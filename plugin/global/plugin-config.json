@@ -1,0 +1,42 @@
+{
+  "item": [
+    {
+      "name": "ip-restriction",
+      "schema": "plugin/portal/ip-restriction.json",
+      "description": "黑白名单插件",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "1000",
+      "instructionForUse": "根据IP过滤请求",
+      "displayName": "IP黑白名单"
+    },
+    {
+      "name": "percent-limit",
+      "schema": "plugin/portal/percent-limit.json",
+      "description": "百分比限流插件",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "500",
+      "instructionForUse": "按百分比限流，例如允许50%通过",
+      "displayName": "百分比限流"
+    },
+    {
+      "name": "static-downgrade",
+      "schema": "plugin/portal/static-downgrade.json",
+      "description": "静态降级",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "2200",
+      "instructionForUse": "当后端响应结果符合条件时，对返回结果进行静态响应降级"
+    }
+  ]
+}

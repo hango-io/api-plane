@@ -1,0 +1,78 @@
+{
+  "item": [
+    {
+      "name": "percent-limit",
+      "displayName": "百分比限流",
+      "schema": "plugin/route/percent-limit.json",
+      "description": "百分比限流插件",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "500",
+      "instructionForUse": "按百分比限流，例如允许50%通过",
+      "categoryKey": "trafficPolicy",
+      "categoryName": "流量管理"
+    },
+    {
+      "name": "ip-restriction",
+      "displayName": "IP黑白名单",
+      "schema": "plugin/route/ip-restriction.json",
+      "description": "黑白名单插件",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule,global",
+      "pluginPriority": "1000",
+      "instructionForUse": "根据ip过滤请求",
+      "categoryKey": "security",
+      "categoryName": "安全"
+    },
+    {
+      "name": "static-downgrade",
+      "displayName": "静态降级",
+      "schema": "plugin/route/static-downgrade.json",
+      "description": "",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule,global",
+      "pluginPriority": "2200",
+      "instructionForUse": "当后端响应结果符合条件时，对返回结果进行静态响应降级",
+      "categoryKey": "trafficPolicy",
+      "categoryName": "流量管理"
+    },
+    {
+      "name": "local-limiting",
+      "displayName": "本地限流",
+      "schema": "plugin/route/local-limit.json",
+      "description": "",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule,global",
+      "pluginPriority": "3400",
+      "instructionForUse": "请求频率限流，按后端服务节点限流",
+      "categoryKey": "trafficPolicy",
+      "categoryName": "流量管理"
+    },
+    {
+      "name": "ua-restriction",
+      "displayName": "UA黑白名单",
+      "schema": "plugin/route/ua-restriction.json",
+      "description": "UA黑白名单插件",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "global,routeRule",
+      "instructionForUse": "UA黑白名单插件",
+      "categoryKey": "security",
+      "categoryName": "安全"
+    }
+  ]
+}

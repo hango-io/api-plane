@@ -1,0 +1,94 @@
+{
+  "inject": {
+    "kind": "local-limiting",
+    "name": "local-limiting"
+  },
+  "layouts": [
+    {
+      "key": "IsSafe",
+      "alias": "是否线程独立",
+      "type": "switch",
+      "help": "默认使用锁机制保证安全；如果打开该字段，代表线程独立。限流规则上限为rate*proxy worker"
+    },
+    {
+      "key": "limit_by_list",
+      "alias": "限流标识列表",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "headers",
+          "alias": "限流headers",
+          "type": "array",
+          "layouts": [
+            {
+              "key": "headerKey",
+              "alias": "限流header",
+              "type": "input"
+            },
+            {
+              "key": "match_type",
+              "alias": "匹配方式",
+              "type": "select",
+              "default": "exact_match",
+              "options": [
+                {
+                  "text": "精确匹配",
+                  "value": "exact_match"
+                },
+                {
+                  "text": "正则表达式",
+                  "value": "safe_regex_match"
+                }
+              ]
+            },
+            {
+              "key": "value",
+              "type": "input",
+              "alias": "取值",
+              "invisible": {
+                "present_match": ["this", "match_type"],
+                "present_match_invert": ["this", "match_type"]
+              }
+            }
+          ]
+        },
+        {
+          "key": "day",
+          "alias": "每天请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "hour",
+          "alias": "每小时请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "minute",
+          "alias": "每分钟请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "second",
+          "alias": "每秒请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        }
+      ]
+    }
+  ]
+}

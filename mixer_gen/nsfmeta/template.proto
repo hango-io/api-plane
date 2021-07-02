@@ -1,0 +1,17 @@
+syntax = "proto3";
+package nsfmeta;
+import "mixer/adapter/model/v1beta1/extensions.proto";
+option (istio.mixer.adapter.model.v1beta1.template_variety) = TEMPLATE_VARIETY_ATTRIBUTE_GENERATOR;
+message Template {
+    string source_uid = 1;
+    string destination_uid = 2;
+    string url_path = 3;
+    string x_nsf_app = 4;
+    string host = 5;
+    string destination_host = 6;
+}
+message OutputTemplate {
+    string source_project = 1;
+    string destination_project = 2;
+    string url_path_pattern = 3;
+}
