@@ -21,5 +21,4 @@ buid
 .DS_Store
 .idea/
 builds/
-*.jar
 k8s.yaml
