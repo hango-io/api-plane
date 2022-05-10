@@ -43,7 +43,7 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
         }
         if ("safe_regex_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(header_safe_regex, headerKey, headerValue));
+              String.format(safe_regex, headerKey, headerValue));
         } else if ("present_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rqx.headers",
               String.format(present_match, headerKey));
@@ -52,7 +52,7 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
               String.format(present_invert_match, headerKey));
         } else {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(header_exact, headerKey, headerValue));
+              String.format(exact, headerKey, headerValue));
         }
       });
     }
@@ -62,10 +62,10 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
       if (nonNull(matchType, host)) {
         if ("safe_regex_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(header_safe_regex, ":authority", host));
+              String.format(safe_regex, ":authority", host));
         } else {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(header_exact, ":authority", host));
+              String.format(exact, ":authority", host));
         }
       }
     }
@@ -74,10 +74,10 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
       if (nonNull(method)) {
         if (method.size() == 1) {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(header_exact, ":method", method.get(0)));
+              String.format(exact, ":method", method.get(0)));
         } else if (method.size() > 1) {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(header_safe_regex, ":method", String.join("|", method)));
+              String.format(safe_regex, ":method", String.join("|", method)));
         }
       }
     }
@@ -87,10 +87,10 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
       if (nonNull(matchType, path)) {
         if ("safe_regex_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(header_safe_regex, ":path", path));
+              String.format(safe_regex, ":path", path));
         } else {
           builder
-              .addJsonElement("$.enable_rqx.headers", String.format(header_exact, ":path", path));
+              .addJsonElement("$.enable_rqx.headers", String.format(exact, ":path", path));
         }
       }
     }
@@ -110,7 +110,7 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
         }
         if ("safe_regex_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rpx.headers",
-              String.format(header_safe_regex, headerKey, headerValue));
+              String.format(safe_regex, headerKey, headerValue));
         } else if ("present_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rpx.headers",
               String.format(present_match, headerKey));
@@ -119,7 +119,7 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
               String.format(present_invert_match, headerKey));
         } else {
           builder.addJsonElement("$.enable_rpx.headers",
-              String.format(header_exact, headerKey, headerValue));
+              String.format(exact, headerKey, headerValue));
         }
       });
     }
@@ -127,7 +127,7 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
       String code = source.getValue("$.condition.response.code.value", String.class);
       if (nonNull(code)) {
         builder.addJsonElement("$.enable_rpx.headers",
-            String.format(header_safe_regex, ":status", code + "|"));
+            String.format(safe_regex, ":status", code + "|"));
       }
     }
 

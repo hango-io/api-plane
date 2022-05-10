@@ -36,15 +36,15 @@ public abstract class AbstractSchemaProcessor implements SchemaProcessor<Service
         }
      }
      */
-    public String header_safe_regex = "{\"name\":\"%s\",\"string_match\":{\"safe_regex\":{\"google_re2\":{},\"regex\":\"%s\"}}}";
+    public String safe_regex = "{\"name\":\"%s\",\"string_match\":{\"safe_regex\":{\"google_re2\":{},\"regex\":\"%s\"}}}";
 
-    public String header_exact = "{\"name\":\"%s\",\"string_match\":{\"exact\": \"%s\"}}";
+    public String exact = "{\"name\":\"%s\",\"string_match\":{\"exact\": \"%s\"}}";
 
     public String header_safe_regex_invert = "{\"name\":\"%s\",\"string_match\":{\"safe_regex_match\":{\"google_re2\":{},\"regex\":\"%s\"}},\"invert_match\": %s}";
 
     public String header_exact_invert = "{\"name\":\"%s\",\"string_match\":{\"exact\": \"%s\"},\"invert_match\": %s}";
 
-    public String header_prefix = "{\"name\":\"%s\",\"string_match\":{\"prefix\": \"%s\"}}";
+    public String prefix = "{\"name\":\"%s\",\"string_match\":{\"prefix\": \"%s\"}}";
 
     public String present_match = "{\"name\":\"%s\", \"present_match\":true, \"invert_match\":true}";
 

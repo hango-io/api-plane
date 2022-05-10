@@ -39,9 +39,9 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
                 String headerValue = item.get("value");
                 if (haveNull(matchType, headerKey, headerValue)) return;
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(header_safe_regex, headerKey, headerValue));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex, headerKey, headerValue));
                 } else {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(header_exact, headerKey, headerValue));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact, headerKey, headerValue));
                 }
             });
         }
@@ -50,9 +50,9 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
             String host = source.getValue("$.condition.request.host.value", String.class);
             if (nonNull(matchType, host)) {
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(header_safe_regex, ":authority", host));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex, ":authority", host));
                 } else {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(header_exact, ":authority", host));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact, ":authority", host));
                 }
             }
         }
@@ -60,9 +60,9 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
             List<String> method = source.getValue("$.condition.request.method", List.class);
             if (nonNull(method)) {
                 if (method.size() == 1) {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(header_exact, ":method", method.get(0)));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact, ":method", method.get(0)));
                 } else if (method.size() > 1) {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(header_safe_regex, ":method", String.join("|", method)));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex, ":method", String.join("|", method)));
                 }
             }
         }
@@ -71,9 +71,9 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
             String path = source.getValue("$.condition.request.path.value", String.class);
             if (nonNull(matchType, path)) {
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(header_safe_regex, ":path", path));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex, ":path", path));
                 } else {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(header_exact, ":path", path));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact, ":path", path));
                 }
             }
         }
@@ -85,9 +85,9 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
                 String headerValue = item.get("value");
                 if (haveNull(matchType, headerKey, headerValue)) return;
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.downgrade_rpx.headers", String.format(header_safe_regex, headerKey, headerValue));
+                    builder.addJsonElement("$.downgrade_rpx.headers", String.format(safe_regex, headerKey, headerValue));
                 } else {
-                    builder.addJsonElement("$.downgrade_rpx.headers", String.format(header_exact, headerKey, headerValue));
+                    builder.addJsonElement("$.downgrade_rpx.headers", String.format(exact, headerKey, headerValue));
                 }
             });
         }
@@ -95,7 +95,7 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
             String matchType = source.getValue("$.condition.response.code.match_type", String.class);
             String code = source.getValue("$.condition.response.code.value", String.class);
             if (nonNull(code)) {
-                builder.addJsonElement("$.downgrade_rpx.headers", String.format(header_safe_regex, ":status", code+"|"));
+                builder.addJsonElement("$.downgrade_rpx.headers", String.format(safe_regex, ":status", code+"|"));
             }
         }
         builder.updateValue("$.static_response.http_status", source.getValue("$.response.code", Integer.class));
