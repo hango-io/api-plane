@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+import "google/protobuf/struct.proto";
+
+package istio.networking.v1alpha3;
+
+option go_package = "istio.io/api/networking/v1alpha3";
+
+// 示例：
+// kind: GatewayPlugin
+//metadata:
+//  name: gateway-yx-transformation
+//  namespace: gateway-system
+//spec:
+//  gateway:
+//  - gateway-system/gateway-yx
+//  route:
+//  - TestApi
+//  user:
+//  - ttt
+//  plugins:
+//  - name: com.netease.transformation
+//    settings:
+//      request_transformations:
+//        transformation_template:
+//          extractors:
+//            call-back:
+//              query_param: 'ddd'
+//              set_to_context: true
+//      response_transformations:
+//        transformation_template:
+//          extractors:
+//            all-body:
+//              body: {}
+//              regex: '([\s\S]*)'
+//              subgroup: 1
+//          body:
+//            text: '{{context("call-back")}}({{ all-body }})'
+//          parse_body_behavior: 1
+//        conditions:
+//        - context:
+//            request_method: 'GET'
+//          headers:
+//            name: 'Content-Type'
+//            regex_match: '.*application/json'
+message GatewayPlugin {
+    // 插件配置绑定的网关实例
+    repeated string gateway = 5;
+
+    // 插件配置生效的API
+    repeated string route = 1;
+    // 插件配置生效的Host
+    repeated string host = 2;
+    // 插件配置生效的Service
+    repeated string service = 3;
+
+    // 插件配置
+    repeated plugins plugins = 4;
+
+    // 插件配置绑定的租户
+    repeated string user = 6;
+
+    // 路由组级别配置，其优先级丢路由级别配置
+    repeated string route_group = 7;
+}
+
+message plugins {
+    // 插件配置
+    google.protobuf.Struct settings = 1;
+    // 插件名或插件别名
+    string name = 2;
+}

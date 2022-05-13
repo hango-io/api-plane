@@ -1,0 +1,148 @@
+{
+  "formatter":{
+    "kind": "transformer",
+    "headers": "&headers",
+    "querystrings": "&querystrings",
+    "path": [
+      {
+        "text": "&urlPath"
+      }
+    ],
+    "urlPath": "&urlPath",
+    "urlSwitch": "&urlSwitch"
+  },
+  "layouts":[
+    {
+      "key": "headers",
+      "alias": "请求头",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "key",
+          "alias": "Header名称",
+          "type": "input",
+          "rules": [
+            "Required"
+          ]
+        },
+        {
+          "key": "action",
+          "alias": "请求动作",
+          "type": "select",
+          "default": "Action_Default",
+          "options": [
+            {
+              "text": "增加或更新（如果不存在则增加，如果存在则更新）",
+              "value": "Action_Default"
+            },
+            {
+              "text": "增加（如果存在则不操作）",
+              "value": "Action_Add"
+            },
+            {
+              "text": "更新（如果不存在则不操作）",
+              "value": "Action_Update"
+            },
+            {
+              "text": "删除",
+              "value": "Action_Delete"
+            }
+          ],
+          "rules": [
+            "Required",
+            "MaxNumber(3)",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "text",
+          "alias": "取值",
+          "type": "input",
+          "help": "可以提取原请求中指定参数作为取值。如：(1)提取query string部分参数param，则填写为{{querystrings[param]}}. (2)提取header部分参数headerKey，则填写为{{headers[headerKey]}}. (3)提取url path部分第一个参数，则填写为{{url[0]}}。注意：如果header、query string部分参数提取失败则不会进行对应的转换操作，url path部分参数提取失败会导致请求返回400错误",
+          "invisible": {
+            "this.action": "Action_Delete"
+          },
+          "rules": [
+            "Required"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "querystrings",
+      "alias": "请求参数",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "key",
+          "alias": "请求参数",
+          "type": "input",
+          "rules": [
+            "Required"
+          ]
+        },
+        {
+          "key": "action",
+          "alias": "请求动作",
+          "type": "select",
+          "default": "Action_Default",
+          "options": [
+            {
+              "text": "增加或更新（如果不存在则增加，如果存在则更新）",
+              "value": "Action_Default"
+            },
+            {
+              "text": "增加（如果存在则不操作）",
+              "value": "Action_Add"
+            },
+            {
+              "text": "更新（如果不存在则不操作）",
+              "value": "Action_Update"
+            },
+            {
+              "text": "删除",
+              "value": "Action_Delete"
+            }
+          ],
+          "rules": [
+            "Required",
+            "MaxNumber(3)",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "text",
+          "alias": "取值",
+          "type": "input",
+          "help": "可以提取原请求中指定参数作为取值。如：(1)提取query string部分参数param，则填写为{{querystrings[param]}}. (2)提取header部分参数headerKey，则填写为{{headers[headerKey]}}. (3)提取url path部分第一个参数，则填写为{{url[0]}}。注意：如果header、query string部分参数提取失败则不会进行对应的转换操作，url path部分参数提取失败会导致请求返回400错误",
+          "invisible": {
+            "this.action": "Action_Delete"
+          },
+          "rules": [
+            "Required"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "urlSwitch",
+      "alias": "是否path转换",
+      "type": "switch"
+    },
+    {
+      "key": "urlPath",
+      "alias": "重写后path",
+      "type": "input",
+      "help": "可以提取原请求中指定参数作为取值。如：(1)提取query string部分参数param，则填写为{{querystrings[param]}}. (2)提取header部分参数headerKey，则填写为{{headers[headerKey]}}. (3)提取path部分第一个参数，进行path转换，则填写为{{path[0]}}，query请求会携带至原请求。注意：如果header、query string部分参数提取失败则不会进行对应的转换操作，url path部分参数提取失败会导致请求返回400错误, path转换如果采用{{url[0]}}的提取方式会丢弃query",
+      "visible": {
+        "true": [
+          "this",
+          "urlSwitch"
+        ]
+      },
+      "rules": [
+        "Required"
+      ]
+    }
+  ]
+}

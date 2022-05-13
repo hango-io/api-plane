@@ -1,0 +1,19 @@
+{
+  "inject": {
+    "kind": "function"
+  },
+  "layouts": [
+    {
+      "key": "envoy_on_request",
+      "alias": "请求脚本",
+      "default": "",
+      "type": "code"
+    },
+    {
+      "key": "envoy_on_response",
+      "alias": "响应脚本",
+      "default": "",
+      "type": "code"
+    }
+  ]
+}

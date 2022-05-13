@@ -1,0 +1,469 @@
+{
+  "formatter": {
+    "kind": "dynamic-downgrade",
+    "condition?": "&condition",
+    "cache?": "&cache",
+    "ttl": "&ttl",
+    "cacheKey": "&cache_key",
+    "httpx?": "&httpx",
+    "dowgrade_type": "&dowgrade_type"
+  },
+  "layouts": [
+    {
+      "key": "kind",
+      "default": "dynamic-downgrade",
+      "visible": false
+    },
+    {
+      "key": "condition",
+      "alias": "动态降级条件",
+      "type": "layouts",
+      "layouts": [
+        {
+          "key": "request",
+          "alias": "请求",
+          "type": "layouts",
+          "layouts": [
+            {
+              "key": "requestSwitch",
+              "alias": "请求匹配",
+              "type": "switch",
+              "default": false
+            },
+            {
+              "key": "method",
+              "alias": "请求方法",
+              "type": "multi_select",
+              "visible": {
+                "this.requestSwitch": true
+              },
+              "options": [
+                {
+                  "text": "GET",
+                  "value": "GET"
+                },
+                {
+                  "text": "HEAD",
+                  "value": "HEAD"
+                }
+              ]
+            },
+            {
+              "key": "path",
+              "alias": "请求路径",
+              "type": "layouts",
+              "visible": {
+                "this.requestSwitch": true
+              },
+              "layouts": [
+                {
+                  "key": "match_type",
+                  "alias": "匹配方式",
+                  "type": "select",
+                  "default": "exact_match",
+                  "options": [
+                    {
+                      "text": "精确匹配",
+                      "value": "exact_match"
+                    },
+                    {
+                      "text": "正则表达式",
+                      "value": "safe_regex_match"
+                    }
+                  ]
+                },
+                {
+                  "key": "value",
+                  "type": "input",
+                  "alias": "取值"
+                }
+              ]
+            },
+            {
+              "key": "host",
+              "alias": "域名",
+              "type": "layouts",
+              "visible": {
+                "this.requestSwitch": true
+              },
+              "layouts": [
+                {
+                  "key": "match_type",
+                  "alias": "匹配方式",
+                  "type": "select",
+                  "default": "exact_match",
+                  "options": [
+                    {
+                      "text": "精确匹配",
+                      "value": "exact_match"
+                    },
+                    {
+                      "text": "正则表达式",
+                      "value": "safe_regex_match"
+                    }
+                  ]
+                },
+                {
+                  "key": "value",
+                  "type": "input",
+                  "alias": "取值"
+                }
+              ]
+            },
+            {
+              "key": "headers",
+              "alias": "请求头",
+              "type": "array",
+              "visible": {
+                "this.requestSwitch": true
+              },
+              "layouts": [
+                {
+                  "key": "headerKey",
+                  "alias": "请求头",
+                  "type": "input"
+                },
+                {
+                  "key": "match_type",
+                  "alias": "匹配方式",
+                  "type": "select",
+                  "default": "exact_match",
+                  "options": [
+                    {
+                      "text": "精确匹配",
+                      "value": "exact_match"
+                    },
+                    {
+                      "text": "正则表达式",
+                      "value": "safe_regex_match"
+                    }
+                  ]
+                },
+                {
+                  "key": "value",
+                  "type": "input",
+                  "alias": "取值",
+                  "invisible": {
+                    "present_match": [
+                      "this",
+                      "match_type"
+                    ],
+                    "present_match_invert": [
+                      "this",
+                      "match_type"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "response",
+          "alias": "响应",
+          "type": "layouts",
+          "layouts": [
+            {
+              "key": "code",
+              "alias": "响应状态码",
+              "type": "layouts",
+              "layouts": [
+                {
+                  "key": "match_type",
+                  "alias": "匹配方式",
+                  "type": "select",
+                  "default": "exact_match",
+                  "options": [
+                    {
+                      "text": "精确匹配",
+                      "value": "exact_match"
+                    }
+                  ]
+                },
+                {
+                  "key": "value",
+                  "alias": "取值",
+                  "type": "input",
+                  "rules": [
+                    "Required"
+                    ]
+                }
+              ]
+            },
+            {
+              "key": "headers",
+              "alias": "响应头",
+              "type": "array",
+              "visible": {
+                "this.responseSwitch": true
+              },
+              "layouts": [
+                {
+                  "key": "headerKey",
+                  "alias": "响应头",
+                  "type": "input"
+                },
+                {
+                  "key": "match_type",
+                  "alias": "匹配方式",
+                  "type": "select",
+                  "default": "exact_match",
+                  "options": [
+                    {
+                      "text": "精确匹配",
+                      "value": "exact_match"
+                    },
+                    {
+                      "text": "正则表达式",
+                      "value": "safe_regex_match"
+                    }
+                  ]
+                },
+                {
+                  "key": "value",
+                  "type": "input",
+                  "alias": "取值",
+                  "invisible": {
+                    "present_match": [
+                      "this",
+                      "match_type"
+                    ],
+                    "present_match_invert": [
+                      "this",
+                      "match_type"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "dowgrade_type",
+      "alias": "动态降级类型",
+      "type": "select",
+      "default": "httpx",
+      "options": [
+        {
+          "value": "cache",
+          "text": "缓存降级"
+        },
+        {
+          "value": "httpx",
+          "text": "接口降级"
+        }
+      ],
+      "style": "width: 600px; display: block;"
+    },
+    {
+      "key": "cache",
+      "alias": "降级缓存配置",
+      "type": "layouts",
+      "visible": {
+        "dowgrade_type": "cache"
+      },
+      "layouts": [
+        {
+          "key": "condition",
+          "alias": "缓存条件",
+          "type": "layouts",
+          "layouts": [
+            {
+              "key": "response",
+              "alias": "响应",
+              "type": "layouts",
+              "layouts": [
+                {
+                  "key": "responseSwitch",
+                  "alias": "是否使用响应进行匹配",
+                  "type": "switch",
+                  "default": false
+                },
+                {
+                  "key": "code",
+                  "alias": "响应状态码",
+                  "type": "layouts",
+                  "visible": {
+                    "this.responseSwitch": true
+                  },
+                  "layouts": [
+                    {
+                      "key": "match_type",
+                      "alias": "匹配方式",
+                      "type": "select",
+                      "default": "exact_match",
+                      "options": [
+                        {
+                          "text": "精确匹配",
+                          "value": "exact_match"
+                        },
+                        {
+                          "text": "正则表达式",
+                          "value": "safe_regex_match"
+                        }
+                      ]
+                    },
+                    {
+                      "key": "value",
+                      "alias": "取值",
+                      "type": "input"
+                    }
+                  ]
+                },
+                {
+                  "key": "headers",
+                  "alias": "响应头",
+                  "type": "array",
+                  "visible": {
+                    "this.responseSwitch": true
+                  },
+                  "layouts": [
+                    {
+                      "key": "headerKey",
+                      "alias": "响应头",
+                      "type": "input"
+                    },
+                    {
+                      "key": "match_type",
+                      "alias": "匹配方式",
+                      "type": "select",
+                      "default": "exact_match",
+                      "options": [
+                        {
+                          "text": "精确匹配",
+                          "value": "exact_match"
+                        },
+                        {
+                          "text": "正则表达式",
+                          "value": "safe_regex_match"
+                        }
+                      ]
+                    },
+                    {
+                      "key": "value",
+                      "type": "input",
+                      "alias": "取值",
+                      "invisible": {
+                        "present_match": [
+                          "this",
+                          "match_type"
+                        ],
+                        "present_match_invert": [
+                          "this",
+                          "match_type"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "ttl",
+          "alias": "Redis缓存TTL",
+          "type": "layouts",
+          "layouts": [
+            {
+              "key": "default",
+              "alias": "默认TTL",
+              "help": "默认TTL设置，填写0即不使用缓存，单位ms",
+              "type": "input",
+              "rules": [
+                "Required",
+                "Number",
+                "MinNumber(0)",
+                "MaxNumber(99999999)"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "cache_key",
+          "alias": "缓存key配置",
+          "help": "默认情况下使用method + host + path（不带querystring参数）作为缓存的key",
+          "type": "layouts",
+          "layouts": [
+            {
+              "key": "ignoreCase",
+              "alias": "key忽略大小写",
+              "type": "switch",
+              "default": true
+            },
+            {
+              "key": "query_params",
+              "alias": "query参数",
+              "type": "multi_input"
+            },
+            {
+              "key": "headers",
+              "alias": "请求头",
+              "type": "multi_input"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "httpx",
+      "alias": "接口降级配置",
+      "type": "layouts",
+      "visible": {
+        "dowgrade_type": "httpx"
+      },
+      "layouts": [
+        {
+          "key": "uri",
+          "alias": "接口降级uri",
+          "type": "input",
+          "help": "uri为空，默认采用原接口"
+        },
+        {
+          "key": "remote",
+          "alias": "降级服务配置",
+          "help": "如果不配置，默认采用全局降级服务。需要联系管理员配置全局降级服务",
+          "type": "layouts",
+          "layouts": [
+            {
+              "key": "requestSwitch",
+              "alias": "自定义服务",
+              "type": "switch",
+              "default": false
+            },
+            {
+              "key": "cluster",
+              "alias": "降级服务",
+              "type": "dynamic_service_list",
+              "visible": {
+                "this.requestSwitch": true
+              },
+              "default": {
+                "Id": "",
+                "Port": ""
+              },
+              "help": "需要选择网关对应的cluster"
+            },
+            {
+              "key": "timeout",
+              "alias": "超时时间",
+              "type": "input",
+              "help": "单位s",
+              "visible": {
+                "this.requestSwitch": true
+              },
+              "rules": [
+                "Required",
+                "Number",
+                "MinNumber(0)",
+                "MaxNumber(99999999)"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

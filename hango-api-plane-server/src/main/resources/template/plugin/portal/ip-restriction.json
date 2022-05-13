@@ -1,0 +1,32 @@
+{
+  "inject": {
+    "kind": "ip-restriction"
+  },
+  "layouts": [
+    {
+      "key": "type",
+      "alias": "黑白名单类型",
+      "type": "select",
+      "options": [
+        {
+          "text": "黑名单",
+          "value": "0"
+        },
+        {
+          "text": "白名单",
+          "value": "1"
+        }
+      ],
+      "rules": [
+        "Required",
+        "Number"
+      ]
+    },
+    {
+      "key": "list",
+      "alias": "IP列表",
+      "default": [],
+      "type": "multi_input"
+    }
+  ]
+}

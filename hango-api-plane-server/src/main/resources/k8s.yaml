@@ -1,0 +1,7 @@
+k8s:
+  clusters:
+    # 单集群可不配相关信息
+    default:
+      k8s-api-server: ""
+      cert-data: ""
+      key-data: ""

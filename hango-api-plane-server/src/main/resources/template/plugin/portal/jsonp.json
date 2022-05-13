@@ -1,0 +1,15 @@
+{
+  "inject": {
+    "kind": "jsonp"
+  },
+  "layouts": [
+    {
+      "key": "callback",
+      "alias": "callback",
+      "type": "input",
+      "rules": [
+        "Required"
+      ]
+    }
+  ]
+}

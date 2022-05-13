@@ -1,0 +1,170 @@
+/*
+* @Author: zhranklin
+* @Date: 2021/8/3
+*/
+
+syntax = "proto3";
+
+import "networking/v1alpha3/virtual_service.proto";
+import "proxy/filters/dubbo/circuit_breaker/v2/circuit_breaker.proto";
+import "proxy/filters/http/circuit_breaker/v2/circuit_breaker.proto";
+import "networking/v1alpha3/destination_rule.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+import "google/api/field_behavior.proto";
+
+package slime.microservice.v1alpha1;
+
+option go_package = "slime.io/slime/slime-modules/rvs/api/v1alpha1";
+
+message RichVirtualService {
+    string host = 201;
+
+    repeated string extraHosts = 202;
+
+    repeated string gateways = 2;
+
+    repeated HTTPRoute http = 3;
+
+    repeated istio.networking.v1alpha3.TLSRoute tls = 5;
+
+    repeated istio.networking.v1alpha3.TCPRoute tcp = 4;
+
+    repeated string export_to = 6;
+
+    repeated DubboRoute dubbo = 7;
+
+    istio.networking.v1alpha3.TrafficPolicy traffic_policy = 200;
+}
+
+message HTTPRoute {
+    string name = 17;
+
+    repeated istio.networking.v1alpha3.HTTPMatchRequest match = 1;
+
+    repeated HTTPRouteDestination route = 2;
+
+    istio.networking.v1alpha3.HTTPRedirect redirect = 3;
+
+    //    istio.networking.v1alpha3.Delegate delegate = 20;
+
+    istio.networking.v1alpha3.HTTPRewrite rewrite = 4;
+
+    reserved 5;
+    reserved "websocket_upgrade";
+
+    google.protobuf.Duration timeout = 6;
+
+    istio.networking.v1alpha3.HTTPRetry retries = 7;
+
+    istio.networking.v1alpha3.HTTPFaultInjection fault = 8;
+
+    istio.networking.v1alpha3.Destination mirror = 9;
+
+    google.protobuf.UInt32Value mirror_percent = 18 [deprecated = true];
+
+    istio.networking.v1alpha3.Percent mirror_percentage = 19;
+
+    istio.networking.v1alpha3.CorsPolicy cors_policy = 10;
+
+    reserved 11 to 15;
+    reserved "append_headers", "remove_response_headers", "append_response_headers", "remove_request_headers", "append_request_headers";
+
+    istio.networking.v1alpha3.Headers headers = 16;
+
+    proxy.filters.http.circuit_breaker.v2.CircuitBreaker breaker = 200;
+
+    Downgrade downgrade = 201;
+
+    istio.networking.v1alpha3.TrafficPolicy traffic_policy = 202;
+
+    // $hide_from_docs
+    // Next available field number: 21
+}
+
+message CommonMatcher {
+    map<string, istio.networking.v1alpha3.StringMatch> headers = 1;
+    map<string, istio.networking.v1alpha3.StringMatch> query_params = 2;
+    map<string, istio.networking.v1alpha3.StringMatch> cookies = 3;
+}
+
+message KeyMaker {
+    bool exclude_path = 1;
+
+    bool exclude_host = 2;
+
+    repeated string query_params = 3;
+
+    repeated string headers_keys = 6;
+
+    bool ignore_case = 7;
+}
+
+
+message Downgrade {
+    CommonMatcher downgrade_rqx = 1;
+    CommonMatcher downgrade_rpx = 2;
+
+    enum DowngradeSource {
+        CACHE = 0;
+        HTTPX = 1;
+    }
+
+    CommonMatcher cache_rpx_rpx = 3;
+    map<string, uint64> cache_ttls = 4;
+    KeyMaker key_maker = 5;
+    string downgrade_uri = 6;
+    DowngradeSource downgrade_src = 7;
+
+}
+
+message HTTPRouteDestination {
+    Destination destination = 1 [(google.api.field_behavior) = REQUIRED];
+
+    int32 weight = 2;
+
+    reserved 3 to 6;
+    reserved "remove_response_headers", "append_response_headers", "remove_request_headers", "append_request_headers";
+
+    istio.networking.v1alpha3.Headers headers = 7;
+}
+
+message Destination {
+    string host = 1;
+
+    string subset = 2;
+
+    map<string, string> labels = 200;
+
+    istio.networking.v1alpha3.PortSelector port = 3;
+}
+
+message DubboRoute {
+    string name = 1;
+
+    istio.networking.v1alpha3.StringMatch interface = 2;
+
+    string version = 3;
+
+    string group = 4;
+
+    repeated istio.networking.v1alpha3.DubboMatchRequest match = 5;
+
+    repeated RouteDestination route = 6;
+
+    istio.networking.v1alpha3.DubboFaultInjection fault = 7;
+
+    istio.networking.v1alpha3.DubboRetry retries = 8;
+
+    proxy.filters.dubbo.circuit_breaker.v2.CircuitBreaker breaker = 200;
+
+    Downgrade downgrade = 201;
+
+    istio.networking.v1alpha3.TrafficPolicy traffic_policy = 202;
+}
+
+message RouteDestination {
+    Destination destination = 1 [(google.api.field_behavior) = REQUIRED];
+
+    int32 weight = 2;
+}

@@ -1,0 +1,160 @@
+{
+  "item": [
+    {
+      "name": "ianus-percent-limit",
+      "schema": "plugin/portal/ianus-percent-limit.json",
+      "description": "百分比限流插件",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "500",
+      "instructionForUse": "按百分比限流，例如允许50%通"
+    },
+    {
+      "name": "ianus-rate-limiting",
+      "schema": "plugin/portal/ianus-rate-limiting.json",
+      "description": "频控插件",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "1500",
+      "instructionForUse": "按频率限流,例如限制5个请求/s"
+    },
+    {
+      "name": "ianus-router",
+      "schema": "plugin/portal/ianus-router.json",
+      "description": "路由插件",
+      "processor": "RouteProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "3500",
+      "instructionForUse": "实现请求中断功能，配置该插件后根据配置响应信息直接返回给客户端"
+    },
+    {
+      "name": "ip-restriction",
+      "schema": "plugin/portal/ip-restriction.json",
+      "description": "黑白名单插件",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule,global",
+      "pluginPriority": "1000",
+      "instructionForUse": "根据ip过滤请求"
+    },
+    {
+      "name": "cors",
+      "schema": "plugin/portal/cors.json",
+      "description": "",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule,global",
+      "pluginPriority": "2000",
+      "instructionForUse": "跨域资源共享插件cors"
+    },
+    {
+      "name": "jsonp",
+      "schema": "plugin/portal/jsonp.json",
+      "description": "jsonp插件",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "2700",
+      "instructionForUse": "跨域资源共享插件jsonp"
+    },
+    {
+      "name": "rewrite",
+      "schema": "plugin/portal/rewrite.json",
+      "description": "重写插件",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "2500",
+      "instructionForUse": "前缀替换插件"
+    },
+    {
+      "name": "cache",
+      "schema": "plugin/portal/cache.json",
+      "description": "",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule,global",
+      "pluginPriority": "3000",
+      "instructionForUse": "缓存插件，仅对GET、HEAD方法生效，若配置了cache插件，则在响应头中可以看到"
+    },
+    {
+      "name": "transformer",
+      "schema": "plugin/portal/request-transformer-new.json",
+      "description": "",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "2300",
+      "instructionForUse": "请求转换插件，允许对header、queryString参数的增加、删除、修改"
+    },
+    {
+      "name": "static-downgrade",
+      "schema": "plugin/portal/static-downgrade.json",
+      "description": "",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule,global",
+      "pluginPriority": "2200",
+      "instructionForUse": "静态降级插件，当返回结果符合条时件对返回结果进行降级"
+    },
+    {
+      "name": "trace",
+      "schema": "plugin/portal/neTraceFileLog.json",
+      "description": "",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "global",
+      "pluginPriority": "4000",
+      "instructionForUse": "trace插件"
+    },
+    {
+      "name": "super-auth",
+      "schema": "plugin/portal/superAuth.json",
+      "description": "",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "global,routeRule",
+      "pluginPriority": "1700",
+      "instructionForUse": "认证鉴权插件"
+    },
+    {
+      "name": "youdaoMathAuthentication",
+      "schema": "plugin/portal/youdaoMathAuthentication.json",
+      "description": "有道数学鉴权插件",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "1000",
+      "instructionForUse": "有道数学鉴权插件"
+    }
+  ]
+}

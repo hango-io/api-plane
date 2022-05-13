@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.netease.cloud.nsf.common.proto";
+option java_outer_classname = "AgentConfigProto";
+option objc_class_prefix = "CONFIG";
+
+//import "commonmeta.proto";
+package config;
+
+// Agent向Server请求配置信息/心跳
+service AgentConfig {
+	// 同步配置
+    rpc SyncConfiguration(stream AgentConfigInfo) returns (stream AgentConfigInfo) {}
+}
+
+
+message AgentConfigInfo {
+    string agentId = 1;// agent id
+    string version = 2;// 配置版本号
+    HystrixConfig hystrixConfig = 3; // 熔断配置
+  	RateLimitConfig rateLimitConfig = 4; // 流控配置
+    FaultToleranceConfig faultToleranceConfig = 5; // 容错配置.
+    LoadBalancedConfig loadBalancedConfig = 6; //负载均衡配置
+    RouterConfig routerConfig = 7; //路由配置
+    DivideConfig divideConfig =8; //参数分流配置
+    string configType = 9; //配置类型. 默认不填或0为拉全量配置；1为心跳(server直接返回响应,用于保持连接)
+    AuthenticationConfig authenticationConfig =10;
+    ServiceOnlineConfig serviceOnlineConfig = 11; //服务上下线配置
+    TurbineAddressConfig turbineAddressConfig =12;//turbine地址配置
+    ApolloNamespaceConfig apolloNamespaceConfig = 13; //动态监听配置表
+    PriorityRouteConfig priorityRouteConfig = 14; //机房优先级路由开关
+    ColorChainConfig colorChainConfig = 15; //流量染色
+    string registryId = 16; // 心跳的时候发送registryId用以同步
+    ArthasConfig arthasConfig = 17; //arthas诊断开关
+    AuthConfig authConfig = 18; //鉴权信息
+    TrafficMarkConfig trafficMarkConfig = 19; //流量染色V2
+    DiscoveryConfig DiscoveryConfig = 20; //服务发现信息, 包括k8s service等
+    GlobalConfig globalConfig = 21; //环境统一下发的配置
+    IfaceRateLimitConfig ifaceRateLimitConfig = 22; //接口级限流
+}
+
+
+message HystrixConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message FaultToleranceConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message RateLimitConfig {
+	map<string, string> config = 1; // 具体配置map
+}
+
+message LoadBalancedConfig {
+	map<string, string> config = 1; // 具体配置map
+}
+
+message RouterConfig {
+	map<string, string> config = 1; // 具体配置map
+}
+
+message DivideConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message AuthenticationConfig {
+    map<string, string> config = 1; //
+}
+
+message ServiceOnlineConfig {
+	map<string, string> config = 1; // 具体配置map
+}
+
+message TurbineAddressConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message ApolloNamespaceConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message PriorityRouteConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message ColorChainConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message ArthasConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message TrafficMarkConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message AuthConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message DiscoveryConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message GlobalConfig {
+    map<string, string> config = 1; // 具体配置map
+}
+
+message IfaceRateLimitConfig {
+    map<string, string> config = 1; // 具体配置map
+}

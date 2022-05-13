@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package istio.envoy.config.filter.http.resty.v2;
+import "google/protobuf/struct.proto";
+option go_package = "istio.io/api/envoy/config/filter/http/resty/v2";
+
+message Plugin {
+    string name = 1;
+    google.protobuf.Struct config = 2;
+}
+message EnablePlugins {
+    repeated Plugin plugins = 1;
+}

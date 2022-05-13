@@ -1,0 +1,191 @@
+{
+  "fields": {
+    "x_user_id": {
+      "type": "string",
+      "help": "租户id",
+      "order_index": 0
+    },
+    "matcher": {
+      "item_schema": {
+        "fields": {
+          "enable": {
+            "alias": "是否启用",
+            "type": "boolean",
+            "order_index": 2
+          },
+          "name": {
+            "alias": "名称",
+            "type": "string",
+            "order_index": 0
+          },
+          "content": {
+            "schema": {
+              "fields": {
+                "condition": {
+                  "item_schema": {
+                    "fields": {
+                      "left_value": {
+                        "alias": "变量名称",
+                        "type": "string",
+                        "order_index": 1
+                      },
+                      "right_value": {
+                        "alias": "变量值",
+                        "type": "string",
+                        "order_index": 3
+                      },
+                      "right_operator": {
+                        "alias": "操作符",
+                        "type": "string",
+                        "order_index": 2,
+                        "enum": [
+                          {
+                            "name": "≈",
+                            "value": "≈"
+                          },
+                          {
+                            "name": "!≈",
+                            "value": "!≈"
+                          },
+                          {
+                            "name": "=",
+                            "value": "="
+                          },
+                          {
+                            "name": "!=",
+                            "value": "!="
+                          },
+                          {
+                            "name": "存在",
+                            "value": "exsists"
+                          },
+                          {
+                            "name": "不存在",
+                            "value": "not exsists"
+                          }
+                        ]
+                      },
+                      "target": {
+                        "alias": "变量来源",
+                        "type": "string",
+                        "order_index": 0,
+                        "enum": [
+                          {
+                            "name": "header",
+                            "value": "header"
+                          },
+                          {
+                            "name": "uri",
+                            "value": "uri"
+                          },
+                          {
+                            "name": "host",
+                            "value": "host"
+                          },
+                          {
+                            "name": "userAgent",
+                            "value": "userAgent"
+                          },
+                          {
+                            "name": "referer",
+                            "value": "referer"
+                          },
+                          {
+                            "name": "ip",
+                            "value": "ip"
+                          },
+                          {
+                            "name": "method",
+                            "value": "method"
+                          },
+                          {
+                            "name": "args",
+                            "value": "args"
+                          },
+                          {
+                            "name": "cookie",
+                            "value": "cookie"
+                          },
+                          {
+                            "name": "内置变量",
+                            "value": "internalVariables"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "alias": "条件",
+                  "type": "array",
+                  "order_index": 0
+                },
+                "action": {
+                  "item_schema": {
+                    "fields": {
+                      "expression": {
+                        "help": "格式为：key:value 或者 key:newKey",
+                        "alias": "表达式",
+                        "type": "string",
+                        "order_index": 2
+                      },
+                      "operation": {
+                        "alias": "类型",
+                        "type": "string",
+                        "order_index": 1,
+                        "enum": [
+                          {
+                            "name": "追加",
+                            "value": "append"
+                          },
+                          {
+                            "name": "新增",
+                            "value": "put"
+                          },
+                          {
+                            "name": "重命名",
+                            "value": "rename"
+                          },
+                          {
+                            "name": "删除",
+                            "value": "remove"
+                          }
+                        ]
+                      },
+                      "target": {
+                        "alias": "位置",
+                        "type": "string",
+                        "order_index": 0,
+                        "enum": [
+                          {
+                            "name": "queryString",
+                            "value": "queryString"
+                          },
+                          {
+                            "name": "headers",
+                            "value": "headers"
+                          },
+                          {
+                            "name": "body",
+                            "value": "body"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "alias": "执行动作",
+                  "type": "array",
+                  "order_index": 1
+                }
+              }
+            },
+            "alias": "规则列表",
+            "type": "table",
+            "order_index": 1
+          }
+        }
+      },
+      "alias": "规则列表",
+      "type": "array",
+      "order_index": 1
+    }
+  }
+}

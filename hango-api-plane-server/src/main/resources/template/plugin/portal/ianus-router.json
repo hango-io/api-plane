@@ -1,0 +1,39 @@
+{
+  "inject": {
+    "regex": "/(.*)",
+    "variable": "/$1"
+  },
+  "formatter": {
+    "kind": "ianus-router",
+    "version": "1.0",
+    "code": "&return_target.code",
+    "body": "&return_target.body"
+  },
+  "layouts":[
+    {
+      "key": "return_target",
+      "alias": "中断响应",
+      "layouts": [
+        {
+          "key": "code",
+          "alias": "响应状态码",
+          "type": "input",
+          "rules": [
+            "Required",
+            "Number",
+            "MinNumber(200)",
+            "MaxNumber(599)"
+          ]
+        },
+        {
+          "key": "body",
+          "alias": "响应内容",
+          "type": "input",
+          "rules":[
+            "Required"
+          ]
+        }
+      ]
+    }
+  ]
+}

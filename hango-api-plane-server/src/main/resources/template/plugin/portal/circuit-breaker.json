@@ -1,0 +1,190 @@
+{
+  "formatter": {
+    "kind": "circuit-breaker",
+    "config": {
+      "error_percent_threshold": "&errorPercent.errorPercentThreshold",
+      "min_request_amount": "&errorPercent.minRequestAmount",
+      "average_response_time": "&rt.rtThreshold",
+      "consecutive_slow_requests": "&rt.consecutiveSlowRequests",
+      "breakType": "&breakType",
+      "lookback_duration": "&lookbackDuration",
+      "break_duration": "&breakDuration"
+    },
+    "response": {
+      "code": "&response.code",
+      "headers": "&response.headers",
+      "body": "&response.body"
+    }
+  },
+  "layouts": [
+    {
+      "key": "breakType",
+      "alias": "熔断触发条件",
+      "type": "checkbox",
+      "options": [
+        {
+          "text": "错误率触发熔断",
+          "value": "ErrorPercentCircuitbreaker"
+        },
+        {
+          "text": "RT触发熔断",
+          "value": "RTCircuitbreaker"
+        }
+      ],
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "errorPercent",
+      "alias": "错误率触发熔断",
+      "help": "错误定义：服务响应5xx，网关代理请求到服务过程中超时等异常均会计入5xx统计",
+      "type": "layouts",
+      "visible": {
+        "RTCircuitbreaker,ErrorPercentCircuitbreaker": ["this", "breakType"],
+        "ErrorPercentCircuitbreaker,RTCircuitbreaker": ["this", "breakType"],
+        "ErrorPercentCircuitbreaker": ["this", "breakType"]
+      },
+      "layouts": [
+        {
+          "key": "errorPercentThreshold",
+          "alias": "错误百分比阈值",
+          "help": "与最小请求次数搭配生效，仅在统计窗口内，最小请求次数与错误百分比阈值同时满足时触发熔断",
+          "type": "input",
+          "placeholder": "范围 (0.0, 100.0] 之间",
+          "rules": [
+            "Required",
+            "FloatNumber(5)",
+            "MaxFloatNumber(100.0)",
+            "MinFloatNumber(0.00001)"
+          ]
+        },
+        {
+          "key": "minRequestAmount",
+          "alias": "最小请求次数",
+          "help": "与错误百分比阈值搭配生效，仅在统计窗口内，最小请求次数与错误百分比阈值同时满足时触发熔断",
+          "type": "input",
+          "placeholder": "范围 [1, 4294967295] 之间",
+          "rules": [
+            "Required",
+            "Number",
+            "MinNumber(1)",
+            "MaxNumber(4294967295)"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "rt",
+      "alias": "RT触发熔断",
+      "type": "layouts",
+      "visible": {
+        "RTCircuitbreaker,ErrorPercentCircuitbreaker": ["this", "breakType"],
+        "ErrorPercentCircuitbreaker,RTCircuitbreaker": ["this", "breakType"],
+        "RTCircuitbreaker": ["this", "breakType"]
+      },
+      "layouts": [
+        {
+          "key": "rtThreshold",
+          "alias": "慢响应时间阈值",
+          "help": "慢响应时间阈值，与连续慢响应次数搭配生效，当连续",
+          "placeholder": "单位s，范围 (0, 1000.0]",
+          "type": "input",
+          "rules": [
+            "Required",
+            "FloatNumber(5)",
+            "MaxFloatNumber(1000.0)",
+            "MinFloatNumber(0.00001)"
+          ]
+        },
+        {
+          "key": "consecutiveSlowRequests",
+          "alias": "连续慢响应次数",
+          "help": "与响应时间阈值，范围 [1, 4294967295] 之间，与慢响应时间阈值搭配生效，当连续有",
+          "type": "input",
+          "rules": [
+            "Required",
+            "Number",
+            "MinNumber(1)",
+            "MaxNumber(4294967295)"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lookbackDuration",
+      "alias": "统计窗口",
+      "help": "统计窗口，单位s，默认10s，最大值为120s",
+      "type": "input",
+      "placeholder": "单位s，范围(0.0,120.0)",
+      "rules": [
+        "Required",
+        "FloatNumber(5)",
+        "MaxFloatNumber(119.999)",
+        "MinFloatNumber(0.00001)"
+      ]
+    },
+    {
+      "key": "breakDuration",
+      "alias": "惩罚时间",
+      "help": "当触发熔断时的惩罚时间，单位s，在该时间内不再请求后端服务而之间返回熔断后的定制响应",
+      "type": "input",
+      "placeholder": "单位s，范围 (0.0, 10000]",
+      "rules": [
+        "Required",
+        "FloatNumber(5)",
+        "MaxFloatNumber(10000.0)",
+        "MinFloatNumber(0.00001)"
+      ]
+    },
+    {
+      "key": "response",
+      "alias": "定制响应",
+      "help": "当触发熔断后，会返回此部分定制的响应",
+      "type": "layouts",
+      "layouts": [
+        {
+          "key": "code",
+          "type": "input",
+          "alias": "响应状态码",
+          "placeholder": "请输入 [200, 599] 之间的响应状态码",
+          "rules": [
+            "Required",
+            "Number",
+            "MinNumber(200)",
+            "MaxNumber(599)"
+          ]
+        },
+        {
+          "key": "headers",
+          "type": "array",
+          "alias": "响应头",
+          "layouts": [
+            {
+              "key": "key",
+              "type": "input",
+              "alias": "响应头名称",
+              "rules": [
+                "Required"
+              ]
+            },
+            {
+              "key": "value",
+              "type": "input",
+              "alias": "响应头值",
+              "rules": [
+                "Required"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "body",
+          "type": "input",
+          "alias": "响应内容",
+          "help": "若不填写，则默认返回：circuit breaker filter abort"
+        }
+      ]
+    }
+  ]
+}

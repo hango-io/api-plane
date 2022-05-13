@@ -1,0 +1,65 @@
+{
+  "formatter": {
+    "kind": "neRequestTermination",
+    "type": "lua",
+    "need_to_response": "&need_to_response",
+    "config": {
+      "response": {
+        "status": "&response.status",
+        "headers": "@response.headers",
+        "body": "&response.body"
+      }
+    }
+  },
+  "layouts": [
+   {
+      "key": "response",
+      "alias": "直接响应内容",
+      "help": "请求不会打到业务，从网关侧直接返回",
+      "type": "layouts",
+      "layouts": [
+        {
+          "key": "status",
+          "type": "number",
+          "help": "默认200",
+          "default": 200,
+          "alias": "响应状态码",
+          "rules": [
+            "Required",
+            "Number",
+            "MinNumber(200)",
+            "MaxNumber(599)"
+          ]
+        },
+        {
+          "key": "headers",
+          "type": "array",
+          "alias": "响应头",
+          "layouts": [
+            {
+              "key": "key",
+              "type": "input",
+              "alias": "请求头",
+              "rules": [
+                "Required"
+              ]
+            },
+            {
+              "key": "value",
+              "type": "input",
+              "alias": "请求头值",
+              "rules": [
+                "Required"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "body",
+          "type": "input",
+          "alias": "请求响应内容"
+        }
+      ]
+    }
+  ]
+}

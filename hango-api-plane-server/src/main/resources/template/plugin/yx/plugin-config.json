@@ -1,0 +1,112 @@
+{
+  "item": [
+    {
+      "name": "ianus-percent-limit",
+      "schema": "plugin/yx/ianus-percent-limit.json",
+      "description": "百分比限流插件",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "500",
+      "instructionForUse": "按百分比限流，例如允许50%通"
+    },
+    {
+      "name": "ianus-rate-limiting",
+      "schema": "plugin/yx/ianus-rate-limiting.json",
+      "description": "频控插件",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "1500",
+      "instructionForUse": "按频率限流,例如限制5个请求/s"
+    },
+    {
+      "name": "ianus-router",
+      "schema": "plugin/yx/ianus-router.json",
+      "description": "路由插件",
+      "processor": "RouteProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "3500",
+      "instructionForUse": "包含参数分流、重定向、直接返回、PassProxy功能"
+    },
+    {
+      "name": "ip-restriction",
+      "schema": "plugin/yx/ip-restriction.json",
+      "description": "黑白名单插件",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "1000",
+      "instructionForUse": "根据ip过滤请求"
+    },
+    {
+      "name": "cors",
+      "schema": "plugin/yx/cors.json",
+      "description": "",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "2000",
+      "instructionForUse": ""
+    },
+    {
+      "name": "auth",
+      "schema": "plugin/yx/auth.json",
+      "description": "",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "3000",
+      "instructionForUse": "auth插件"
+    },
+    {
+      "name": "body-extractor",
+      "schema": "plugin/yx/body-extractor.json",
+      "description": "",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "3000",
+      "instructionForUse": "body提取插件"
+    },
+    {
+      "name": "ianus-request-transformer",
+      "schema": "plugin/yx/ianus-request-transformer.json",
+      "description": "",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "3000",
+      "instructionForUse": "请求转换插件"
+    },
+    {
+      "name": "rewrite",
+      "schema": "plugin/portal/rewrite.json",
+      "description": "重写插件",
+      "processor": "AggregateExtensionProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule",
+      "pluginPriority": "2500",
+      "instructionForUse": "重写插件"
+    }
+  ]
+}

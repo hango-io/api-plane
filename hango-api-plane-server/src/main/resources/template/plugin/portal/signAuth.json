@@ -1,0 +1,108 @@
+{
+  "formatter": {
+    "kind": "sign-auth",
+    "type": "super-auth",
+    "useAuthz": "&useAuthz",
+    "failureAuthAllow": "&failureAuthAllow",
+    "bufferSetting": "&bufferSetting",
+    "cacheSwitch": "&cacheSwitch",
+    "authz_result_cache": "&authz_result_cache"
+  },
+  "layouts": [
+    {
+      "key": "useAuthz",
+      "alias": "鉴权",
+      "help": "开关关闭后，则只会对客户端请求进行认证，所有合法的外部认证都可以访问；开关打开后，会在认证成功后判断对应的外部认证是否被成功授权",
+      "type": "switch",
+      "default": false
+    },
+    {
+      "key": "failureAuthAllow",
+      "alias": "允许匿名访问",
+      "help": "仅对无需鉴权的情况可配置，开启允许匿名访问后，即使认证失败也会将请求继续转发到后端服务，只是转发后相关的认证请求头为空",
+      "type": "switch",
+      "default": false,
+      "visible": {
+        "this.useAuthz": false
+      }
+    },
+    {
+      "key": "bufferSetting",
+      "alias": "请求体设置",
+      "type": "layouts",
+      "layouts": [
+        {
+          "key": "maxRequestBytes",
+          "alias": "最大请求体字节数",
+          "help": "当有请求体时，请求体的hash会参与签名计算。当请求体大小大于该值后，根据 是否允许部分消息 配置截取部分请求体进行签名计算或者拒绝客户端请求",
+          "type": "input",
+          "default": "4096",
+          "rules": [
+            "Number",
+            "MinNumber(1)",
+            "MaxNumber(1073741824)",
+            "Required"
+          ]
+        },
+        {
+          "key": "allowPartialMessage",
+          "alias": "是否允许部分消息",
+          "type": "switch",
+          "help": "该开关打开时，若请求体大于 最大请求字节数 时会截取 最大请求体字节数进行签名计算；否则会拒绝客户端请求",
+          "default": true
+        }
+      ]
+    },
+    {
+      "key": "cacheSwitch",
+      "alias": "是否认证缓存",
+      "type": "switch"
+    },
+    {
+      "key": "authz_result_cache",
+      "alias": "认证缓存配置",
+      "type": "layouts",
+      "help": "配置认证缓存相关信息，包括缓存key以及缓存ttl",
+      "visible": {
+        "true": [
+          "this",
+          "cacheSwitch"
+        ]
+      },
+      "layouts": [
+        {
+          "key": "result_cache_key",
+          "alias": "缓存key配置",
+          "help": "配置缓存key，默认情况，JWT认证和Oauth2认证采用header:authority,签名认证采用header：x-nsf-accesskey作为缓存key",
+          "type": "layouts",
+          "layouts":[
+            {
+              "key": "ignore_case",
+              "alias": "key忽略大小写",
+              "type": "switch",
+              "default": true
+            },
+            {
+              "key": "headers_keys",
+              "alias": "自定义请求头",
+              "help": "可选配置，如果不配置则采用默认配置",
+              "type": "multi_input"
+            }
+          ]
+        },
+        {
+          "key": "result_cache_ttl",
+          "alias": "缓存ttl配置",
+          "help": "指定缓存时间，单位ms",
+          "type": "input",
+          "rules": [
+            "Required",
+            "Number",
+            "MinNumber(0)",
+            "MaxNumber(99999999)"
+          ]
+        }
+      ]
+    }
+  ]
+}

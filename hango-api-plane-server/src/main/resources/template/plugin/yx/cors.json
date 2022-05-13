@@ -1,0 +1,34 @@
+{
+  "fields": {
+    "allowOrigin": {
+      "type": "array",
+      "alias": "allow origin",
+      "required": false
+    },
+    "allowMethods": {
+      "type": "array",
+      "alias": "allow methods",
+      "required": false
+    },
+    "allowHeaders": {
+      "type": "array",
+      "alias": "allow headers",
+      "required": false
+    },
+    "exposeHeaders": {
+      "type": "array",
+      "alias": "expose headers",
+      "required": false
+    },
+    "maxAge": {
+      "type": "string",
+      "alias": "max age",
+      "required": false
+    },
+    "allowCredentials": {
+      "type": "boolean",
+      "alias": "allow credentials",
+      "default": true
+    }
+  }
+}

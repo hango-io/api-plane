@@ -1,0 +1,74 @@
+release 1.2
+
+网关共通：
+- vs中的插件配置(除了路由)全部迁移至gateway plugin crd
+- 修改ratelimit插件的id生成方式（使用hash计算）
+- 路由插件中增加meta信息
+- 删除资源时通知slime
+
+轻舟网关:
+- 路由指标监控
+- 支持动态降级、本地限流、Auth增强、熔断
+- 支持Oauth2插件
+- 传媒自定义插件
+- 插件分类
+- SOAP转REST
+
+网格：
+- 增加单机+全局限流插件
+- 网格资源sidecar scope
+- 增加pod日志查询接口
+- ServiceEntry查询支持
+- 支持命名空间管理
+- 网格告警
+
+通用:
+- 网关网格configuration拆分
+- 支持k8s 1.17
+
+release 1.1
+
+网关共通：
+- 查询服务和查询实例接口优化
+- 实例健康状态查询接口
+- 增加gateway的http10字段支持
+- TransformProcessor支持Condition
+- 增加路由默认超时时间60s
+- ratelimit插件配置由SharedConfig转移到ConfigMap
+- 发布api时，可以覆盖ratelimit configmap
+- 发布的dr只对当前的namespace可见
+- rewrite插件支持配置condition
+
+严选网关:
+- 多租户支持
+- route插件rewrite子插件增加condition,兼容严选旧用法
+- route插件rewrite子插件将渲染配置迁移到ext字段，使用插件别名为com.netease.rewrite
+- 支持header、query匹配
+- 路由规则排序
+- vs中的api字段值改为服务名+api名，原先单纯为api名
+
+轻舟网关：
+- vs元数据增加
+- 服务发布提供健康检查配置
+- 动态、静态服务发布
+- 支持header、query匹配
+- 路由规则排序
+- virtual service拆分,一个api一个vs
+- 接口暴露subset
+- virtualservice的host改为具体host而不是*
+- 增加idletimeout 3s
+- 增加连接池、负载均衡
+- destinationrule和servcieentry增加了gwLabels
+- 发布API增加请求头新增字段
+
+ServiceMesh:
+- 创建、删除、查询资源接口
+- 拓扑功能，对接kiali
+- sidecar 自动注入及升级
+- k8s 资源监听管理
+- 增加pilot健康检查接口
+- 增加根据namespace查询资源接口
+- 增加资源校验接口
+
+工程整体:
+- 增加全局Reqeust,Response日志打印

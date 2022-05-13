@@ -1,0 +1,115 @@
+{
+  "formatter": {
+    "kind": "ianus-rate-limiting",
+    "limit_by_list?": "&limit_by_list"
+  },
+  "inject": {
+    "kind": "ianus-rate-limiting",
+    "name": "ianus-rate-limiting"
+  },
+  "layouts": [
+    {
+      "key": "limit_by_list",
+      "alias": "限制规则列表",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "identifier_extractor",
+          "help": "用于计算请求标识，以供计数使用;仅Header参数限流，例如 Header[User-Agent]",
+          "alias": "请求头名称",
+          "type": "string",
+          "rules":[
+            "Header\\[.*\\]"
+          ]
+        },
+        {
+          "key": "pre_condition",
+          "help": "满足前置条件的请求才会进入频控流程",
+          "alias": "请求头匹配",
+          "type": "array",
+          "layouts": [
+            {
+              "key": "operator",
+              "alias": "匹配方式",
+              "type": "select",
+              "options": [
+                { "value": "=", "text": "等于" },
+                { "value": "!=", "text": "不等于" },
+                { "value": "≈", "text": "正则匹配" },
+                { "value": "!≈", "text": "正则不匹配" },
+                { "value": "present", "text": "存在" }
+              ],
+              "rules": [
+                "Required"
+              ]
+            },
+            {
+              "key": "invert",
+              "alias": "invert",
+              "type": "radio",
+              "default": "false",
+              "help": "invert 为false,对于满足该匹配条件的请求进行限流; invert 为 true,对于不满足该匹配条件的请求进行限流",
+              "visible": {
+                  "this.operator": "present"
+              },
+              "options": [
+                "true",
+                "false"
+              ],
+              "rules": [
+                "Required"
+              ]
+            },
+            {
+              "key": "right_value",
+              "alias": "取值",
+              "type": "string",
+              "invisible": {
+                "this.operator": "present"
+              },
+              "rules": [
+                "Required"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "day",
+          "alias": "每天请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "hour",
+          "alias": "每小时请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "minute",
+          "alias": "每分钟请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "second",
+          "alias": "每秒请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        }
+      ]
+    }
+  ]
+}

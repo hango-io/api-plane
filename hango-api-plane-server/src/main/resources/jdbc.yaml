@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    dbcp2:
+      initial-size: 32
+      max-idle: 64
+      max-total: 200
+      min-idle: 32
+    driver-class-name: com.mysql.jdbc.Driver
+    password: root
+    type: org.apache.commons.dbcp2.BasicDataSource
+    url: jdbc:mysql://localhost:3306/mcp?&autoReconnect=true&connectTimeout=5000&socketTimeout=50000&generateSimpleParameterMetadata=true
+    username: root

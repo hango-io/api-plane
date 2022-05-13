@@ -1,0 +1,105 @@
+{
+  "inject": {
+    "kind": "ianus-rate-limiting",
+    "name": "ianus-rate-limiting"
+  },
+  "layouts": [
+    {
+      "key": "limit_by_list",
+      "alias": "限制标识列表",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "identifier_extractor",
+          "help": "用于计算请求标识，以供计数使用;仅支持IP限流，Header参数限流，例如 Header[User-Agent]",
+          "alias": "标识提取策略",
+          "type": "string",
+          "rules":[
+            "IP|Header\\[.*\\]"
+          ]
+        },
+        {
+          "key": "pre_condition",
+          "help": "满足前置条件的请求才会进入频控流程. 左变量为identifier_extractor提取的值",
+          "alias": "频控前置条件",
+          "type": "array",
+          "layouts": [
+            {
+              "key": "right_value",
+              "alias": "right_value",
+              "type": "string",
+              "invisible": {
+                "this.operator": "present"
+              }
+            },
+            {
+              "key": "operator",
+              "alias": "operator",
+              "type": "select",
+              "options": [
+                "≈",
+                "!≈",
+                "=",
+                "!=",
+                "present"
+              ]
+            },
+            {
+              "key": "invert",
+              "alias": "invert",
+              "type": "radio",
+              "default": "false",
+              "help": "invert 为false,对于满足该匹配条件的请求进行限流; invert 为 true,对于不满足该匹配条件的请求进行限流",
+              "visible": {
+                  "this.operator": "present"
+              },
+              "options": [
+                "true",
+                "false"
+              ],
+              "rules": [
+                "Required"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "day",
+          "alias": "每天请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "hour",
+          "alias": "每小时请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "minute",
+          "alias": "每分钟请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "second",
+          "alias": "每秒请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        }
+      ]
+    }
+  ]
+}

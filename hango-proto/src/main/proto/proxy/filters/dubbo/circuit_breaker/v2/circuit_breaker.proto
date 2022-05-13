@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package proxy.filters.dubbo.circuit_breaker.v2;
+
+option java_package = "proxy.filters.dubbo.circuit_breaker.v2";
+option java_outer_classname = "CircuitBreakerProto";
+option java_multiple_files = true;
+
+import "envoy/type/percent.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+import "validate/validate.proto";
+
+message CircuitBreaker {
+  //熔断时返回数据
+  message CircuitBreakerResponse {
+    uint32 dubbo_status = 1;
+  }
+
+  // 熔断条件:连续慢请求数是否超过设置阈值
+  google.protobuf.Duration average_response_time = 1;
+  uint32 consecutive_slow_requests = 2;
+
+  //熔断条件：一定请求数内错误发生率是否超过阈值
+  envoy.type.Percent error_percent_threshold = 3;
+  uint32 min_request_amount = 4;
+
+  CircuitBreakerResponse response = 5 [(validate.rules).message.required = true];
+
+  google.protobuf.Duration break_duration = 6 [(validate.rules).duration.required = true];
+  google.protobuf.Duration lookback_duration = 7 [(validate.rules).duration = {lt {seconds: 3600}}];
+}
