@@ -3,7 +3,7 @@
     {
       "name": "ianus-percent-limit",
       "displayName": "百分比限流",
-      "schema": "plugin/portal/ianus-percent-limit.json",
+      "schema": "plugin/route/ianus-percent-limit.json",
       "description": "百分比限流插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -18,7 +18,7 @@
     {
       "name": "ianus-rate-limiting",
       "displayName": "限流",
-      "schema": "plugin/portal/ianus-rate-limiting.json",
+      "schema": "plugin/route/ianus-rate-limiting.json",
       "description": "频控插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -33,7 +33,7 @@
     {
       "name": "ianus-router",
       "displayName": "请求中断",
-      "schema": "plugin/portal/ianus-router.json",
+      "schema": "plugin/route/ianus-router.json",
       "description": "请求中断插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -48,7 +48,7 @@
     {
       "name": "ip-restriction",
       "displayName": "IP黑白名单",
-      "schema": "plugin/portal/ip-restriction.json",
+      "schema": "plugin/route/ip-restriction.json",
       "description": "黑白名单插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -63,7 +63,7 @@
     {
       "name": "ua-restriction",
       "displayName": "UA黑白名单",
-      "schema": "plugin/portal/ua-restriction.json",
+      "schema": "plugin/route/ua-restriction.json",
       "description": "UA黑白名单插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -78,7 +78,7 @@
     {
       "name": "referer-restriction",
       "displayName": "Referer黑白名单",
-      "schema": "plugin/portal/referer-restriction.json",
+      "schema": "plugin/route/referer-restriction.json",
       "description": "Referer黑白名单插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -93,7 +93,7 @@
     {
       "name": "header-restriction",
       "displayName": "Header黑白名单",
-      "schema": "plugin/portal/header-restiction.json",
+      "schema": "plugin/route/header-restiction.json",
       "description": "Header黑白名单插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -108,7 +108,7 @@
     {
       "name": "response-header-rewrite",
       "displayName": "响应头部重写",
-      "schema": "plugin/portal/response-header-rewrite.json",
+      "schema": "plugin/route/response-header-rewrite.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -123,7 +123,7 @@
     {
       "name": "cors",
       "displayName": "CORS",
-      "schema": "plugin/portal/cors.json",
+      "schema": "plugin/route/cors.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -138,7 +138,7 @@
     {
       "name": "jsonp",
       "displayName": "JSONP",
-      "schema": "plugin/portal/jsonp.json",
+      "schema": "plugin/route/jsonp.json",
       "description": "jsonp插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -153,7 +153,7 @@
     {
       "name": "rewrite",
       "displayName": "请求Path重写",
-      "schema": "plugin/portal/rewrite.json",
+      "schema": "plugin/route/rewrite.json",
       "description": "重写插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -168,7 +168,7 @@
     {
       "name": "cache",
       "displayName": "缓存",
-      "schema": "plugin/portal/cache.json",
+      "schema": "plugin/route/cache.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -183,7 +183,7 @@
     {
       "name": "local-cache",
       "displayName": "本地缓存",
-      "schema": "plugin/portal/local-cache.json",
+      "schema": "plugin/route/local-cache.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -198,7 +198,7 @@
     {
       "name": "redis-cache",
       "displayName": "Redis缓存",
-      "schema": "plugin/portal/redis-cache.json",
+      "schema": "plugin/route/redis-cache.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -213,7 +213,7 @@
     {
       "name": "transformer",
       "displayName": "请求转换",
-      "schema": "plugin/portal/request-transformer-new.json",
+      "schema": "plugin/route/request-transformer-new.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -228,7 +228,7 @@
     {
       "name": "static-downgrade",
       "displayName": "静态降级",
-      "schema": "plugin/portal/static-downgrade.json",
+      "schema": "plugin/route/static-downgrade.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -243,7 +243,7 @@
     {
       "name": "dynamic-downgrade",
       "displayName": "动态降级",
-      "schema": "plugin/portal/dynamic-downgrade.json",
+      "schema": "plugin/route/dynamic-downgrade.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -258,7 +258,7 @@
     {
       "name": "sign-auth",
       "displayName": "签名认证",
-      "schema": "plugin/portal/signAuth.json",
+      "schema": "plugin/route/signAuth.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -273,7 +273,7 @@
     {
       "name": "jwt-auth",
       "displayName": "JWT认证",
-      "schema": "plugin/portal/jwtAuth.json",
+      "schema": "plugin/route/jwtAuth.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -288,7 +288,7 @@
     {
       "name": "oauth2-auth",
       "displayName": "OAuth2认证",
-      "schema": "plugin/portal/oauth2Auth.json",
+      "schema": "plugin/route/oauth2Auth.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -303,7 +303,7 @@
     {
       "name": "circuit-breaker",
       "displayName": "熔断",
-      "schema": "plugin/portal/circuit-breaker.json",
+      "schema": "plugin/route/circuit-breaker.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -318,7 +318,7 @@
     {
       "name": "local-limiting",
       "displayName": "本地限流",
-      "schema": "plugin/portal/local-limit.json",
+      "schema": "plugin/route/local-limit.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -333,7 +333,7 @@
     {
       "name": "soap-json-transcoder",
       "displayName": "soap转换",
-      "schema": "plugin/portal/soap-json-transcoder.json",
+      "schema": "plugin/route/soap-json-transcoder.json",
       "description": "",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
