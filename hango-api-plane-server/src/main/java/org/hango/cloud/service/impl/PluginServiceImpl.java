@@ -36,10 +36,10 @@ public class PluginServiceImpl implements PluginService {
 
     private static final String PLUGIN_CONFIG = "plugin/%s/plugin-config.json";
 
-    @Value("${pluginConfigEnv:portal}")
+    @Value("${pluginConfigEnv:route}")
     private String env;
 
-    @Value("${globalPluginConfigEnv:portal}")
+    @Value("${globalPluginConfigEnv:route}")
     private String globalEnv;
 
     @Autowired
