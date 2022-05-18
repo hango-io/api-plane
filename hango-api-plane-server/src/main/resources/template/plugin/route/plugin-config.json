@@ -136,51 +136,6 @@
       "categoryName": "安全"
     },
     {
-      "name": "jsonp",
-      "displayName": "JSONP",
-      "schema": "plugin/route/jsonp.json",
-      "description": "jsonp插件",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "routeRule",
-      "pluginPriority": "2700",
-      "instructionForUse": "跨域访问JSONP",
-      "categoryKey": "security",
-      "categoryName": "安全"
-    },
-    {
-      "name": "rewrite",
-      "displayName": "请求Path重写",
-      "schema": "plugin/route/rewrite.json",
-      "description": "重写插件",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "routeRule",
-      "pluginPriority": "2500",
-      "instructionForUse": "替换请求Path前缀",
-      "categoryKey": "dataFormat",
-      "categoryName": "数据转换"
-    },
-    {
-      "name": "cache",
-      "displayName": "缓存",
-      "schema": "plugin/route/cache.json",
-      "description": "",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "routeRule,global",
-      "pluginPriority": "3000",
-      "instructionForUse": "缓存后端应答，以缓存响应请求",
-      "categoryKey": "trafficPolicy",
-      "categoryName": "流量管理"
-    },
-    {
       "name": "local-cache",
       "displayName": "本地缓存",
       "schema": "plugin/route/local-cache.json",
@@ -209,21 +164,6 @@
       "instructionForUse": "redis缓存后端应答，以缓存响应请求",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理"
-    },
-    {
-      "name": "transformer",
-      "displayName": "请求转换",
-      "schema": "plugin/route/request-transformer-new.json",
-      "description": "",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "routeRule",
-      "pluginPriority": "2300",
-      "instructionForUse": "修改请求Header、QueryString以及Path",
-      "categoryKey": "dataFormat",
-      "categoryName": "数据转换"
     },
     {
       "name": "static-downgrade",
@@ -256,51 +196,6 @@
       "categoryName": "流量管理"
     },
     {
-      "name": "sign-auth",
-      "displayName": "签名认证",
-      "schema": "plugin/route/signAuth.json",
-      "description": "",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "global,routeRule",
-      "pluginPriority": "1700",
-      "instructionForUse": "提供ak,sk签名认证",
-      "categoryKey": "auth",
-      "categoryName": "认证"
-    },
-    {
-      "name": "jwt-auth",
-      "displayName": "JWT认证",
-      "schema": "plugin/route/jwtAuth.json",
-      "description": "",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "global,routeRule",
-      "pluginPriority": "1700",
-      "instructionForUse": "提供JWT认证",
-      "categoryKey": "auth",
-      "categoryName": "认证"
-    },
-    {
-      "name": "oauth2-auth",
-      "displayName": "OAuth2认证",
-      "schema": "plugin/route/oauth2Auth.json",
-      "description": "",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "global,routeRule",
-      "pluginPriority": "1700",
-      "instructionForUse": "提供Oauth2认证",
-      "categoryKey": "auth",
-      "categoryName": "认证"
-    },
-    {
       "name": "circuit-breaker",
       "displayName": "熔断",
       "schema": "plugin/route/circuit-breaker.json",
@@ -330,20 +225,5 @@
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理"
     },
-    {
-      "name": "soap-json-transcoder",
-      "displayName": "soap转换",
-      "schema": "plugin/route/soap-json-transcoder.json",
-      "description": "",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "",
-      "pluginPriority": "3400",
-      "instructionForUse": "soap转rest",
-      "categoryKey": "trafficPolicy",
-      "categoryName": "流量管理"
-    }
   ]
 }
