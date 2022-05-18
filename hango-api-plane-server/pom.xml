@@ -15,14 +15,16 @@
     </properties>
 
     <artifactId>hango-api-plane-server</artifactId>
-    <repositories>
-        <repository>
-            <id>hzntes</id>
-            <name>NTES-HZ Maven Repository</name>
-            <url>http://mvn.hz.netease.com/artifactory/repo</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>hzntes</id>-->
+<!--            <name>NTES-HZ Maven Repository</name>-->
+<!--            <url>http://mvn.hz.netease.com/artifactory/repo</url>-->
+<!--            <layout>default</layout>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -61,6 +63,13 @@
             <version>1.5.8.RELEASE</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -97,7 +106,16 @@
             <groupId>me.snowdrop</groupId>
             <artifactId>istio-model</artifactId>
             <version>1.0.6-QZ-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/istio-model-1.0.6-QZ-SNAPSHOT.jar</systemPath>
+        </dependency>
 
+        <dependency>
+            <groupId>me.snowdrop</groupId>
+            <artifactId>istio-common</artifactId>
+            <version>1.0.6-QZ-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/istio-common-1.0.6-QZ-SNAPSHOT.jar</systemPath>
         </dependency>
 
         <!-- k8s -->
@@ -202,6 +220,15 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <directory>lib/</directory>
+                            <targetPath>WEB-INF/lib</targetPath>
+                            <includes>
+                                <include>**/*.jar</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
 
