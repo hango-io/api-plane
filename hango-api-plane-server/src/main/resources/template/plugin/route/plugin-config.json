@@ -224,6 +224,6 @@
       "instructionForUse": "请求频率限流，限制网关实例节点的服务请求流量",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理"
-    },
+    }
   ]
 }
