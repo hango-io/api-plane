@@ -1,18 +1,6 @@
 package org.hango.cloud.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hango.cloud.core.GlobalConfig;
-import org.hango.cloud.core.gateway.service.GatewayConfigManager;
-import org.hango.cloud.core.gateway.service.ResourceManager;
-import org.hango.cloud.k8s.K8sTypes.PluginManager;
-import org.hango.cloud.service.GatewayService;
-import org.hango.cloud.util.Const;
-import org.hango.cloud.util.TelnetUtil;
-import org.hango.cloud.util.Trans;
-import org.hango.cloud.util.errorcode.ApiPlaneErrorCode;
-import org.hango.cloud.util.errorcode.ErrorCode;
-import org.hango.cloud.util.errorcode.ErrorCodeEnum;
-import org.hango.cloud.util.exception.ApiPlaneException;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import me.snowdrop.istio.api.IstioResource;
 import me.snowdrop.istio.api.networking.v1alpha3.GatewaySpec;
@@ -21,24 +9,25 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.hango.cloud.core.GlobalConfig;
+import org.hango.cloud.core.gateway.service.GatewayConfigManager;
+import org.hango.cloud.core.gateway.service.ResourceManager;
+import org.hango.cloud.core.istio.PilotHttpClient;
+import org.hango.cloud.core.template.TemplateTranslator;
+import org.hango.cloud.k8s.K8sTypes.PluginManager;
 import org.hango.cloud.meta.Endpoint;
-import org.hango.cloud.meta.Gateway;
 import org.hango.cloud.meta.IstioGateway;
 import org.hango.cloud.meta.PluginOrder;
 import org.hango.cloud.meta.ServiceHealth;
-import org.hango.cloud.meta.dto.DubboMetaDto;
-import org.hango.cloud.meta.dto.GatewayPluginDTO;
-import org.hango.cloud.meta.dto.PluginOrderDTO;
-import org.hango.cloud.meta.dto.PluginOrderItemDTO;
-import org.hango.cloud.meta.dto.PortalAPIDTO;
-import org.hango.cloud.meta.dto.PortalAPIDeleteDTO;
-import org.hango.cloud.meta.dto.PortalIstioGatewayDTO;
-import org.hango.cloud.meta.dto.PortalLoadBalancerDTO;
-import org.hango.cloud.meta.dto.PortalServiceConnectionPoolDTO;
-import org.hango.cloud.meta.dto.PortalServiceDTO;
-import org.hango.cloud.meta.dto.PortalTrafficPolicyDTO;
-import org.hango.cloud.meta.dto.ServiceAndPortDTO;
-import org.hango.cloud.meta.dto.ServiceSubsetDTO;
+import org.hango.cloud.meta.dto.*;
+import org.hango.cloud.service.GatewayService;
+import org.hango.cloud.util.Const;
+import org.hango.cloud.util.TelnetUtil;
+import org.hango.cloud.util.Trans;
+import org.hango.cloud.util.errorcode.ApiPlaneErrorCode;
+import org.hango.cloud.util.errorcode.ErrorCode;
+import org.hango.cloud.util.errorcode.ErrorCodeEnum;
+import org.hango.cloud.util.exception.ApiPlaneException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +67,12 @@ public class GatewayServiceImpl implements GatewayService {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    private TemplateTranslator templateTranslator;
+
+    @Autowired
+    private PilotHttpClient pilotHttpClient;
 
     public GatewayServiceImpl(ResourceManager resourceManager, GatewayConfigManager configManager, GlobalConfig globalConfig) {
         this.resourceManager = resourceManager;
@@ -272,13 +267,14 @@ public class GatewayServiceImpl implements GatewayService {
     }
 
     @Override
-    public List<ServiceAndPortDTO> getServiceAndPortList(String name, String type, String registryId) {
+    public List<ServiceAndPortDTO> getServiceAndPortList(String name, String type, String registryId, Map<String, String> filters) {
+        logger.info("[get service] start getServiceAndPortList, name: {}, type: {}, registryId: {}", name, type, registryId);
         String pattern = ".*";
         if (!StringUtils.isEmpty(name)) {
             pattern = "^" + name + pattern + "$";
         }
         final Pattern fPattern = Pattern.compile(pattern);
-        return resourceManager.getServiceAndPortList().stream()
+        return resourceManager.getServiceAndPortList(filters).stream()
                 .filter(sap -> fPattern.matcher(sap.getName()).find())
                 .filter(sap -> matchType(type, sap.getName(), registryId))
                 .map(sap -> {
@@ -289,10 +285,6 @@ public class GatewayServiceImpl implements GatewayService {
                 }).collect(Collectors.toList());
     }
 
-    @Override
-    public List<Gateway> getGatewayList() {
-        return resourceManager.getGatewayList();
-    }
 
     @Override
     public List<ServiceHealth> getServiceHealthList(String host, List<String> subsets, String gateway) {
@@ -307,7 +299,7 @@ public class GatewayServiceImpl implements GatewayService {
             return true;
         if (type.equalsIgnoreCase(Const.SERVICE_TYPE_K8S) && name.endsWith(".svc.cluster.local")) return true;
         if (type.equalsIgnoreCase(Const.SERVICE_TYPE_DUBBO) && name.endsWith(".dubbo")) return true;
-
+        if (type.equalsIgnoreCase(Const.SERVICE_TYPE_EUREKA) && name.endsWith(".eureka")) return true;
         return false;
     }
 
@@ -342,26 +334,16 @@ public class GatewayServiceImpl implements GatewayService {
     }
 
     @Override
-    public List<DubboMetaDto> getDubboMeta(String igv, String applicationName, String method) {
-        List<DubboMetaDto> metaList = new ArrayList<>();
-        List<Endpoint> searchResult = resourceManager.getEndpointList().stream().filter(endpoint -> Const.PROTOCOL_DUBBO.equalsIgnoreCase(endpoint.getProtocol()))
-                .filter(endpoint -> StringUtils.isBlank(igv) || StringUtils.equals(igv + Const.DUBBO_SERVICE_SUFFIX, endpoint.getHostname()))
-                .filter(endpoint -> StringUtils.isBlank(applicationName) || StringUtils.equals(applicationName, endpoint.getLabels().get(Const.DUBBO_APPLICATION)))
-                .collect(Collectors.toList());
-        logger.info("dubbo endpoint filter result count is {}", searchResult.size());
-        //同样的IGV + APPLICATION 指定且仅指定一套服务
-        Map<String, List<Endpoint>> groupByService = searchResult.stream().collect(Collectors.groupingBy(endpoint -> endpoint.getHostname() + "###" + endpoint.getLabels().get(Const.DUBBO_APPLICATION)));
-        Iterator<Map.Entry<String, List<Endpoint>>> iterator = groupByService.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, List<Endpoint>> next = iterator.next();
-            List<Endpoint> backendServiceList = next.getValue();
-            Random random = new Random();
-            //随机选取任意一个Endpoint的地址进行Dubbo 元数据获取
-            Endpoint endpoint = backendServiceList.get(random.nextInt(backendServiceList.size()));
-            logger.info("选取的后端节点信息为 {}", ToStringBuilder.reflectionToString(endpoint, ToStringStyle.SHORT_PREFIX_STYLE));
-            metaList.addAll(handlerInfo(endpoint, method));
-        }
-        return metaList;
+    public List<DubboMetaDto> getDubboMeta(String igv) {
+        //获取dubbo实例
+        List<Endpoint> endpoints = pilotHttpClient.getDubboEndpoints(igv);
+        logger.info("dubbo endpoint filter result count is {}", endpoints.size());
+        //随机选择一个实例
+        Random random = new Random();
+        Endpoint endpoint = endpoints.get(random.nextInt(endpoints.size()));
+        logger.info("选取的后端节点信息为 {}", ToStringBuilder.reflectionToString(endpoint, ToStringStyle.SHORT_PREFIX_STYLE));
+        //dubbo telnet获取method信息
+        return handlerInfo(endpoint);
     }
 
     /**
@@ -370,16 +352,13 @@ public class GatewayServiceImpl implements GatewayService {
      * @param endpoint
      * @return
      */
-    private List<DubboMetaDto> handlerInfo(Endpoint endpoint, String queryMethod) {
+    private List<DubboMetaDto> handlerInfo(Endpoint endpoint) {
         List<DubboMetaDto> metaList = new ArrayList<>();
-        if (endpoint == null) {
-            logger.info("endpoint is null");
-            return Collections.emptyList();
-        }
         //去除.dubbo 后缀
-        String[] igv = splitIgv(StringUtils.removeEnd(endpoint.getHostname(), Const.DUBBO_SERVICE_SUFFIX));
+        String[] igv = splitIgv(endpoint.getHostname());
         String info = TelnetUtil
-            .sendCommand(endpoint.getAddress(), NumberUtils.toInt(endpoint.getLabels().get(Const.DUBBO_TCP_PORT)), globalConfig.getTelnetConnectTimeout(), String.format(DUBBO_TELNET_COMMAND_TEMPLATE, igv), DUBBO_TELNET_COMMAND_END_PATTERN);
+            .sendCommand(endpoint.getAddress(), NumberUtils.toInt(endpoint.getLabel(Const.DUBBO_TCP_PORT)), globalConfig.getTelnetConnectTimeout(),
+                    String.format(DUBBO_TELNET_COMMAND_TEMPLATE, igv), DUBBO_TELNET_COMMAND_END_PATTERN);
         //解析dubbo telnet信息
         String[] methodList = processMessageList(endpoint, info).split("\\r\\n");
         for (String methodInfo : methodList) {
@@ -392,9 +371,6 @@ public class GatewayServiceImpl implements GatewayService {
             String returns = matcher.group(1);
             String method = matcher.group(2);
             String params = matcher.group(3);
-            if (StringUtils.isNotBlank(queryMethod) && !StringUtils.equals(method, queryMethod)) {
-                continue;
-            }
             DubboMetaDto dubboMetaDto = new DubboMetaDto();
             dubboMetaDto.setApplicationName(endpoint.getLabels().get(Const.DUBBO_APPLICATION));
             dubboMetaDto.setInterfaceName(igv[0]);

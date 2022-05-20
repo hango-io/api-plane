@@ -9,6 +9,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class DubboMetaDto {
 
@@ -169,11 +173,6 @@ public class DubboMetaDto {
         this.createTime = createTime;
     }
 
-
-    public String getIgv(){
-        StringUtils.joinWith(":", interfaceName, group, version);
-        return CommonUtil.removeEnd(":", interfaceName);
-    }
 
     @Override
     public String toString() {

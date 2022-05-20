@@ -2,6 +2,7 @@ package org.hango.cloud.meta;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -63,6 +64,13 @@ public class Endpoint {
 
     public void setLabels(Map<String, String> labels) {
         this.labels = labels;
+    }
+
+    public String getLabel(String key) {
+        if (labels == null || StringUtils.isBlank(key)){
+            return StringUtils.EMPTY;
+        }
+        return labels.get(key);
     }
 
     @Override

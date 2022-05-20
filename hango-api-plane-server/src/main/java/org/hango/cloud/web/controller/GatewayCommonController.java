@@ -1,10 +1,8 @@
 package org.hango.cloud.web.controller;
 
 import com.google.common.collect.ImmutableMap;
-import org.hango.cloud.meta.Gateway;
 import org.hango.cloud.meta.dto.PluginOrderDTO;
 import org.hango.cloud.service.GatewayService;
-import org.hango.cloud.util.Const;
 import org.hango.cloud.util.errorcode.ApiPlaneErrorCode;
 import org.hango.cloud.util.errorcode.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import static org.hango.cloud.util.Const.VAILD_REGISTRY;
 
+/**
+ * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/26
+ **/
 @RestController
 @RequestMapping(value = "/api", params = "Version=2019-07-25")
 public class GatewayCommonController extends BaseController {
@@ -35,28 +36,19 @@ public class GatewayCommonController extends BaseController {
     @RequestMapping(params = "Action=GetServiceAndPortList", method = RequestMethod.GET)
     public String getServiceAndPortList(@RequestParam(name = "Name", required = false) String name,
                                         @RequestParam(name = "Type", required = false) String type,
-                                        @RequestParam(name = "Registry", required = false) String registry) {
+                                        @RequestParam(name = "Registry", required = false) String registry,
+                                        @RequestParam Map<String, String> filters) {
 
         if (type != null) {
-            if (!type.equals(Const.SERVICE_TYPE_CONSUL) && !type.equals(Const.SERVICE_TYPE_K8S) && !type.equals(Const.SERVICE_TYPE_DUBBO)) {
+            if (!VAILD_REGISTRY.contains(type)) {
                 return apiReturn(ApiPlaneErrorCode.ParameterError("Type"));
             }
         }
         ErrorCode code = ApiPlaneErrorCode.Success;
         return apiReturn(code.getStatusCode(), code.getCode(), null,
-                ImmutableMap.of("ServiceList", gatewayService.getServiceAndPortList(name, type, registry)));
+                ImmutableMap.of("ServiceList", gatewayService.getServiceAndPortList(name, type, registry, filters)));
     }
 
-    @RequestMapping(params = "Action=GetGatewayList", method = RequestMethod.GET)
-    public String getGatewayList() {
-
-        Map<String, Object> result = new HashMap<>();
-        List<Gateway> gatewayList = gatewayService.getGatewayList();
-
-        result.put(RESULT_LIST, gatewayList);
-        ErrorCode code = ApiPlaneErrorCode.Success;
-        return apiReturn(code.getStatusCode(), code.getCode(), null, result);
-    }
 
     @RequestMapping(params = "Action=GetPluginOrder", method = RequestMethod.POST)
     public String getPluginOrder(@RequestBody PluginOrderDTO pluginOrderDTO) {
@@ -82,12 +74,10 @@ public class GatewayCommonController extends BaseController {
     }
 
     @RequestMapping(params = "Action=GetDubboMeta", method = RequestMethod.GET)
-    public String getDubboMeta(@RequestParam(name = "Igv", required = false) String igv,
-                               @RequestParam(name = "Method", required = false) String method,
-                               @RequestParam(name = "ApplicationName", required = false) String applicationName) {
+    public String getDubboMeta(@RequestParam(name = "Igv") String igv) {
 
         Map<String, Object> result = new HashMap<>();
-        result.put(RESULT, gatewayService.getDubboMeta(igv,applicationName,method));
+        result.put(RESULT, gatewayService.getDubboMeta(igv));
         return apiReturn(result);
 
     }

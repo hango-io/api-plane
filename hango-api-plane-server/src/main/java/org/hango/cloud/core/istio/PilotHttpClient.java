@@ -1,43 +1,39 @@
 package org.hango.cloud.core.istio;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.ServicePort;
+import net.minidev.json.JSONObject;
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.k8s.KubernetesClient;
 import org.hango.cloud.meta.Endpoint;
-import org.hango.cloud.meta.Gateway;
-import org.hango.cloud.util.CommonUtil;
+import org.hango.cloud.meta.dto.PortalServiceDTO;
 import org.hango.cloud.util.Const;
 import org.hango.cloud.util.exception.ApiPlaneException;
-import org.hango.cloud.util.exception.ExceptionConst;
-import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.ServicePort;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hango.cloud.util.exception.ExceptionConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -53,16 +49,20 @@ public class PilotHttpClient {
     private List<String> pilotNamespaces;
 
     @Value(value = "${istioName:istiod}")
-    private String NAME;
+    private String ISTIO_NAME;
 
-//    private static final String GET_ENDPOINTZ_PATH = "/debug/endpointz?brief=true&instancePort=true";
-    //todo 优化istio-apiplane处理逻辑
+    @Value(value = "${meshRegistryName:galley}")
+    private String MESH_REGISTRY_NAME;
+
     private static final String GET_ENDPOINTZ_PATH = "/debug/endpointz?brief=true";
-    private static final String GET_CONFIGZ_PATH = "/debug/configz";
-    private static final String HEALTH_CHECK_PATH = "/ready";
+
+    private static final String GET_ZK_PATH = "/zk?interfaceName=";
 
     @Value(value = "${istioHttpUrl:#{null}}")
     private String istioHttpUrl;
+
+    @Value(value = "${meshRegistryHttpUrl:#{null}}")
+    private String meshRegistryHttpUrl;
 
     @Autowired
     RestTemplate restTemplate;
@@ -77,13 +77,15 @@ public class PilotHttpClient {
     @Autowired
     ObjectMapper objectMapper;
 
+
     @Value(value = "${endpointExpired:10}")
     private Long endpointCacheExpired;
-
 
     LoadingCache<String, Object> endpointsCache;
     LoadingCache<String, Map<String, Map<String, String>>> statusCache;
     public static final String PILOT_GLOBAL_KEY = "global";
+
+    public static final Integer ERROR_PORT = -1;
 
     @PostConstruct
     void cacheInit() {
@@ -100,70 +102,171 @@ public class PilotHttpClient {
                 });
     }
 
-    @PostConstruct
-    void statusCacheInit() {
-        statusCache = CacheBuilder.newBuilder()
-            .initialCapacity(1)
-            .expireAfterWrite(10, TimeUnit.SECONDS)
-            .recordStats()
-            .build(new CacheLoader<String, Map<String, Map<String, String>>>() {
-                @Override
-                public Map<String, Map<String, String>> load(String key) throws IOException {
-                    List<String> urls = new ArrayList<>();
-                    if (PILOT_GLOBAL_KEY.equals(key)) {
-                        urls = getIstioPodUrls();
-                    } else if (key.startsWith("istio-env/")) {
-                        urls = getUrls(key.replaceAll("^istio-env/", ""));
-                    }
-                    return urls.stream()
-						.flatMap(istioUrl -> syncz(istioUrl).stream())
-                        .collect(Collectors.toMap(m -> m.get("proxy"), m -> m, (m1, m2) -> {
-                            logger.error("syncz pod conflict: {}", m1.get("proxy"));
-                            return m1;
-                        }));
-                }
-            });
+    private String getIstioUrl() {
+        if (!StringUtils.isEmpty(istioHttpUrl)) return istioHttpUrl;
+        return getSvcUrl(ISTIO_NAME);
     }
 
-    private List<Map<String, String>> syncz(String istioUrl) {
+    private String getMeshRegistryUrl() {
+        if (!StringUtils.isEmpty(meshRegistryHttpUrl)) return meshRegistryHttpUrl;
+        return getSvcUrl(MESH_REGISTRY_NAME);
+    }
+
+    public List<Endpoint> getDubboEndpoints(String igv){
+        String interfaceName = igv.split(":")[0];
+        String body = getForEntity(getMeshRegistryUrl() + GET_ZK_PATH + interfaceName, String.class).getBody();
+        if (StringUtils.isBlank(body)){
+            return new ArrayList<>();
+        }
         try {
-            String body = getForEntity(istioUrl + "/debug/syncz", String.class).getBody();
-            if (!StringUtils.isEmpty(body)) {
-                List<Map<String, String>> result = objectMapper.readValue(body, new TypeReference<List<Map<String, String>>>() {});
-                if (result != null) {
-                    return result;
-                } else {
-                    return new ArrayList<>();
-                }
-            }
+            return parseDubboInfo(body, igv);
         } catch (Exception e) {
-            logger.error("error while getting pod sync data", e);
+            logger.error("解析dubbo信息失败，body：{}， igv:{}", body, igv);
         }
         return new ArrayList<>();
     }
 
-    public String invokeIstiod(String podName, String podNamespace, String path, Map<String, String> params) {
-        Pod pod = client.getObject(K8sResourceEnum.Pod.name(), podNamespace, podName);
-        String istioUrl = String.format("http://%s:8080", pod.getStatus().getPodIP());
-        return getForEntity(istioUrl + path, String.class).getBody();
+    public List<Endpoint> parseDubboInfo(String str, String igv){
+        List<Endpoint> endpointList = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode cache;
+        try {
+            cache = objectMapper.readTree(str).get("cache");
+        } catch (JsonProcessingException e) {
+            logger.error("parse dubbo info error, str:{}", str, e);
+            return endpointList;
+        }
+        JsonNode cluster = cache.get(igv);
+        if (cluster == null){
+            return endpointList;
+        }
+        JsonNode serviceEntry = cluster.get("ServiceEntry");
+        if (serviceEntry == null){
+            return endpointList;
+        }
+        JsonNode ports = serviceEntry.get("ports");
+        if (ports == null){
+            return endpointList;
+        }
+        JsonNode port = ports.get(0);
+        if (port == null){
+            return endpointList;
+        }
+        JsonNode protocalNode = port.get("protocal");
+        JsonNode numberNode = port.get("number");
+        String protocal = protocalNode == null ? Const.PROTOCOL_DUBBO : protocalNode.asText();
+        Integer number = numberNode == null ? 80 : numberNode.asInt();
+        JsonNode endpoints = serviceEntry.get("endpoints");
+        if (endpoints == null){
+            return endpointList;
+        }
+        for (JsonNode endpoint : endpoints) {
+            Endpoint ep = new Endpoint();
+            ep.setHostname(igv);
+            ep.setProtocol(protocal);
+            ep.setPort(number);
+            JsonNode address = endpoint.get("address");
+            if (address != null){
+                ep.setAddress(address.asText());
+            }
+            JsonNode labels = endpoint.get("labels");
+            if (labels != null){
+                Map<String, String> labelMap = objectMapper.convertValue(labels, new TypeReference<Map<String, String>>(){});
+                ep.setLabels(labelMap);
+            }
+            JsonNode dubboPorts = endpoint.get("ports");
+            if (dubboPorts != null){
+                Map<String, Integer> portRes = objectMapper.convertValue(dubboPorts, new TypeReference<Map<String, Integer>>(){});
+                Integer dubboPort = portRes.values().stream().findFirst().orElse(null);
+                if (dubboPort != null && dubboPort >= 0){
+                    Map<String, String> dubboLabel = CollectionUtils.isEmpty(ep.getLabels())? new HashMap<>() : ep.getLabels();
+                    dubboLabel.put(Const.DUBBO_TCP_PORT, String.valueOf(dubboPort));
+                    ep.setLabels(dubboLabel);
+                }
+            }
+            endpointList.add(ep);
+        }
+
+        return endpointList;
     }
 
-    private List<String> getIstioPodUrls() {
-        return pilotNamespaces.stream()
-            .flatMap(ns -> getUrls(ns).stream())
-            .collect(Collectors.toList());
+    private String getEndpoints() {
+        try {
+            return (String) endpointsCache.get("endpoints");
+        } catch (ExecutionException e) {
+            throw new ApiPlaneException(e.getMessage(), e);
+        }
     }
 
-    private List<String> getUrls(String ns) {
-        String podUrl = client.getUrlWithLabels(K8sResourceEnum.Pod.name(), ns, ImmutableMap.of("app", NAME)) + "&fieldSelector=status.phase%3DRunning";
-        return client.<Pod>getObjectList(podUrl).stream()
-            .map(p -> String.format("http://%s:8080", p.getStatus().getPodIP()))
-            .collect(Collectors.toList());
+    public List<Endpoint> getEndpointList() {
+        List<Endpoint> endpoints = new ArrayList<>();
+        String[] rawValues = StringUtils.split(getEndpoints(), "\n");
+        for (String rawValue : rawValues) {
+            String[] segments = StringUtils.splitPreserveAllTokens(rawValue, " ");
+            if (ArrayUtils.getLength(segments) != 4) {
+                continue;
+            }
+            /**
+             * segments[0]:com.netease.cloud.nsf.demo.stock.api.EchoService:A:dubbo
+             * segments[1]:10.178.249.42:80
+             * segments[2]:application=spring-cloud-dubbo,deprecated=false,dubbo=2.0.2,group=group-a,interface=com.netease.apigateway.dubbo.api.GatewayEchoService
+             */
+
+            Endpoint ep = new Endpoint();
+            //解析hostname和protocal
+            parseHostInfo(ep, segments[0]);
+            //解析ip+port
+            String[] ipPort = StringUtils.splitPreserveAllTokens(segments[1], ":");
+            //解析label
+            Map<String, String> labelMap = new HashMap<>();
+            String[] labels = StringUtils.split(segments[2], ",");
+            for (String label : labels) {
+                String[] kv = StringUtils.splitPreserveAllTokens(label, "=");
+                if (ArrayUtils.getLength(kv) == 2) {
+                    labelMap.put(kv[0], kv[1]);
+                }
+            }
+            ep.setAddress(ipPort[0]);
+            ep.setPort(Integer.valueOf(ipPort[1]));
+            ep.setLabels(labelMap);
+            endpoints.add(ep);
+        }
+        return endpoints.stream().filter(o -> StringUtils.isNotBlank(o.getHostname())).collect(Collectors.toList());
     }
 
-    private String getIstioUrl() {
-        if (!StringUtils.isEmpty(istioHttpUrl)) return istioHttpUrl;
-        List<Service> pilotServices = client.getObjectList(K8sResourceEnum.Service.name(), NAMESPACE, ImmutableMap.of("app", NAME));
+    /**
+     * 解析hostname和protocal信息
+     * hostNameProtocal: com.netease.cloud.nsf.demo.stock.api.EchoService:A:dubbo
+     * hostname: com.netease.cloud.nsf.demo.stock.api.EchoService:A
+     * protocal: dubbo
+     */
+    private void parseHostInfo(Endpoint ep, String hostNameProtocal){
+        if (StringUtils.isBlank(hostNameProtocal)){
+            return;
+        }
+        //获取最后一个冒号的位置
+        int index = hostNameProtocal.lastIndexOf(":");
+        //基于最后一个冒号分割，前半段为hostName, 后半段为协议
+        String hostName = hostNameProtocal.substring(0, index);
+        String protocal = hostNameProtocal.substring(index+1);
+        ep.setHostname(hostName);
+        ep.setProtocol(protocal);
+    }
+
+    public <T> ResponseEntity<T> getForEntity(String str, Class<T> clz) {
+
+        ResponseEntity<T> entity;
+        try {
+            entity = restTemplate.getForEntity(str, clz);
+        } catch (Exception e) {
+            logger.warn("", e);
+            throw new ApiPlaneException(e.getMessage());
+        }
+        return entity;
+    }
+
+    public String getSvcUrl(String svcName) {
+        List<Service> pilotServices = client.getObjectList(K8sResourceEnum.Service.name(), NAMESPACE, ImmutableMap.of("app", svcName));
         if (CollectionUtils.isEmpty(pilotServices)) throw new ApiPlaneException(ExceptionConst.PILOT_SERVICE_NON_EXIST);
         Service service = pilotServices.get(0);
         String ip = service.getSpec().getClusterIP();
@@ -180,183 +283,6 @@ public class PilotHttpClient {
         return String.format("http://%s:%s", ip, port);
     }
 
-    public Map<String, String> getSidecarSyncStatus(String name, String namespace) {
-        try {
-            return statusCache.get(PILOT_GLOBAL_KEY).get(String.format("%s.%s", name, namespace));
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Map<String, Map<String, String>> getSidecarSyncStatusFromPilot(String type, String version) {
-        try {
-            return statusCache.get(String.format("%s/%s", type, version));
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private String getEndpoints() {
-        try {
-            return (String) endpointsCache.get("endpoints");
-        } catch (ExecutionException e) {
-            throw new ApiPlaneException(e.getMessage(), e);
-        }
-    }
-
-    private List<Endpoint> getEndpointList() {
-        List<Endpoint> endpoints = new ArrayList<>();
-        //fmt.Fprintf(w, "%s:%s %s:%d %v %s\n", ss.Hostname,
-        //            p.Name, svc.Endpoint.Address, svc.Endpoint.EndpointPort, svc.Endpoint.Labels,
-        //            svc.Endpoint.ServiceAccount)
-
-        String[] rawValues = StringUtils.split(getEndpoints(), "\n");
-        for (String rawValue : rawValues) {
-            String[] segments = StringUtils.splitPreserveAllTokens(rawValue, " ");
-            if (ArrayUtils.getLength(segments) != 4) {
-                continue;
-            }
-            String[] hostNameProtocol = StringUtils.splitPreserveAllTokens(segments[0], ":");
-            String[] ipPort = StringUtils.splitPreserveAllTokens(segments[1], ":");
-            Map<String, String> labelMap = new HashMap<>();
-            String[] labels = StringUtils.split(segments[2], ",");
-            for (String label : labels) {
-                String[] kv = StringUtils.splitPreserveAllTokens(label, "=");
-                if (ArrayUtils.getLength(kv) == 2) {
-                    labelMap.put(kv[0], kv[1]);
-                }
-            }
-            Endpoint ep = new Endpoint();
-            ep.setHostname(hostNameProtocol[0]);
-            ep.setProtocol(hostNameProtocol[1]);
-            ep.setAddress(ipPort[0]);
-            ep.setPort(Integer.valueOf(ipPort[1]));
-            ep.setLabels(labelMap);
-            endpoints.add(ep);
-        }
-        return endpoints;
-
-//        for (String rawValue : rawValues) {
-//            String[] segments = StringUtils.splitPreserveAllTokens(rawValue, " ");
-//            //相对于/debug/endpointz?brief=true
-//            // /debug/endpointz?brief=true&instancePort=true接口增加了Endpoint端口
-//            if (ArrayUtils.getLength(segments) < 5) {
-//                continue;
-//            }
-//            String[] hostNameProtocol = StringUtils.splitPreserveAllTokens(segments[0], ":");
-//            String[] ipPort = StringUtils.splitPreserveAllTokens(segments[2], ":");
-//            Map<String, String> labelMap = new HashMap<>();
-//            String[] labels = StringUtils.split(segments[3], ",");
-//            for (String label : labels) {
-//                String[] kv = StringUtils.splitPreserveAllTokens(label, "=");
-//                if (ArrayUtils.getLength(kv) == 2) {
-//                    labelMap.put(kv[0], kv[1]);
-//                }
-//            }
-//            Endpoint ep = new Endpoint();
-//            ep.setHostname(hostNameProtocol[0]);
-//            ep.setProtocol(hostNameProtocol[1]);
-//            ep.setAddress(ipPort[0]);
-//            //service entry port
-//            ep.setPort(Integer.valueOf(ipPort[1]));
-//            ep.setLabels(labelMap);
-//            fixDubboEndPoint(hostNameProtocol, ep, segments[segments.length - 1]);
-//            endpoints.add(ep);
-//        }
-//        return endpoints;
-    }
-
-    /**
-     * 解析 dubbo 信息
-     * dubbo hostName 以 : 拼接, {@link this#getEndpointList()} 方法中的hostNameProtocol提取将会产生问题， 在本方法中处理
-     * @param hostNameProtocol
-     * @param ep
-     * @return
-     */
-    private void fixDubboEndPoint(String[] hostNameProtocol, Endpoint ep, String endpointPort) {
-        if (ObjectUtils.isEmpty(hostNameProtocol)) {
-            return;
-        }
-        if (!Const.PROTOCOL_DUBBO.equalsIgnoreCase(hostNameProtocol[hostNameProtocol.length - 1])) {
-            return;
-        }
-        hostNameProtocol[hostNameProtocol.length - 1] = null;
-        ep.setHostname(CommonUtil.removeEnd(":", StringUtils.joinWith(":", hostNameProtocol)));
-        Map<String, String> labels = ep.getLabels();
-        if (CollectionUtils.isEmpty(labels)) {
-            labels = new HashMap<>();
-        }
-        labels.put(Const.DUBBO_TCP_PORT, endpointPort);
-        ep.setProtocol(Const.PROTOCOL_DUBBO);
-    }
-
-    public List<String> getServiceList(Predicate<Endpoint> filter) {
-        if (Objects.isNull(filter)) {
-            filter = e -> true;
-        }
-        return getEndpointList().stream().filter(filter).map(Endpoint::getHostname).distinct().collect(Collectors.toList());
-    }
-
-    public List<Endpoint> getEndpointList(Predicate<Endpoint> filter) {
-        if (Objects.isNull(filter)) {
-            filter = e -> true;
-        }
-        return getEndpointList().stream().filter(filter).distinct().collect(Collectors.toList());
-    }
-
-    public List<Gateway> getGatewayList(Predicate<Gateway> filter) {
-        if (Objects.isNull(filter)) {
-            filter = e -> true;
-        }
-        List<Gateway> gateways = getEndpointList().stream().map(endpoint -> {
-            Gateway gateway = new Gateway();
-            gateway.setAddress(endpoint.getAddress());
-            gateway.setHostname(endpoint.getHostname());
-            gateway.setLabels(endpoint.getLabels());
-            return gateway;
-        }).filter(filter).distinct().collect(Collectors.toList());
-        Map<String, Gateway> temp = new HashMap<>();
-        gateways.forEach(gateway -> temp.putIfAbsent(gateway.getAddress(), gateway));
-        return new ArrayList<>(temp.values());
-    }
-
-
-  /*  public List<IstioGateway> getIstioGateway(Predicate<Gateway> filter) {
-        if (Objects.isNull(filter)) {
-            filter = e -> true;
-        }
-        List<IstioGateway> gateways = getEndpointList().stream().map(endpoint -> {
-            IstioGateway gateway = new IstioGateway();
-            gateway.setName(endpoint.get());
-            gateway.setHostname(endpoint.getHostname());
-            gateway.setLabels(endpoint.getLabels());
-            return gateway;
-        }).filter(filter).distinct().collect(Collectors.toList());
-        Map<String, IstioGateway> temp = new HashMap<>();
-        gateways.forEach(gateway -> temp.putIfAbsent(gateway.getGwCluster(), gateway));
-        return new ArrayList<>(temp.values());
-    }*/
-
-    public boolean isReady() {
-        ResponseEntity<String> resp = shortTimeoutRestTemplate.exchange(getIstioUrl() + HEALTH_CHECK_PATH,
-                HttpMethod.GET, null, String.class);
-        if (resp.getStatusCode() != HttpStatus.OK) return false;
-        return true;
-    }
-
-    private <T> ResponseEntity<T> getForEntity(String str, Class<T> clz) {
-
-        ResponseEntity<T> entity;
-        try {
-            entity = restTemplate.getForEntity(str, clz);
-        } catch (Exception e) {
-            logger.warn("", e);
-            throw new ApiPlaneException(e.getMessage());
-        }
-        return entity;
-    }
 }
 
 

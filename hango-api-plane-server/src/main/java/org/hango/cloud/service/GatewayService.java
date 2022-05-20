@@ -1,18 +1,11 @@
 package org.hango.cloud.service;
 
-import org.hango.cloud.meta.dto.DubboMetaDto;
-import org.hango.cloud.meta.dto.PluginOrderDTO;
-import org.hango.cloud.meta.dto.PortalAPIDTO;
-import org.hango.cloud.meta.dto.PortalAPIDeleteDTO;
-import org.hango.cloud.meta.dto.PortalIstioGatewayDTO;
-import org.hango.cloud.meta.dto.PortalServiceDTO;
-import org.hango.cloud.meta.dto.ServiceAndPortDTO;
+import org.hango.cloud.meta.ServiceHealth;
+import org.hango.cloud.meta.dto.*;
 import org.hango.cloud.util.errorcode.ErrorCode;
 
 import java.util.List;
-import org.hango.cloud.meta.Gateway;
-import org.hango.cloud.meta.ServiceHealth;
-import org.hango.cloud.meta.dto.GatewayPluginDTO;
+import java.util.Map;
 
 
 public interface GatewayService {
@@ -45,9 +38,8 @@ public interface GatewayService {
 
     List<String> getServiceList();
 
-    List<ServiceAndPortDTO> getServiceAndPortList(String name, String type, String registryId);
+    List<ServiceAndPortDTO> getServiceAndPortList(String name, String type, String registryId, Map<String, String> filters);
 
-    List<Gateway> getGatewayList();
 
     List<ServiceHealth> getServiceHealthList(String host, List<String> subsets, String gateway);
 
@@ -59,10 +51,8 @@ public interface GatewayService {
      * 获取Dubbo Meta元数据信息
      *
      * @param igv             接口+版本+分组 {interface:group:version}
-     * @param applicationName 应用名称
-     * @param method          dubbo方法
      * @return
      */
-    List<DubboMetaDto> getDubboMeta(String igv, String applicationName, String method);
+    List<DubboMetaDto> getDubboMeta(String igv);
 
 }

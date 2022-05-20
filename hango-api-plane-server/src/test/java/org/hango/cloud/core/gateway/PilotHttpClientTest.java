@@ -49,7 +49,7 @@ public class PilotHttpClientTest extends BaseTest {
         when(k8sClient.getObjectList(any(),any(),any())).thenReturn(Arrays.asList(service));
         when(restTemplate.getForEntity(anyString(), any())).thenReturn(entity);
 
-        List<Endpoint> endpoints = istioHttpClient.getEndpointList(f -> true);
+        List<Endpoint> endpoints = istioHttpClient.getEndpointList();
 
         Assert.assertNotNull(endpoints);
         Assert.assertEquals(6, endpoints.size());

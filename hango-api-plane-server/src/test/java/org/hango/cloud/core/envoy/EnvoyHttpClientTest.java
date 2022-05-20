@@ -1,13 +1,9 @@
 package org.hango.cloud.core.envoy;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hango.cloud.core.BaseTest;
 import org.hango.cloud.core.k8s.KubernetesClient;
 import org.hango.cloud.meta.ServiceHealth;
-import org.hango.cloud.meta.dto.GatewayPluginDTO;
-import org.hango.cloud.meta.dto.PluginOrderDTO;
-import org.hango.cloud.meta.dto.PortalAPIDTO;
 import org.hango.cloud.meta.dto.PortalServiceDTO;
 import org.hango.cloud.service.GatewayService;
 import io.fabric8.kubernetes.api.model.Pod;
@@ -77,62 +73,5 @@ public class EnvoyHttpClientTest extends BaseTest {
         return ps;
     }
 
-    @Test
-    public void pluginManager() throws Exception{
-        String str = "{\n" +
-                "          \"GatewayLabels\": {\n" +
-                "              \"gw_cluster\": \"prod-gateway\"\n" +
-                "          },\n" +
-                "          \"Plugins\": [\n" +
-                "            {\n" +
-                "                  \"name\": \"com.netease.metadatahub\",\n" +
-                "                  \"enable\": \"true\",\n" +
-                "                  \"listenerType\": 2,\n" +
-                "                  \"inline\":{\n" +
-                "\"settings\": {\n" +
-                "                      \"set_to_metadata\": [\n" +
-                "                        {\n" +
-                "                          \"name\": \":path\",\n" +
-                "                          \"rename\": \"x-envoy-origin-path\"\n" +
-                "                        },\n" +
-                "                        {\n" +
-                "                          \"name\": \":method\",\n" +
-                "                          \"rename\": \"x-envoy-origin-method\"\n" +
-                "                        },\n" +
-                "                        {\n" +
-                "                          \"name\": \":authority\",\n" +
-                "                          \"rename\": \"x-envoy-origin-host\"\n" +
-                "                        }\n" +
-                "                      ]\n" +
-                "                  }\n" +
-                "                  }\n" +
-                "                  \n" +
-                "              }\n" +
-                "          ]\n" +
-                "        }";
-        PluginOrderDTO pluginOrderDTO = JSONObject.parseObject(str, PluginOrderDTO.class);
-        System.out.println(objectMapper.writeValueAsString(pluginOrderDTO));
-        gatewayService.updatePluginOrder(pluginOrderDTO);
-    }
-
-
-    @Test
-    public void envoyplugin() throws  Exception{
-        String str = "{\"Hosts\":[\"gateway-proxy.qa-yl.service.163.org\",\"istio.com\",\"test.cn\",\"xty.com\",\"abc.abc\"],\"Gateway\":\"prod-gateway\",\"Code\":\"project2-3-1-cors\",\"PluginType\":\"cors\",\"Plugins\":[\"{\\\"maxAge\\\":false,\\\"kind\\\":\\\"cors\\\",\\\"corsPolicy\\\":{\\\"kind\\\":\\\"cors\\\",\\\"allowOriginRegex\\\":[\\\"openzfw.com\\\"]}}\"]}";
-        String str1 = "{\"Hosts\":[\"gateway-proxy.qa-yl.service.163.org\",\"istio.com\",\"test.cn\",\"xty.com\",\"abc.abc\"],\"Gateway\":\"prod-gateway\",\"RouteId\":9779,\"PluginType\":\"ianus-router\",\"Plugins\":[\"{\\\"kind\\\":\\\"ianus-router\\\",\\\"rule\\\":[{\\\"name\\\":\\\"return\\\",\\\"action\\\":{\\\"rewrite_regex\\\":\\\"/(.*)\\\",\\\"action_type\\\":\\\"return\\\",\\\"return_target\\\":{\\\"code\\\":\\\"344\\\",\\\"body\\\":\\\"aaaasda\\\"},\\\"target\\\":\\\"/$1\\\"}}],\\\"version\\\":\\\"1.0\\\"}\"]}";
-
-        GatewayPluginDTO pluginOrderDTO = JSONObject.parseObject(str1, GatewayPluginDTO.class);
-        String str2 = "{\"kind\":\"ianus-router\",\"code\":\"344\",\"body\":\"aaaasda\",\"version\":\"1.0\"}";
-        pluginOrderDTO.setPlugins(Arrays.asList(str2));
-        String s = JSONObject.toJSONString(pluginOrderDTO);
-        System.out.println(s);
-        gatewayService.updateGatewayPlugin(pluginOrderDTO);
-    }
-    @Test
-    public void testApi(){
-        String str = "{\"Order\":50200861,\"ProxyServices\":[{\"BackendService\":\"istio-e2e-app.apigw-demo.svc.cluster.local\",\"Type\":\"DYNAMIC\",\"Port\":80,\"Code\":\"DYNAMIC-7134\",\"Weight\":100}],\"Hosts\":[\"gateway-proxy.qa-yl.service.163.org\"],\"RequestUris\":[\"/corsScenario\"],\"StatsMeta\":[10067],\"ServiceTag\":\"CorsScenarioServiceName\",\"Timeout\":60000,\"ProjectId\":3,\"RouteId\":10067,\"HttpRetry\":{\"Attempts\":2,\"RetryOn\":\"\",\"IsRetry\":false,\"PerTryTimeout\":60000},\"Code\":\"10067\",\"Gateway\":\"prod-gateway\",\"RouteName\":\"CorsScenario-RuleName-1\",\"UriMatch\":\"prefix\",\"Methods\":[\"*\"],\"Plugins\":[]}";
-        PortalAPIDTO portalAPIDTO = JSONObject.parseObject(str, PortalAPIDTO.class);
-        gatewayService.updateAPI(portalAPIDTO);
-    }
 
 }
