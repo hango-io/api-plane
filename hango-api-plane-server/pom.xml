@@ -15,15 +15,6 @@
     </properties>
 
     <artifactId>hango-api-plane-server</artifactId>
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>hzntes</id>-->
-<!--            <name>NTES-HZ Maven Repository</name>-->
-<!--            <url>http://mvn.hz.netease.com/artifactory/repo</url>-->
-<!--            <layout>default</layout>-->
-<!--        </repository>-->
-<!--    </repositories>-->
-
 
     <dependencies>
         <dependency>

@@ -1,11 +1,11 @@
-FROM hub.c.163.com/qingzhou/tomcat-8.5-jdk8-openjdk-skiff:v1.4-210408-multi-arch
+FROM hangoio/tomcat-8.5:v1.1
 
 ENV TZ=Asia/Shanghai LANG=C.UTF-8 LANGUAGE=C.UTF-8 LC_ALL=C.UTF-8
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 WORKDIR /usr/local/tomcat
-COPY nsf-api-plane-server/setenv.sh $CATALINA_HOME/bin/
+COPY setenv.sh $CATALINA_HOME/bin/
 RUN rm -rf webapps/*
-COPY nsf-api-plane-server/target/*.war webapps/
+COPY ./target/*.war webapps/
 RUN cd /usr/local/tomcat/webapps && \
     mv nsf*.war ROOT.war && \
     unzip ROOT.war -d ./ROOT && \
