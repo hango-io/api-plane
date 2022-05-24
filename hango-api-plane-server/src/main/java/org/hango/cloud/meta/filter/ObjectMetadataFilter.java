@@ -8,9 +8,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/6/20
- **/
+
 public class ObjectMetadataFilter extends SimpleBeanPropertyFilter {
 
     private static final List<String> MAINTAIN_FILEDS = Arrays.asList("name", "namespace");

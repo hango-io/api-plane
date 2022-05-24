@@ -1,10 +1,6 @@
 package org.hango.cloud.core.k8s.http;
 
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/31
- **/
 public interface K8sHttpClient {
 
     String getWithNull(String url);

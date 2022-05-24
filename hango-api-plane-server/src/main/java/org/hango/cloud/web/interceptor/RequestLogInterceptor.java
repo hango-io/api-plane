@@ -12,9 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.Charset;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/1/14
- **/
+
 public class RequestLogInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestLogInterceptor.class);

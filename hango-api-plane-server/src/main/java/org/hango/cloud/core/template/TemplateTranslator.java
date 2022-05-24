@@ -14,10 +14,6 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import java.io.IOException;
 import java.util.Arrays;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/26
- **/
 @Component
 public class TemplateTranslator {
     private static final Logger logger = LoggerFactory.getLogger(TemplateTranslator.class);

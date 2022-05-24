@@ -2,10 +2,6 @@ package org.hango.cloud.core.editor;
 
 import com.jayway.jsonpath.Predicate;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/25
- **/
 public interface Editor {
     boolean contain(String path, Predicate... filter);
 

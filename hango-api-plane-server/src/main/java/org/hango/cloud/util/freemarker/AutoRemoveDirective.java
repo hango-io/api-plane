@@ -29,7 +29,7 @@ import java.util.Map;
  *
  * 以上区块有value为1,保留。
  *
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/11/28
+ *
  **/
 public class AutoRemoveDirective implements TemplateDirectiveModel {
 

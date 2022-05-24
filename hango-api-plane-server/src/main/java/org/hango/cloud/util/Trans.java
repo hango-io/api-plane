@@ -41,9 +41,7 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/19
- **/
+
 public class Trans {
 
 

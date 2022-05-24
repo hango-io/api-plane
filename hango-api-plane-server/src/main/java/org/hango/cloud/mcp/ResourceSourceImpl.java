@@ -4,10 +4,6 @@ import io.grpc.stub.StreamObserver;
 import istio.mcp.v1alpha1.Mcp;
 import istio.mcp.v1alpha1.ResourceSourceGrpc;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/10
- **/
 public class ResourceSourceImpl extends ResourceSourceGrpc.ResourceSourceImplBase {
 
     private McpResourceWatcher watcher;

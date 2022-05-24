@@ -1,7 +1,7 @@
 package org.hango.cloud.util.errorcode;
 
 /**
- * @author Chen Jiahan | chenjiahan@corp.netease.com
+ *
  */
 public class ExceptionHandlerErrorCode extends ErrorCode {
 

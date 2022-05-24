@@ -1,9 +1,5 @@
 package org.hango.cloud.core.k8s.validator;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2020/3/5
- **/
 public class ConstraintViolation<T> {
     private String message;
     private T bean;

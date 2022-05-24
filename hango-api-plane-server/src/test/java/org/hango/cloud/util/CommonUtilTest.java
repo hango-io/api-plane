@@ -12,9 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/26
- **/
+
 public class CommonUtilTest {
 
 

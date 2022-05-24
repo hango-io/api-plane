@@ -3,10 +3,6 @@ package org.hango.cloud.mcp.status;
 import org.hango.cloud.mcp.dao.StatusDao;
 import org.hango.cloud.mcp.dao.meta.Status;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/5/6
- **/
 public class StatusNotifierImpl implements StatusNotifier {
     private ValueGenerator defaultGenerator;
 

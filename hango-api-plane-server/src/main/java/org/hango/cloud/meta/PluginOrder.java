@@ -3,9 +3,7 @@ package org.hango.cloud.meta;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/26
- **/
+
 public class PluginOrder extends CommonModel {
 
     private Map<String, String> gatewayLabels;

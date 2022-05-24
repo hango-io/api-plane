@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/6/14
- **/
+
 public class Header {
 
     /**

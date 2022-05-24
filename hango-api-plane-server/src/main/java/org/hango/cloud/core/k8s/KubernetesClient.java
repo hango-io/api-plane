@@ -11,11 +11,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Map;
 
-
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/30
- **/
 public class KubernetesClient extends DefaultK8sHttpClient {
 
     public KubernetesClient(Config config, OkHttpClient httpClient, EditorContext editorContext) {

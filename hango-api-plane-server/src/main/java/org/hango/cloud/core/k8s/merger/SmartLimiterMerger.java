@@ -4,9 +4,6 @@ import org.hango.cloud.util.function.Merger;
 import com.netease.slime.api.microservice.v1alpha1.SmartLimiter;
 import org.springframework.util.CollectionUtils;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/10
- **/
 public class SmartLimiterMerger implements Merger<SmartLimiter> {
 
     @Override

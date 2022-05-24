@@ -5,10 +5,6 @@ import org.hango.cloud.mcp.dao.StatusDao;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/23
- **/
 public class StatusProductorImpl implements StatusProductor {
     private StatusDao dao;
 

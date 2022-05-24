@@ -6,9 +6,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.validation.Valid;
 
-/**
- * @author Kent
- */
 public class PortalTrafficPolicyDTO {
 
     /**

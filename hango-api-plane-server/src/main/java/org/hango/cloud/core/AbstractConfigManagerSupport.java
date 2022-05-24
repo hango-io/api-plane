@@ -11,11 +11,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/8
- *
- *
- **/
 public abstract class AbstractConfigManagerSupport implements ConfigManager{
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractConfigManagerSupport.class);

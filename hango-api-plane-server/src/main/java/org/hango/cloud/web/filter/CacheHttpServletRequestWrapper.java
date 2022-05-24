@@ -9,9 +9,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/26
- **/
+
 public class CacheHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
     private byte[] body;

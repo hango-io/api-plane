@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author wupenghuai@corp.netease.com
+ *
  * @date 2020/4/16
  **/
 public class MeshRateLimitProcessorTest extends BasePluginTest {

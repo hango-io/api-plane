@@ -10,10 +10,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import java.util.List;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/23
- **/
 public class StatusDaoImpl implements StatusDao {
     private NamedParameterJdbcTemplate namedTemplate;
 

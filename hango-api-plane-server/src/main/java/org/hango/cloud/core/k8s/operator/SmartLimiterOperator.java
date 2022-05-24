@@ -5,9 +5,6 @@ import com.netease.slime.api.microservice.v1alpha1.SmartLimiter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/10
- **/
 @Component
 public class SmartLimiterOperator implements k8sResourceOperator<SmartLimiter> {
 

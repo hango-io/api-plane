@@ -16,7 +16,6 @@ import java.util.Map;
 
 /**
  * 使用k8s作为存储
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/25
  **/
 public class K8sConfigStore implements ConfigStore {
 

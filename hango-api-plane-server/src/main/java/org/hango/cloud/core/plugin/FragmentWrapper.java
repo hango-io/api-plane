@@ -2,10 +2,6 @@ package org.hango.cloud.core.plugin;
 
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/8/19
- **/
 public class FragmentWrapper {
     private K8sResourceEnum resourceType;
     private FragmentTypeEnum fragmentType;

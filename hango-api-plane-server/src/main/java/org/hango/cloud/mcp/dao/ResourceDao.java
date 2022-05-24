@@ -4,10 +4,6 @@ import org.hango.cloud.mcp.dao.meta.Resource;
 
 import java.util.List;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/22
- **/
 public interface ResourceDao {
     boolean contains(String collection, String name);
 

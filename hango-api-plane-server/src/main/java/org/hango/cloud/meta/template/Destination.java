@@ -1,9 +1,7 @@
 package org.hango.cloud.meta.template;
 
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/6/14
- **/
+
 public class Destination {
 
     private String subset;

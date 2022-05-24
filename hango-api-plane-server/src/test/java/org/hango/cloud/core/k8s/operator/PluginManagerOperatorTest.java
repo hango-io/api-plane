@@ -12,9 +12,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/11/13
- **/
+
 public class PluginManagerOperatorTest {
 
     PluginManagerOperator operator;

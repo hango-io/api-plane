@@ -20,10 +20,6 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/12/16
- **/
 @Component
 public class AggregateExtensionProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
 

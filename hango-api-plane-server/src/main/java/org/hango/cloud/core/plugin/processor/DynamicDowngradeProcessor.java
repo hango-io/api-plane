@@ -14,10 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2020/2/25
- **/
 @Component
 public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override

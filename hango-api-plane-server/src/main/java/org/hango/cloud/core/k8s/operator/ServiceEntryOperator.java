@@ -12,9 +12,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/19
- **/
 @Component
 public class ServiceEntryOperator implements k8sResourceOperator<ServiceEntry> {
 

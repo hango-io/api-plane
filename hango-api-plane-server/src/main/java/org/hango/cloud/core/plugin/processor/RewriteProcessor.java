@@ -12,10 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/11/19
- **/
 @Component
 public class RewriteProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override

@@ -10,9 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/27
- **/
 public class DefaultModelProcessor<T> implements ModelProcessor<T> {
 
     TemplateTranslator templateTranslator;

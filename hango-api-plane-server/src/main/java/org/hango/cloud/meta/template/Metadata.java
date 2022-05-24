@@ -2,9 +2,7 @@ package org.hango.cloud.meta.template;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/6/17
- **/
+
 public class Metadata {
 
     @NotNull(message = "metadata name")

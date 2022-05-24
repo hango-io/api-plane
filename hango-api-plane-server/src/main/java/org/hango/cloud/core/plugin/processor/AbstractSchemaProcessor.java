@@ -14,10 +14,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/8/20
- **/
 public abstract class AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSchemaProcessor.class);

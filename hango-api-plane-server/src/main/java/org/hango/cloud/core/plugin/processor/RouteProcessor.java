@@ -26,8 +26,6 @@ import java.util.regex.Pattern;
 /**
  * 路由插件的转换processor
  *
- * @auther wupenghuai@corp.netease.com
- * @date 2019/8/7
  **/
 @Component
 public class RouteProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {

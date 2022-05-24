@@ -9,9 +9,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/12/23
- **/
+
 public class ServiceSubsetDTO {
 
     @JsonProperty(value = "Name")

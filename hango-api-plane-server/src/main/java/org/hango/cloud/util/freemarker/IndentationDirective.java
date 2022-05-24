@@ -9,9 +9,7 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/8/9
- **/
+
 public class IndentationDirective implements TemplateDirectiveModel {
 
     private static final String COUNT = "count";

@@ -2,10 +2,6 @@ package org.hango.cloud.mcp.status;
 
 import java.util.*;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/23
- **/
 public class Status {
     private final Property[] properties;
 

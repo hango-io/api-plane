@@ -2,9 +2,6 @@ package org.hango.cloud.configuration.ext;
 
 import org.hango.cloud.util.Const;
 
-/**
- * @author zhangzihao
- */
 public class ApiPlaneConfig {
 
     private String nsfMetaUrl;

@@ -15,9 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/26
- **/
+
 @RestController
 @RequestMapping(value = "/api", params = "Version=2019-07-25")
 public class GatewayCommonController extends BaseController {

@@ -8,9 +8,7 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/8/23
- **/
+
 public class IgnoreDirective implements TemplateDirectiveModel {
 
     private static final String LIST = "list";

@@ -5,9 +5,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/12/30
- **/
 public class PortalAPIDeleteDTO {
 
     @NotEmpty(message = "gateway")

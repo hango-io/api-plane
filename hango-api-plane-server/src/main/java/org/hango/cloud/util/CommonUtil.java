@@ -23,9 +23,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/4
- **/
+
 public class CommonUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonUtil.class);

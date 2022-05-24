@@ -17,7 +17,6 @@ import java.util.Objects;
 /**
  * 一个服务对应一个gateway,一个gateway里面只配一个server,
  * server里的hosts可以多个
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/31
  **/
 @Component
 public class GatewayOperator implements k8sResourceOperator<Gateway> {

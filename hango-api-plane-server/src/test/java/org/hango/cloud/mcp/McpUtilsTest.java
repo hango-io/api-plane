@@ -9,7 +9,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
- * @author wupenghuai@corp.netease.com
+ *
  * @date 2020/4/30
  **/
 public class McpUtilsTest {

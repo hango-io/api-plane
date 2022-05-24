@@ -4,9 +4,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/26
- **/
+
 public class CacheHttpRequestFilter implements Filter {
 
     @Override

@@ -50,9 +50,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/25
- **/
+
 public class GatewayServiceImpl implements GatewayService {
 
     private static final Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);

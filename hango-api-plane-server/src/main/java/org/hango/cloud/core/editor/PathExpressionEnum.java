@@ -8,9 +8,6 @@ import java.util.List;
 
 /**
  * 提供给jsonpath的path expression
- *
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/25
  **/
 public enum PathExpressionEnum {
 

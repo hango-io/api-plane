@@ -11,10 +11,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/5/6
- **/
 @Aspect
 public class GatewayServiceAop {
     private TransactionTemplate transactionTemplate;

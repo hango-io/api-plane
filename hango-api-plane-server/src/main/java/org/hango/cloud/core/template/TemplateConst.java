@@ -3,8 +3,6 @@ package org.hango.cloud.core.template;
 /**
  * 支持TemplateWrapper的regex expression
  *
- * @auther wupenghuai@corp.netease.com
- * @date 2019/8/2
  **/
 public interface TemplateConst {
     String DESCRIPTION_TAG = "(?m)^#(?!@)(.*)$";

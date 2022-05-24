@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * VirtualCluster DTO
  * VirtualCluster资源配置
- * @author hanjiahao
+ *
  */
 public class VirtualClusterDTO {
     /**

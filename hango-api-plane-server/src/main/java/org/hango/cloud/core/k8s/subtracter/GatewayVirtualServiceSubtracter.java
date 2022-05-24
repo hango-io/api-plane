@@ -7,9 +7,6 @@ import istio.networking.v1alpha3.VirtualServiceOuterClass;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/17
- **/
 public class GatewayVirtualServiceSubtracter implements Subtracter<K8sTypes.VirtualService> {
 
     private String key;

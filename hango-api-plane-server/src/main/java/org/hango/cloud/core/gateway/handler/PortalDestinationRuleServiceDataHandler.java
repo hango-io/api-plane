@@ -14,9 +14,6 @@ import java.util.List;
 
 import static org.hango.cloud.core.template.TemplateConst.*;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/27
- **/
 public class PortalDestinationRuleServiceDataHandler extends ServiceDataHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(PortalDestinationRuleServiceDataHandler.class);

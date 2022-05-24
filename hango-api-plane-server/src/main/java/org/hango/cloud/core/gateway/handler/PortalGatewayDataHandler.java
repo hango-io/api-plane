@@ -7,13 +7,6 @@ import org.hango.cloud.meta.IstioGateway;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author zhangbj
- * @version 1.0
- * @Type
- * @Desc
- * @date 2020/1/8
- */
 public class PortalGatewayDataHandler extends GatewayDataHandler {
 
     private Boolean enableHttp10;

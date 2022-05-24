@@ -12,9 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/15
- **/
+
 
 @SpringBootApplication
 @PropertySource(value = {"classpath:k8s.yaml", "classpath:jdbc.yaml","classpath:resourceExtractorConfig.yaml"}, factory = YamlPropertyLoaderFactory.class)

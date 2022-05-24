@@ -11,9 +11,6 @@ import java.util.stream.Collectors;
 
 import static org.hango.cloud.core.template.TemplateConst.*;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/27
- **/
 public class PluginOrderDataHandler implements DataHandler<PluginOrder> {
 
     private static final String DEFAULT_PLUGIN_MANAGER_NAME = "qz-global";

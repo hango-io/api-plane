@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/25
- **/
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Endpoint {
 

@@ -31,9 +31,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/18
- **/
+
 @Configuration
 @PropertySource(value = {"classpath:mesh-config.properties"})
 public class ApiPlaneAutoBaseConfiguration {

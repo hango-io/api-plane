@@ -12,10 +12,6 @@ import java.util.regex.Pattern;
 
 import static org.hango.cloud.core.editor.PathExpressionEnum.*;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/31
- **/
 public final class K8sResourceGenerator extends ResourceGenerator {
 
 

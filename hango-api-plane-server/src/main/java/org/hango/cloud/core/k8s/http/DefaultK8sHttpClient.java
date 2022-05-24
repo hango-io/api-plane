@@ -27,10 +27,6 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/31
- **/
 public class DefaultK8sHttpClient implements K8sHttpClient {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultK8sHttpClient.class);

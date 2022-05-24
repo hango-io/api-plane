@@ -2,9 +2,6 @@ package org.hango.cloud.core.k8s.event;
 
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/6/5
- **/
 public class RlsInfo {
 
     Map<String, String> labels;

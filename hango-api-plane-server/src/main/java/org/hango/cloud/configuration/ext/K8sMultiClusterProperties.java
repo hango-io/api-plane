@@ -5,9 +5,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-/**
- * Created by 张武(zhangwu@corp.netease.com) at 2019/11/20
- */
 @ConfigurationProperties("k8s")
 @Component
 public class K8sMultiClusterProperties {

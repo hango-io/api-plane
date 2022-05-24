@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author wupenghuai@corp.netease.com
+ *
  * @date 2020/4/8
  **/
 public class CircuitBreakerProcessorTest extends BasePluginTest {

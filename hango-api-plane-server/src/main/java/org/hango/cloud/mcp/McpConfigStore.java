@@ -14,10 +14,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/21
- **/
 public class McpConfigStore implements ConfigStore {
 
     private static final Logger logger = LoggerFactory.getLogger(McpConfigStore.class);

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 网关插件实体类，承载着插件CRD相关的信息（目前插件CRD包括VirtualService和GatewayPlugin）
  *
- * @author yutao04
+ *
  * @date 2021.12.06
  */
 public class GatewayPlugin {

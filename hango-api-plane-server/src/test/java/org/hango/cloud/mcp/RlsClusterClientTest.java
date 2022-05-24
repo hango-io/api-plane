@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ratelimit.config.Config;
 
 /**
- * @author wupenghuai@corp.netease.com
+ *
  * @date 2020/5/8
  **/
 @SpringBootTest(classes = ApiPlaneApplication.class, properties = {"k8s.clusters.default.k8s-api-server=https://1.1.1.1", "nonK8sMode=true"})

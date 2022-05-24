@@ -1,9 +1,5 @@
 package org.hango.cloud.mcp.status;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/5/6
- **/
 public interface StatusNotifier {
     void notifyStatus(String key);
 

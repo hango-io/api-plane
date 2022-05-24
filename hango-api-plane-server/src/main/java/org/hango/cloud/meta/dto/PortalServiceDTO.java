@@ -8,9 +8,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/19
- **/
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PortalServiceDTO {
 

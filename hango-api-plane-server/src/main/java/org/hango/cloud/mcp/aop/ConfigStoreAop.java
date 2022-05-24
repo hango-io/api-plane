@@ -10,10 +10,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/5/6
- **/
 @Aspect
 public class ConfigStoreAop {
     private TransactionTemplate transactionTemplate;

@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * @author hanjiahao
+ *
  * 路由重试Dto，重试次数，重试超时时间，重试条件
  */
 public class HttpRetryDTO {

@@ -7,9 +7,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/8/28
- **/
 public class RawResourceContainer {
 
     List<FragmentWrapper> virtualServices = new ArrayList<>();

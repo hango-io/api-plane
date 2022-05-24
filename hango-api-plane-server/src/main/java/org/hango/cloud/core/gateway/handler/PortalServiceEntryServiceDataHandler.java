@@ -15,9 +15,6 @@ import java.util.List;
 
 import static org.hango.cloud.core.template.TemplateConst.*;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/10/8
- **/
 public class PortalServiceEntryServiceDataHandler extends ServiceDataHandler {
 
     private static int DEFAULT_PORT = 80;

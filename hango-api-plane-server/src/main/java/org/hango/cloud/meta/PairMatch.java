@@ -1,8 +1,6 @@
 package org.hango.cloud.meta;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/11/7
- **/
+
 public class PairMatch {
 
     private String key;

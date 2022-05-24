@@ -10,10 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2020/2/11
- **/
 @Component
 public class CorsProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override

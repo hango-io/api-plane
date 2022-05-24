@@ -7,9 +7,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/5/12
- **/
 public class GatewayRateLimitConfigMapMerger extends RateLimitConfigMapMerger {
 
     @Override

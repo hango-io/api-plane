@@ -17,10 +17,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/26
- **/
 @Configuration
 @ConditionalOnMissingBean(NonK8sConfiguration.class)
 @ImportAutoConfiguration(IstioSupportConfiguration.class)

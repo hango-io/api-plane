@@ -5,9 +5,6 @@ import org.hango.cloud.meta.Service;
 
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/27
- **/
 public abstract class ServiceDataHandler implements DataHandler<Service> {
 
     @Override

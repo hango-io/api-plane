@@ -9,9 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/8/28
- **/
+
 public class SharedConfigTest {
 
     SharedConfigOperator operator;

@@ -18,9 +18,6 @@ import java.util.stream.Collectors;
 
 import static org.hango.cloud.core.template.TemplateConst.*;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/27
- **/
 public class BaseVirtualServiceAPIDataHandler extends APIDataHandler {
 
     static final String apiVirtualServiceMatch = "gateway/api/virtualServiceMatch";

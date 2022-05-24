@@ -18,10 +18,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author hanjiahao
- * @date 2019/8/22
- **/
 @Component
 public class RateLimitProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override

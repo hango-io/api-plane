@@ -6,9 +6,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/1/13
- **/
 public class GlobalPluginsDeleteDTO {
 
     @JsonProperty(value = "Plugins")

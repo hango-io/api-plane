@@ -8,9 +8,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/3/18
- **/
+
 public class HandlerUtil {
 
     /**

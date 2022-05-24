@@ -2,9 +2,7 @@ package org.hango.cloud.meta;
 
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/16
- **/
+
 public enum UriMatch {
 
     exact,

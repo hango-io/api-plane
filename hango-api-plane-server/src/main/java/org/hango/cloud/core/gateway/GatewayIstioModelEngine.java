@@ -52,9 +52,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/8
- **/
 @Component
 public class GatewayIstioModelEngine extends IstioModelEngine {
 

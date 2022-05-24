@@ -15,9 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static okhttp3.TlsVersion.TLS_1_1;
 import static okhttp3.TlsVersion.TLS_1_2;
 
-/**
- * Created by 张武(zhangwu@corp.netease.com) at 2019/11/13
- */
 public class MultiClusterK8sClient {
 	public static final String DEFAULT_CLUSTER_NAME = "default";
 	private final Map<String, ClientSet> clients = new ConcurrentHashMap<>();
@@ -64,9 +61,6 @@ public class MultiClusterK8sClient {
 		return clients.getOrDefault(clusterName, ClientSet.fakeClient).originalK8sClient;
 	}
 
-	/**
-	 * Created by 张武(zhangwu@corp.netease.com) at 2019/11/13
-	 */
 	public static class ClientSet {
 		public final KubernetesClient k8sClient;
 		public final io.fabric8.kubernetes.client.KubernetesClient originalK8sClient;

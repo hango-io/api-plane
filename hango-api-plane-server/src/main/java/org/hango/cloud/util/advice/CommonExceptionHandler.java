@@ -35,7 +35,7 @@ import java.util.List;
 
 
 /**
- * @author Chen Jiahan | chenjiahan@corp.netease.com
+ *
  */
 @ControllerAdvice
 public class CommonExceptionHandler extends ResponseEntityExceptionHandler {

@@ -21,10 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/5/7
- **/
 public class RlsClusterClient {
     private static final Logger logger = LoggerFactory.getLogger(RlsClusterClient.class);
 

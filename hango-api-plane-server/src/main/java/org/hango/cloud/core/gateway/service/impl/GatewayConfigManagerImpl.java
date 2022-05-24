@@ -33,9 +33,6 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/25
- **/
 public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport implements
     GatewayConfigManager {
 

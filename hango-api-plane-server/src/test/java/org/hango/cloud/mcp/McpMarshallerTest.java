@@ -7,7 +7,7 @@ import org.junit.Test;
 import slime.microservice.plugin.v1alpha1.PluginManagerOuterClass;
 
 /**
- * @author wupenghuai@corp.netease.com
+ *
  * @date 2020/8/6
  **/
 public class McpMarshallerTest {

@@ -11,10 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2020/2/25
- **/
 @Component
 public class LocalLimitProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override

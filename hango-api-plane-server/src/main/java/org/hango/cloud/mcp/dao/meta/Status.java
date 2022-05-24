@@ -1,9 +1,5 @@
 package org.hango.cloud.mcp.dao.meta;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/24
- **/
 public class Status {
     private String name;
     private String value;

@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.CoreMatchers.*;
 
 /**
- * @author wupenghuai@corp.netease.com
+ *
  * @date 2020/6/11
  **/
 public class StatusTest {

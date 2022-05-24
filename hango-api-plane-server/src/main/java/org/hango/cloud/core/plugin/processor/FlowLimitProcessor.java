@@ -8,10 +8,6 @@ import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.meta.ServiceInfo;
 import org.springframework.stereotype.Component;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/9/26
- **/
 @Component
 public class FlowLimitProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override

@@ -5,7 +5,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * 流量镜像配置
- * @Author Jin Chenxi jinchenxi01@corp.netease.com 2021/6/11
  */
 public class PortalMirrorTrafficDto {
 

@@ -9,8 +9,6 @@ import org.springframework.context.annotation.Profile;
 
 /**
  * 网关模式下的configuration
- *
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/6/15
  **/
 @Profile({"gw-qz", "gw-yx"})
 @Configuration

@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationEvent;
 /**
  * 该事件用于rate limit server 的configmap更新后，提醒修改rate limit server的annotation
  *
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/6/5
  **/
 public class NotifyRateLimitServerEvent extends ApplicationEvent {
 

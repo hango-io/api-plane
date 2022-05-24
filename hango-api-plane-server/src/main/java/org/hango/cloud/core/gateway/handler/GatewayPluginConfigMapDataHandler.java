@@ -17,8 +17,6 @@ import static org.hango.cloud.core.template.TemplateConst.*;
 /**
  * 路由插件CRD处理器
  *
- * @author yutao04
- * @date 2021.12.07
  **/
 public class GatewayPluginConfigMapDataHandler implements DataHandler<GatewayPlugin> {
 

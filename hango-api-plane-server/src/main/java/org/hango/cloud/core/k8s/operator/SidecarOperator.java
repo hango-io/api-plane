@@ -8,9 +8,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/22
- **/
 @Component
 public class SidecarOperator implements k8sResourceOperator<Sidecar> {
 

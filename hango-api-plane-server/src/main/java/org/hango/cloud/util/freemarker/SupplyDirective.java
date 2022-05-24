@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/8/26
- **/
+
 public class SupplyDirective implements TemplateDirectiveModel {
 
     enum Keyword {

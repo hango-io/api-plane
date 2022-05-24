@@ -10,10 +10,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/10
- **/
 public class McpUtils {
     private static final String triggerCollection = "$triggerCollection";
 

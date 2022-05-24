@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * @Author wengyanghui | wengyanghui@corp.netease.com | 2020/03/23
- **/
+
 public class WhiteListV2AuthRuleDto {
 
     @JsonProperty("RuleName")

@@ -1,9 +1,5 @@
 package org.hango.cloud.mcp.dao.meta;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/22
- **/
 public class Resource {
     private String collection;
     private String name;

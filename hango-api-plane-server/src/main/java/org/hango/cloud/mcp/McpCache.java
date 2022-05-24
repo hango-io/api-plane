@@ -9,10 +9,6 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/10
- **/
 public class McpCache implements McpResourceDistributor, McpResourceWatcher {
     private static final Logger logger = LoggerFactory.getLogger(McpCache.class);
 

@@ -10,9 +10,6 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.Set;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/6/5
- **/
 public class GatewayK8sEventWatcher {
 
     final static Set<String> SUPPORTED_RESOURCES = ImmutableSet.of(K8sResourceEnum.VirtualService.name(),

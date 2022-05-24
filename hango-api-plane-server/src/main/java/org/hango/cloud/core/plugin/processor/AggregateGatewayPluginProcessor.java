@@ -10,10 +10,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2020/1/17
- **/
 @Component
 public class AggregateGatewayPluginProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
 

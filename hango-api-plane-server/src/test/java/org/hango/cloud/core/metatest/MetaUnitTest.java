@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * @description:
- * @author: zhangzihao1@corp.netease.com
+ *
  * @create: 2018-12-22
  **/
 public class MetaUnitTest extends BaseTest {

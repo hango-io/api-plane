@@ -1,8 +1,6 @@
 package org.hango.cloud.util.exception;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/6/20
- **/
+
 public class ApiPlaneException extends RuntimeException {
 
     private Integer status;

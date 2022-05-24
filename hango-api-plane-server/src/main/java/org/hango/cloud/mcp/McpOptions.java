@@ -6,10 +6,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/17
- **/
 public class McpOptions {
     // 注册支持的collection类型
     private Set<String> snapshotCollections = new HashSet<>();

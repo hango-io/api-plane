@@ -6,9 +6,7 @@ import org.hango.cloud.meta.ViolationItem;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/3/10
- **/
+
 public class ValidateResultDTO {
 
     @JsonProperty("Pass")

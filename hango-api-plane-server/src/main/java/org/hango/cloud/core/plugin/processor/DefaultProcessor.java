@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 /**
  * 直接透传的Processor
  *
- * @auther wupenghuai@corp.netease.com
- * @date 2019/11/19
  **/
 @Component
 public class DefaultProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {

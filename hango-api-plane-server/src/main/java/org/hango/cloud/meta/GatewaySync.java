@@ -2,9 +2,7 @@ package org.hango.cloud.meta;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/23
- **/
+
 public class GatewaySync {
 
     @JsonProperty(value = "Name")

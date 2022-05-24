@@ -4,10 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/11/21
- **/
 public class PluginOrderItemDTO {
 
     @JsonProperty("enable")

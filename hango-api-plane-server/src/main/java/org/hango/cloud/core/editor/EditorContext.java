@@ -4,11 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
 
-
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/25
- **/
 public class EditorContext {
     private ObjectMapper jsonMapper;
 

@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/11/14
- **/
+
 public class PriorityUtil {
 
     //TODO 适配轻舟网关API

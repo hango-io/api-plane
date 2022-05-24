@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import java.util.List;
 
 /**
- * @author yutao04
+ *
  * @date 2021.12.07
  *
  * 插件实体类

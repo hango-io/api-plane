@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.mockito.Mockito.when;
 
 /**
- * @author wupenghuai@corp.netease.com
+ *
  * @date 2020/6/11
  **/
 public class RlsClientTest extends BaseTest {

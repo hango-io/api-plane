@@ -23,9 +23,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/17
- **/
 @Component
 public class DefaultResourceManager implements ResourceManager {
 

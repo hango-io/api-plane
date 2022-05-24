@@ -3,9 +3,6 @@ package org.hango.cloud.core.k8s.subtracter;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.util.function.Subtracter;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/23
- **/
 public class GatewayPluginNormalSubtracter implements Subtracter<K8sTypes.EnvoyPlugin> {
     @Override
     public K8sTypes.EnvoyPlugin subtract(K8sTypes.EnvoyPlugin gatewayPlugin) {

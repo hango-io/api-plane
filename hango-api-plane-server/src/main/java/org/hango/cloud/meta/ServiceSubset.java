@@ -9,9 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/12/23
- **/
+
 public class ServiceSubset {
 
     private String name;

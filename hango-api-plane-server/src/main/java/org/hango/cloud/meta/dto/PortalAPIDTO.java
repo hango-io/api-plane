@@ -7,9 +7,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/19
- **/
 public class PortalAPIDTO {
 
     @NotEmpty(message = "gateway")

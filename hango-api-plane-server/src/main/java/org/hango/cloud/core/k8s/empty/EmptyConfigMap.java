@@ -4,9 +4,6 @@ import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/3/19
- **/
 public class EmptyConfigMap extends ConfigMap implements HasMetadata, EmptyResource {
 
     private ObjectMeta om;

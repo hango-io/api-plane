@@ -22,10 +22,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/17
- **/
 public abstract class IstioModelEngine {
 
     private static final Logger logger = LoggerFactory.getLogger(IstioModelEngine.class);

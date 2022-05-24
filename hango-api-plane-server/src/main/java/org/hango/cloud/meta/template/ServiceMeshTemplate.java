@@ -6,9 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/6/14
- **/
+
 @ConditionalTemplate(templateName = "whiteList", required = {"outWeight", "targetList"})
 @ConditionalTemplate(templateName = "cloudShuttle", required = {"outWeight", "targetList"})
 @ConditionalTemplate(templateName = "faultInject", required = {"host", "percent", "fixedDelay", "httpStatus", "destinations"})

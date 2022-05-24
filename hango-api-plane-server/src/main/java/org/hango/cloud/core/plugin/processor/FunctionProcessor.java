@@ -16,10 +16,6 @@ import com.jayway.jsonpath.Configuration;
 
 import org.springframework.stereotype.Component;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/9/26
- **/
 @Component
 public class FunctionProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
 

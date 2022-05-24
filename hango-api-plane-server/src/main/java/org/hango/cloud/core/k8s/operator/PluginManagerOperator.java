@@ -10,9 +10,6 @@ import slime.microservice.plugin.v1alpha1.PluginManagerOuterClass;
 
 import java.util.Objects;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/26
- **/
 @Component
 public class PluginManagerOperator implements k8sResourceOperator<K8sTypes.PluginManager> {
 

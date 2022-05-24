@@ -4,9 +4,6 @@ import org.hango.cloud.k8s.K8sTypes;
 
 import java.util.function.Supplier;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/23
- **/
 public class DynamicGatewayPluginSupplier implements Supplier<K8sTypes.EnvoyPlugin> {
 
     private String gw;

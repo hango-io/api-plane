@@ -16,12 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-/**
- * @author zhufengwei.sx
- * @date 2021/8/6 9:56
- * 基于Http header进行黑白名单过滤的插件
- */
-
 @Component
 public class HeaderRestrictionProcessor extends AbstractSchemaProcessor {
 

@@ -11,10 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/23
- **/
 public class StatusMonitorImpl implements StatusMonitor {
     private static final Logger logger = LoggerFactory.getLogger(StatusMonitorImpl.class);
 

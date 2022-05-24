@@ -3,9 +3,6 @@ package org.hango.cloud.core;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/3/19
- **/
 @Configuration
 public class GlobalConfig {
 

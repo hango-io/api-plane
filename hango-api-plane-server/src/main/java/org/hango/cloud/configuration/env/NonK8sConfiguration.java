@@ -64,10 +64,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/10
- **/
 @Configuration
 @ConditionalOnProperty("nonK8sMode")
 public class NonK8sConfiguration {

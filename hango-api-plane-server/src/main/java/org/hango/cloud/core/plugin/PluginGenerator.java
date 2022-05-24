@@ -7,10 +7,6 @@ import org.hango.cloud.core.editor.EditorContext;
 import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.editor.ResourceType;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2020/3/13
- **/
 public class PluginGenerator extends ResourceGenerator {
 
     protected static EditorContext defaultContext = new EditorContext(new ObjectMapper(), new YAMLMapper(), Configuration.defaultConfiguration());

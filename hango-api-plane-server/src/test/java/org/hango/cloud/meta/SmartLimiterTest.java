@@ -4,9 +4,7 @@ import org.hango.cloud.util.CommonUtil;
 import com.netease.slime.api.microservice.v1alpha1.SmartLimiter;
 import org.junit.Test;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/10
- **/
+
 public class SmartLimiterTest {
 
     @Test

@@ -6,10 +6,6 @@ import org.hango.cloud.util.exception.ApiPlaneException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/22
- **/
 public class McpMarshaller {
     private static final Logger logger = LoggerFactory.getLogger(McpMarshaller.class);
 

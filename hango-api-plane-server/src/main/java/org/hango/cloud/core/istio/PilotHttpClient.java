@@ -41,9 +41,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/25
- **/
 @Component
 public class PilotHttpClient {
 

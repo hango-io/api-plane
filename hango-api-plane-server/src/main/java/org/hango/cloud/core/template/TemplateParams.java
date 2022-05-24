@@ -3,9 +3,6 @@ package org.hango.cloud.core.template;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/8/9
- **/
 public class TemplateParams {
 
     private TemplateParams parent;

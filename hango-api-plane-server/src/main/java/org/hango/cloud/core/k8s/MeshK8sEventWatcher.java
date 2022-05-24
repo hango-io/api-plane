@@ -16,9 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/6/19
- **/
 public class MeshK8sEventWatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(MeshK8sEventWatcher.class);

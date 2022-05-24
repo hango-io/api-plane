@@ -14,9 +14,7 @@ import org.hango.cloud.meta.Gateway;
 import org.hango.cloud.meta.ServiceHealth;
 import org.hango.cloud.meta.dto.GatewayPluginDTO;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/23
- **/
+
 public interface GatewayService {
 
     void updateAPI(PortalAPIDTO portalAPI);

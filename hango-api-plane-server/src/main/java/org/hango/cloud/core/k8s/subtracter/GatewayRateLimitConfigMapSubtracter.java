@@ -2,9 +2,6 @@ package org.hango.cloud.core.k8s.subtracter;
 
 import org.hango.cloud.core.editor.PathExpressionEnum;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/5/12
- **/
 public class GatewayRateLimitConfigMapSubtracter extends RateLimitConfigMapSubtracter {
 
     private String gateway;

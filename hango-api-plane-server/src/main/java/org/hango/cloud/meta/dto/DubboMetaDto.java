@@ -10,13 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/**
- * @author zhangbj
- * @version 1.0
- * @Type
- * @Desc Dubbo 元数据信息表
- * @date 2021/09/15
- */ 
 public class DubboMetaDto {
 
     /**

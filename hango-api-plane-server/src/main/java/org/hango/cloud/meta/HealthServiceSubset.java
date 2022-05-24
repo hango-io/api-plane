@@ -1,8 +1,6 @@
 package org.hango.cloud.meta;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/6/1
- **/
+
 public class HealthServiceSubset {
 
     private String host;

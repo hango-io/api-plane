@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 /**
  * 路由插件CRD处理器
  *
- * @author yutao04
- * @date 2021.12.07
  **/
 public class GatewayPluginDataHandler implements DataHandler<GatewayPlugin> {
 

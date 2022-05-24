@@ -22,10 +22,6 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/22
- **/
 public class DBSnapshotBuilder implements SnapshotBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(DBSnapshotBuilder.class);

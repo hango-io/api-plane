@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/13
- **/
+
 public class RateLimitPlugin {
 
     private String kind = "mesh-rate-limiting";

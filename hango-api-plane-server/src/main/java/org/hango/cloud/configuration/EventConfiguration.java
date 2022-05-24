@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Profile;
 /**
  *  用于k8s模式的事件处理
  *
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/6/19
  **/
 @Configuration
 @ConditionalOnMissingBean(NonK8sConfiguration.class)

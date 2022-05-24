@@ -5,13 +5,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 
-/**
- * @author zhangbj
- * @version 1.0
- * @Type
- * @Desc
- * @date 2020/1/8
- */
 public class PortalIstioGatewayDTO {
 
     /**

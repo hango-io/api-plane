@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * 顾名思义，永远不返回空，包括空list和null，仅用于特殊场景
  *
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/3/19
  **/
 public class NeverReturnNullModelProcessor<T> implements ModelProcessor<T> {
 

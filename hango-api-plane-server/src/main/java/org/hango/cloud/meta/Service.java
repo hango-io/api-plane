@@ -4,9 +4,7 @@ import org.hango.cloud.meta.dto.PortalServiceConnectionPoolDTO;
 
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/20
- **/
+
 public class Service extends CommonModel {
 
     private String code;

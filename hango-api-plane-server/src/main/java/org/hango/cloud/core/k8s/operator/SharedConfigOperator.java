@@ -14,9 +14,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/8/28
- **/
 public class SharedConfigOperator implements k8sResourceOperator<SharedConfig> {
 
     @Override

@@ -2,9 +2,7 @@ package org.hango.cloud.meta.template;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/6/19
- **/
+
 public class Service {
 
     @NotEmpty(message = "name")

@@ -18,7 +18,7 @@ import java.util.Objects;
 /**
  * 用于校验，当模板为template时，所必需的的字段为required数组中的值
  *
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/6/21
+ *
  **/
 public class ConditionalTemplateValidator implements ConstraintValidator<ConditionalTemplate, Object> {
 

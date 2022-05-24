@@ -15,10 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/22
- **/
 public class ResourceDaoImpl implements ResourceDao {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceDaoImpl.class);

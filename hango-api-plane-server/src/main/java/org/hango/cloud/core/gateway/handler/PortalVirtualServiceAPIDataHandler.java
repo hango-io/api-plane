@@ -15,9 +15,6 @@ import java.util.*;
 
 import static org.hango.cloud.core.template.TemplateConst.VIRTUAL_SERVICE_DESTINATIONS;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/9/27
- **/
 public class PortalVirtualServiceAPIDataHandler extends BaseVirtualServiceAPIDataHandler {
 
     public PortalVirtualServiceAPIDataHandler(ModelProcessor modelProcessor){

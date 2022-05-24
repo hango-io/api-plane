@@ -5,9 +5,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Pattern;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/11/7
- **/
 public class PairMatchDTO {
 
     @NotEmpty(message = "string match key")

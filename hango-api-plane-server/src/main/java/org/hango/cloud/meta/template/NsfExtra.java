@@ -6,9 +6,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/6/14
- **/
+
 public class NsfExtra {
 
     private String host;

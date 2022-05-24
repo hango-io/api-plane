@@ -16,10 +16,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/12/17
- **/
 @Component
 public class TransformProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override

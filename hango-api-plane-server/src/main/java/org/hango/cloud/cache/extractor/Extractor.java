@@ -4,9 +4,6 @@ import io.fabric8.kubernetes.api.model.HasMetadata;
 
 import java.util.Map;
 
-/**
- * @author zhangzihao
- */
 public interface Extractor<T extends HasMetadata> {
 
 

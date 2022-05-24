@@ -9,10 +9,6 @@ import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.meta.ServiceInfo;
 import org.springframework.stereotype.Component;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2020/2/10
- **/
 @Component
 public class TraceProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override

@@ -11,7 +11,7 @@ import java.io.IOException;
 
 /**
  * 为restTemplate增加日志
- * @author Chen Jiahan | chenjiahan@corp.netease.com
+ *
  */
 public class RestTemplateLogInterceptor implements ClientHttpRequestInterceptor {
 

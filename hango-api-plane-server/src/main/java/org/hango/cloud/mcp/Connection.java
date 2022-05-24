@@ -6,10 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/10
- **/
 public class Connection {
 
     private static final Logger logger = LoggerFactory.getLogger(Connection.class);

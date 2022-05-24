@@ -15,8 +15,6 @@ import java.util.Map;
 /**
  * 静态降级插件
  *
- * @auther wupenghuai@corp.netease.com
- * @date 2020/1/9
  **/
 @Component
 public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {

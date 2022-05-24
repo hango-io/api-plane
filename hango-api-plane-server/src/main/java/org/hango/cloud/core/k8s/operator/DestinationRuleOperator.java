@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/30
- **/
 @Component
 public class DestinationRuleOperator implements k8sResourceOperator<K8sTypes.DestinationRule> {
 

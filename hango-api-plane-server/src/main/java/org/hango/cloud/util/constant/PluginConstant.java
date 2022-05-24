@@ -1,7 +1,7 @@
 package org.hango.cloud.util.constant;
 
 /**
- * @author yutao04
+ *
  * @date 2021/12/21
  */
 public class PluginConstant {

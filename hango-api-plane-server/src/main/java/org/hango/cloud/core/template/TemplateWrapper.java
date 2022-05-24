@@ -17,8 +17,6 @@ import java.util.regex.Pattern;
  * 2. 支持Template 打Label, 格式为#@key=value
  * 3. 支持Template 注释, 格式为#注释
  *
- * @auther wupenghuai@corp.netease.com
- * @date 2019/8/2
  **/
 public class TemplateWrapper {
 

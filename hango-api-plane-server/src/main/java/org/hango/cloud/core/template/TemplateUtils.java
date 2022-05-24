@@ -12,15 +12,11 @@ import java.util.regex.Pattern;
 
 import static org.hango.cloud.core.template.TemplateConst.BLANK_LINE;
 import static org.hango.cloud.core.template.TemplateConst.IGNORE_SCHEME;
-
-
 /**
  * Template工具类
  * 1. 可以将一个Template拆分成多个TemplateWrapper
  * 2. 可以根据Label查找TemplateWrapper
  *
- * @auther wupenghuai@corp.netease.com
- * @date 2019/8/1
  **/
 public class TemplateUtils {
 

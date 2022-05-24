@@ -18,10 +18,6 @@ import org.springframework.context.annotation.Bean;
 import java.util.EnumSet;
 import java.util.Set;
 
-/**
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/25
- **/
 @org.springframework.context.annotation.Configuration
 public class EditorSupportConfiguration {
     @Bean

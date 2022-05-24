@@ -4,9 +4,6 @@ import com.netease.slime.api.microservice.v1alpha1.SmartLimiter;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/4/13
- **/
 public class EmptySmartLimiter extends SmartLimiter implements HasMetadata, EmptyResource {
 
     private ObjectMeta om;

@@ -3,7 +3,7 @@ package org.hango.cloud.util.advice;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @author Chen Jiahan | chenjiahan@corp.netease.com
+ *
  */
 public class CommonReturnEntity {
 

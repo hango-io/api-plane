@@ -7,9 +7,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import slime.microservice.plugin.v1alpha1.EnvoyPluginOuterClass;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2020/1/13
- **/
 @Component
 public class GatewayPluginOperator implements k8sResourceOperator<K8sTypes.EnvoyPlugin> {
 

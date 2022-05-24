@@ -3,9 +3,7 @@ package org.hango.cloud.meta;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/12/12
- **/
+
 public class Graph {
 
     public Graph() {

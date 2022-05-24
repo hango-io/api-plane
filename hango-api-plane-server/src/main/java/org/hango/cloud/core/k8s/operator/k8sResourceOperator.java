@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @Author chenjiahan | chenjiahan@corp.netease.com | 2019/7/30
- **/
 public interface k8sResourceOperator<T extends HasMetadata> {
 
     T merge(T old, T fresh);

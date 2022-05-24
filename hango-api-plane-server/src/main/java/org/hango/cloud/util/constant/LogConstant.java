@@ -3,7 +3,7 @@ package org.hango.cloud.util.constant;
 /**
  * 日志常量类
  *
- * @author yutao04
+ *
  * @date 2021/12/27
  */
 public class LogConstant {

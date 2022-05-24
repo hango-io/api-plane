@@ -9,8 +9,6 @@ import java.io.Serializable;
 /**
  * 连接池配置
  *
- * @author TC_WANG
- * @date 2020/1/20 下午2:51.
  */
 public class PortalServiceConnectionPoolDTO implements Serializable {
     /**

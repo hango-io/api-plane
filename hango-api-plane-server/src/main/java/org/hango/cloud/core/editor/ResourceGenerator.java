@@ -20,8 +20,6 @@ import java.util.Objects;
  * 1. 提供obj, json, yaml 三者互相转换的静态方法
  * 2. 可以对json基于JsonPath语法，进行修改裁剪，然后再以json或yaml或obj转出
  *
- * @auther wupenghuai@corp.netease.com
- * @date 2019/7/25
  **/
 public class ResourceGenerator implements Editor {
 

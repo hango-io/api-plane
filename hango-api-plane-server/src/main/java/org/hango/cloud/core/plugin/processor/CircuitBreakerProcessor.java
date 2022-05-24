@@ -10,10 +10,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-/**
- * @author wupenghuai@corp.netease.com
- * @date 2020/4/8
- **/
 @Component
 public class CircuitBreakerProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override
