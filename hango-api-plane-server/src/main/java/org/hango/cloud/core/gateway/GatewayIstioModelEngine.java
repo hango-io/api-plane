@@ -326,6 +326,7 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
                     .addAllTcp(originalSpec.getTcpList())
                     .addAllThrift(originalSpec.getThriftList())
                     .addAllTls(originalSpec.getTlsList())
+                    .setPriority(originalSpec.getPriority())
                     .build());
             return resVs;
         } else {
