@@ -33,7 +33,8 @@
       ],
       "rules": [
         "Required"
-      ]
+      ],
+      "default": []
     },
     {
       "key": "errorPercent",
