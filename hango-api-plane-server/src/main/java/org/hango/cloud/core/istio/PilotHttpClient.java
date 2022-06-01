@@ -54,7 +54,7 @@ public class PilotHttpClient {
     @Value(value = "${meshRegistryName:galley}")
     private String MESH_REGISTRY_NAME;
 
-    private static final String GET_ENDPOINTZ_PATH = "/debug/endpointz?brief=true";
+    private static final String GET_ENDPOINTZ_PATH = "/debug/endpointz?brief=true&servicePort=true";
 
     private static final String GET_ZK_PATH = "/zk?interfaceName=";
 
@@ -203,14 +203,15 @@ public class PilotHttpClient {
         String[] rawValues = StringUtils.split(getEndpoints(), "\n");
         for (String rawValue : rawValues) {
             String[] segments = StringUtils.splitPreserveAllTokens(rawValue, " ");
-            if (ArrayUtils.getLength(segments) != 4) {
+            if (ArrayUtils.getLength(segments) != 5) {
                 continue;
             }
             /**
              * segments[0]:com.netease.cloud.nsf.demo.stock.api.EchoService:A:dubbo
-             * segments[1]:10.178.249.42:80
+             * segments[1]:10.178.249.42:20882
              * segments[2]:application=spring-cloud-dubbo,deprecated=false,dubbo=2.0.2,group=group-a,interface=com.netease.apigateway.dubbo.api.GatewayEchoService
-             */
+             * segments[4]: 80  //service port
+             **/
 
             Endpoint ep = new Endpoint();
             //解析hostname和protocal
@@ -227,7 +228,7 @@ public class PilotHttpClient {
                 }
             }
             ep.setAddress(ipPort[0]);
-            ep.setPort(Integer.valueOf(ipPort[1]));
+            ep.setPort(Integer.valueOf(segments[4]));
             ep.setLabels(labelMap);
             endpoints.add(ep);
         }

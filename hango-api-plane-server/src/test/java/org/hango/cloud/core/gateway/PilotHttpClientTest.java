@@ -35,12 +35,12 @@ public class PilotHttpClientTest extends BaseTest {
     @Test
     public void getEndpointList() {
 
-        String resp = "rate-limit.gateway-system.svc.cluster.local:grpc 10.244.1.29:18081 app=rate-limit,pod-template-hash=6ffc9fdcf9 spiffe://cluster.local/ns/gateway-system/sa/default\n" +
-                "rate-limit.gateway-system.svc.cluster.local:config-grpc 10.244.1.29:16071 app=rate-limit,pod-template-hash=6ffc9fdcf9 spiffe://cluster.local/ns/gateway-system/sa/default\n" +
-                "ratings.default.svc.cluster.local:http 10.244.0.154:9080 app=ratings,pod-template-hash=7bdfd65ccc,version=v1 spiffe://cluster.local/ns/default/sa/bookinfo-ratings\n" +
-                "redis.gateway-system.svc.cluster.local:redis 10.244.1.49:6379 app=redis,pod-template-hash=5cc57965f7 spiffe://cluster.local/ns/gateway-system/sa/default\n" +
-                "reviews.default.svc.cluster.local:http 10.244.1.242:9080 app=reviews,pod-template-hash=844bc59d88,version=v3 spiffe://cluster.local/ns/default/sa/bookinfo-reviews\n" +
-                "tiller-deploy.kube-system.svc.cluster.local:tiller 10.244.1.244:44134 app=helm,name=tiller,pod-template-hash=856685bc59 spiffe://cluster.local/ns/kube-system/sa/tiller\n";
+        String resp = "rate-limit.gateway-system.svc.cluster.local:grpc 10.244.1.29:18081 app=rate-limit,pod-template-hash=6ffc9fdcf9 spiffe://cluster.local/ns/gateway-system/sa/default 80\n" +
+                "rate-limit.gateway-system.svc.cluster.local:config-grpc 10.244.1.29:16071 app=rate-limit,pod-template-hash=6ffc9fdcf9 spiffe://cluster.local/ns/gateway-system/sa/default 80\n" +
+                "ratings.default.svc.cluster.local:http 10.244.0.154:9080 app=ratings,pod-template-hash=7bdfd65ccc,version=v1 spiffe://cluster.local/ns/default/sa/bookinfo-ratings 80\n" +
+                "redis.gateway-system.svc.cluster.local:redis 10.244.1.49:6379 app=redis,pod-template-hash=5cc57965f7 spiffe://cluster.local/ns/gateway-system/sa/default 80\n" +
+                "reviews.default.svc.cluster.local:http 10.244.1.242:9080 app=reviews,pod-template-hash=844bc59d88,version=v3 spiffe://cluster.local/ns/default/sa/bookinfo-reviews 80\n" +
+                "tiller-deploy.kube-system.svc.cluster.local:tiller 10.244.1.244:44134 app=helm,name=tiller,pod-template-hash=856685bc59 spiffe://cluster.local/ns/kube-system/sa/tiller 80\n";
 
         ResponseEntity entity = new ResponseEntity(resp, HttpStatus.OK);
 
@@ -55,7 +55,7 @@ public class PilotHttpClientTest extends BaseTest {
         Assert.assertEquals(6, endpoints.size());
         Assert.assertEquals("rate-limit.gateway-system.svc.cluster.local", endpoints.get(0).getHostname());
         Assert.assertEquals("10.244.1.29", endpoints.get(0).getAddress());
-        Assert.assertEquals(new Integer(18081), endpoints.get(0).getPort());
+        Assert.assertEquals(new Integer(80), endpoints.get(0).getPort());
     }
 
     private Service buildService(String clusterIP, Integer port) {
