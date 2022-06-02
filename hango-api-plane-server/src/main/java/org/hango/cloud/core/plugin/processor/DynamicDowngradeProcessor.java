@@ -209,8 +209,8 @@ public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implement
     private String assembleClusterOutboundInfo(PluginGenerator source) {
         String code = source.getValue("$.httpx.remote.cluster.Code", String.class);
         String backendService = source.getValue("$.httpx.remote.cluster.BackendService", String.class);
-        String gwName = source.getValue("$.httpx.remote.cluster.GwName", String.class);
-        Integer port = source.getValue("$.httpx.remote.cluster.Port[0]", Integer.class);
+        String gwName = source.getValue("$.httpx.remote.cluster.GwClusterName", String.class);
+        Integer port = source.getValue("$.httpx.remote.cluster.Port", Integer.class);
         String outboundService = "";
         if (StringUtils.isEmpty(code) || StringUtils.isEmpty(gwName)) {
             // outbound第三部分为subset，一般情况下不会为空，为空代表全局cluster，字段为空则不拼接
