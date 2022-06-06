@@ -17,7 +17,7 @@ spec:
 <#if t_virtual_service_virtual_cluster_headers?has_content>
 <#list t_virtual_service_virtual_cluster_headers as h>
       ${h.key}:
-        ${h.type}: ${h.value}
+        ${h.type}: "${h.value?j_string}"
 </#list>
 </#if>
     name: ${t_virtual_service_virtual_cluster_name}
