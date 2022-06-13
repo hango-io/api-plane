@@ -338,6 +338,9 @@ public class GatewayServiceImpl implements GatewayService {
         //获取dubbo实例
         List<Endpoint> endpoints = pilotHttpClient.getDubboEndpoints(igv);
         logger.info("dubbo endpoint filter result count is {}", endpoints.size());
+        if (CollectionUtils.isEmpty(endpoints)){
+            return new ArrayList<>();
+        }
         //随机选择一个实例
         Random random = new Random();
         Endpoint endpoint = endpoints.get(random.nextInt(endpoints.size()));

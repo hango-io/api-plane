@@ -1,13 +1,18 @@
 {
-  "inject": {
-    "regex": "/(.*)",
-    "variable": "/$1"
-  },
   "formatter": {
     "kind": "ianus-router",
     "version": "1.0",
-    "code": "&return_target.code",
-    "body": "&return_target.body"
+    "rule": [
+      {
+        "name": "return",
+        "action": {
+          "return_target?": {
+            "code": "&return_target.code",
+            "body": "&return_target.body"
+          }
+        }
+      }
+    ]
   },
   "layouts":[
     {

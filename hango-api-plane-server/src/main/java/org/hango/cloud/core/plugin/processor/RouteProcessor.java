@@ -1,14 +1,16 @@
 package org.hango.cloud.core.plugin.processor;
 
-import org.hango.cloud.core.gateway.service.ResourceManager;
+import org.hango.cloud.core.editor.ResourceGenerator;
+import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.meta.ServiceInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 /**
@@ -28,9 +30,12 @@ public class RouteProcessor extends AbstractSchemaProcessor implements SchemaPro
         PluginGenerator source = PluginGenerator.newInstance(plugin);
         PluginGenerator builder = PluginGenerator.newInstance("{}");
         builder.createOrUpdateJson("$","direct_response", "{}");
-        builder.createOrUpdateValue("$.direct_response", "status", source.getValue("$.code", Integer.class));
+        List<Object> plugins = source.getValue("$.rule");
+        //兼容老版本路由插件，当前版本只有return插件
+        ResourceGenerator rg = ResourceGenerator.newInstance(plugins.get(0), ResourceType.OBJECT, editorContext);
+        builder.createOrUpdateValue("$.direct_response", "status", rg.getValue("$.action.return_target.code", Integer.class));
         builder.createOrUpdateJson("$.direct_response", "body", "{}");
-        builder.createOrUpdateValue("$.direct_response.body", "inline_string", source.getValue("$.body", String.class));
+        builder.createOrUpdateValue("$.direct_response.body", "inline_string", rg.getValue("$.action.return_target.body", String.class));
         FragmentHolder fragmentHolder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
                 .withXUserId(getAndDeleteXUserId(source))
