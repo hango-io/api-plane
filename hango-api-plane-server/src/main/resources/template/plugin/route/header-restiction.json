@@ -5,7 +5,7 @@
   "layouts": [
     {
       "key": "type",
-      "alias": "黑白名单类型",
+      "alias": "类型",
       "type": "select",
       "options": [
         {
@@ -29,7 +29,7 @@
       "layouts": [
         {
           "key": "header",
-          "alias": "header字段",
+          "alias": "header名称",
           "type": "input",
           "rules": [
             "MaxLength(200)",
@@ -59,7 +59,7 @@
         {
           "key": "value",
           "type": "multi_input",
-          "alias": "过滤条件",
+          "alias": "匹配值",
           "invisible": {
             "present_match": ["this", "match_type"],
             "present_match_invert": ["this", "match_type"]
