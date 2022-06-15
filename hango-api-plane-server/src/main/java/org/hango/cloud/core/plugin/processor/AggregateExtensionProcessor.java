@@ -142,7 +142,7 @@ public class AggregateExtensionProcessor extends AbstractSchemaProcessor impleme
         return holder;
     }
 
-    private void coverToExtensionPlugin(FragmentHolder holder, String name) {
+    public void coverToExtensionPlugin(FragmentHolder holder, String name) {
        coverToExtensionPlugin(holder, name, false, null);
     }
 
