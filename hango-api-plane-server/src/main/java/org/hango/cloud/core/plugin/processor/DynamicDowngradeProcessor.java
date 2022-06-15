@@ -194,30 +194,9 @@ public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implement
         }
         if (source.contain("$.httpx.remote") && source.getValue("$.httpx.remote.requestSwitch", Boolean.class)) {
             builder.createOrUpdateJson("$", "override_remote", "{}");
-            builder.createOrUpdateValue("$.override_remote", "cluster", assembleClusterOutboundInfo(source));
+            // 服务案例: "outbound|80|dynamic-5314-demo-gateway|istio-e2e-app.apigw-demo.svc.cluster.local"
+            builder.createOrUpdateValue("$.override_remote", "cluster", source.getValue("$.httpx.remote.cluster"));
             builder.createOrUpdateValue("$.override_remote", "timeout", source.getValue("$.httpx.remote.timeout", Integer.class) + "s");
         }
-    }
-
-    /**
-     * outbound示例：
-     * outbound|80|dynamic-5314-demo-gateway|istio-e2e-app.apigw-demo.svc.cluster.local
-     *
-     * @param source 数据源
-     * @return 组装的outbound信息
-     */
-    private String assembleClusterOutboundInfo(PluginGenerator source) {
-        String code = source.getValue("$.httpx.remote.cluster.Code", String.class);
-        String backendService = source.getValue("$.httpx.remote.cluster.BackendService", String.class);
-        String gwName = source.getValue("$.httpx.remote.cluster.GwClusterName", String.class);
-        Integer port = source.getValue("$.httpx.remote.cluster.Port", Integer.class);
-        String outboundService = "";
-        if (StringUtils.isEmpty(code) || StringUtils.isEmpty(gwName)) {
-            // outbound第三部分为subset，一般情况下不会为空，为空代表全局cluster，字段为空则不拼接
-            outboundService = Const.OUTBOUND + "|" + port + "||" + backendService;
-        } else {
-            outboundService = Const.OUTBOUND + "|" + port + "|" + code.toLowerCase() + "-" + gwName + "|" + backendService;
-        }
-        return outboundService;
     }
 }
