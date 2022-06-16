@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -41,9 +40,19 @@ public class TelnetUtil {
     }
 
 
-    private static void read(InputStream in, StringBuffer buffer) throws IOException {
-        char ch = (char) in.read();
-        buffer.append(ch);
+    public static String read(TelnetClient telnetClient, String pattern) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        while (telnetClient.isAvailable()) {
+            int read = telnetClient.getInputStream().read();
+            if (read == -1){
+                break;
+            }
+            builder.append((char) read);
+            if (builder.toString().endsWith(pattern)) {
+                break;
+            }
+        }
+        return builder.toString().replace(pattern, StringUtils.EMPTY);
     }
 
     /**
@@ -56,24 +65,16 @@ public class TelnetUtil {
      * @return
      */
     public static String sendCommand(String ip, Integer port,Integer connectTimeout, String command, String pattern) {
-        StringBuffer buffer = new StringBuffer();
+        String info = StringUtils.EMPTY;
         try {
             logger.info("telent info , ip = {} ,port = {}", ip, port);
             TelnetClient telnetClient = build(ip, port,connectTimeout);
             write(telnetClient.getOutputStream(), command);
-            while (telnetClient.isAvailable()) {
-                read(telnetClient.getInputStream(), buffer);
-                if (buffer.toString().endsWith(pattern)) {
-                    break;
-                }
-            }
+            info = read(telnetClient, pattern);
             destroy(telnetClient);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        String info = buffer.toString().replace(pattern, StringUtils.EMPTY);
-        logger.info("Telnet info is : \n {}", info);
         return info;
     }
 
