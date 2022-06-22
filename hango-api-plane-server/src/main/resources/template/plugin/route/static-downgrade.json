@@ -291,7 +291,7 @@
         {
           "key": "body",
           "type": "input",
-          "alias": "请求响应内容"
+          "alias": "响应内容"
         }
       ]
     }

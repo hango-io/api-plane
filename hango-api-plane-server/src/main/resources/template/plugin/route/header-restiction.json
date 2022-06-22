@@ -59,7 +59,7 @@
         {
           "key": "value",
           "type": "multi_input",
-          "alias": "匹配值",
+          "alias": "取值",
           "invisible": {
             "present_match": ["this", "match_type"],
             "present_match_invert": ["this", "match_type"]

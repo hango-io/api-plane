@@ -117,7 +117,7 @@
               "layouts": [
                 {
                   "key": "headerKey",
-                  "alias": "请求头",
+                  "alias": "请求头名称",
                   "type": "input"
                 },
                 {
@@ -316,25 +316,29 @@
       "layouts": [
         {
           "key": "excludeHost",
-          "alias": "host不参与key计算",
+          "alias": "忽略host",
           "type": "switch",
+          "help": "Host不参与key计算",
           "default": false
         },
         {
           "key": "ignoreCase",
-          "alias": "key忽略大小写",
+          "alias": "忽略大小写",
           "type": "switch",
+          "help": "Key忽略大小写",
           "default": true
         },
         {
           "key": "queryString",
-          "alias": "查询参数参与key计算",
+          "alias": "自定义查询参数",
+          "help": "自定义查询参数参与key计算",
           "type": "multi_input"
         },
         {
           "key": "headers",
-          "alias": "请求头参与key计算",
-          "type": "multi_input"
+          "alias": "自定义请求头",
+          "type": "multi_input",
+          "help": "自定义请求头参与key计算"
         }
       ]
     }

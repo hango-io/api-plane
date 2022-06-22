@@ -10,7 +10,7 @@
       "layouts": [
         {
           "key": "headerKey",
-          "alias": "响应头名称",
+          "alias": "Header名称",
           "type": "input",
           "help": "在响应中header字段的key值",
           "rules": [
@@ -20,7 +20,7 @@
         },
         {
           "key": "operation",
-          "alias": "请求动作",
+          "alias": "修改类型",
           "type": "select",
           "default": "create",
           "options": [
@@ -45,7 +45,7 @@
         },
         {
           "key": "headerValue",
-          "alias": "响应头取值",
+          "alias": "取值",
           "type": "input",
           "help": "在响应中header字段的value值",
           "invisible": {

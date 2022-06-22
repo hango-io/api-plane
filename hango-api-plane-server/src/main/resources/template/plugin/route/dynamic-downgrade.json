@@ -120,7 +120,7 @@
               "layouts": [
                 {
                   "key": "headerKey",
-                  "alias": "请求头",
+                  "alias": "请求头名称",
                   "type": "input"
                 },
                 {
@@ -277,7 +277,7 @@
               "layouts": [
                 {
                   "key": "responseSwitch",
-                  "alias": "是否使用响应进行匹配",
+                  "alias": "响应匹配",
                   "type": "switch",
                   "default": false
                 },
@@ -322,7 +322,7 @@
                   "layouts": [
                     {
                       "key": "headerKey",
-                      "alias": "响应头",
+                      "alias": "响应头名称",
                       "type": "input"
                     },
                     {
@@ -389,19 +389,22 @@
           "layouts": [
             {
               "key": "ignoreCase",
-              "alias": "key忽略大小写",
+              "alias": "忽略大小写",
               "type": "switch",
+              "help": "Key忽略大小写",
               "default": true
             },
             {
               "key": "query_params",
-              "alias": "query参数",
+              "alias": "自定义查询参数",
+              "help": "自定义查询参数参与key计算",
               "type": "multi_input"
             },
             {
               "key": "headers",
-              "alias": "请求头",
-              "type": "multi_input"
+              "alias": "自定义请求头",
+              "type": "multi_input",
+              "help": "自定义请求头参与key计算"
             }
           ]
         }

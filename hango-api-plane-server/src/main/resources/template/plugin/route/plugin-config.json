@@ -26,7 +26,7 @@
       "updateTime": "1572537600000",
       "pluginScope": "routeRule",
       "pluginPriority": "1500",
-      "instructionForUse": "请求频率限流,例如限制5个请求/s",
+      "instructionForUse": "请求频率限流，例如限制5个请求/s",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理"
     },
@@ -94,7 +94,7 @@
       "name": "header-restriction",
       "displayName": "Header黑白名单",
       "schema": "plugin/route/header-restiction.json",
-      "description": "Header黑白名单插件",
+      "description": "根据header过滤请求",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
       "createTime": "1572537600000",
@@ -116,7 +116,7 @@
       "updateTime": "1636943353954",
       "pluginScope": "routeRule,global",
       "pluginPriority": "2500",
-      "instructionForUse": "修改请求响应头部信息",
+      "instructionForUse": "修改请求响应头信息",
       "categoryKey": "dataFormat",
       "categoryName": "数据转换"
     },

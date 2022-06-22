@@ -15,7 +15,7 @@
   "layouts": [
     {
       "key": "allowOrigin",
-      "alias": "Allow-Origin",
+      "alias": "Allow Origin",
       "help": "指示请求的资源能共享给哪些域",
       "placeholder":"请输入正则表达式",
       "type": "multi_input",
@@ -27,7 +27,7 @@
     },
     {
       "key": "allowMethods",
-      "alias": "Allow-Methods",
+      "alias": "Allow Methods",
       "help": "指定对预请求的响应中，哪些HTTP方法允许访问请求的资源",
       "type": "multi_select",
       "default": [],
@@ -47,7 +47,7 @@
     },
     {
       "key": "allowHeaders",
-      "alias": "Allow-Headers",
+      "alias": "Allow Headers",
       "help": "用在对预请求的响应中，指示实际的请求中可以使用哪些HTTP头",
       "type": "multi_input",
       "rules": [
@@ -57,7 +57,7 @@
     },
     {
       "key": "exposeHeaders",
-      "alias": "Expose-Headers",
+      "alias": "Expose Headers",
       "help": "指示哪些 HTTP 头的名称能在响应中列出",
       "type": "multi_input",
       "rules": [
@@ -67,7 +67,7 @@
     },
     {
       "key": "allowCredentials",
-      "alias": "Allow-Credentials",
+      "alias": "Allow Credentials",
       "help": "表示请求中是否允许发送Credentials，包含cookies, authorization headers 或 TLS client certificates",
       "type": "radio",
       "options": [
@@ -77,7 +77,7 @@
     },
     {
       "key": "maxAge",
-      "alias": "Max-Age",
+      "alias": "Max Age",
       "help": "指示预请求的结果能被缓存多久，单位秒",
       "type": "number",
       "rules": [
