@@ -16,13 +16,13 @@ spec:
 <#if t_gateway_plugin_hosts?has_content>
   host:
 <#list t_gateway_plugin_hosts as h>
-  - ${h}
+  - "${h?j_string}"
 </#list>
 </#if>
 <#if t_gateway_plugin_routes?has_content>
   route:
 <#list t_gateway_plugin_routes as r>
-  - ${r}
+  - "${r?j_string}"
 </#list>
 </#if>
 <#if t_gateway_plugin_users?has_content>
