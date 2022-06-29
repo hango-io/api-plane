@@ -164,8 +164,17 @@
           "type": "layouts",
           "layouts": [
             {
+              "key": "responseSwitch",
+              "alias": "响应匹配",
+              "type": "switch",
+              "default": false
+            },
+            {
               "key": "code",
               "alias": "响应状态码",
+              "visible": {
+                "this.responseSwitch": true
+              },
               "type": "layouts",
               "layouts": [
                 {
