@@ -241,7 +241,6 @@ public class GatewayServiceImpl implements GatewayService {
             itemDTO.setEnable(p.getEnable());
             itemDTO.setName(p.getName());
             itemDTO.setInline(p.getInline());
-            itemDTO.setSettings(p.getInline().getSettings());
             itemDTO.setListenerType(p.getListenerTypeValue());
             itemDTO.setPort(p.getPort());
             dto.getPlugins().add(itemDTO);

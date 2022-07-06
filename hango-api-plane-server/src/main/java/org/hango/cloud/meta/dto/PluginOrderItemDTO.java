@@ -1,5 +1,6 @@
 package org.hango.cloud.meta.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
@@ -18,10 +19,8 @@ public class PluginOrderItemDTO {
     @NotNull(message = "port")
     private Integer port;
 
-    @JsonProperty("settings")
-    private Object settings;
-
     @JsonProperty("inline")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Object inline;
 
     @JsonProperty("listenerType")
@@ -41,14 +40,6 @@ public class PluginOrderItemDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Object getSettings() {
-        return settings;
-    }
-
-    public void setSettings(Object settings) {
-        this.settings = settings;
     }
 
     public Integer getPort() {
