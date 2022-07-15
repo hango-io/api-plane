@@ -4,6 +4,6 @@ headers:
     <#assign addMap = t_virtual_service_request_headers.add/>
     add:
     <#list addMap as k,v>
-      ${k}: "${v}"
+      ${k}: "${v?j_string}"
     </#list>
 </#if>
