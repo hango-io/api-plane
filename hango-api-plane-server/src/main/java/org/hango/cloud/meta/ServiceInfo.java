@@ -1,5 +1,7 @@
 package org.hango.cloud.meta;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.util.StringUtils;
 
 import static org.hango.cloud.core.template.TemplateConst.*;
@@ -121,16 +123,7 @@ public class ServiceInfo {
 
     @Override
     public String toString() {
-        return "ServiceInfo{" +
-                "apiName='" + apiName + '\'' +
-                ", serviceName='" + serviceName + '\'' +
-                ", gateway='" + gateway + '\'' +
-                ", method='" + method + '\'' +
-                ", uri='" + uri + '\'' +
-                ", subset='" + subset + '\'' +
-                ", hosts='" + hosts + '\'' +
-                ", priority='" + priority + '\'' +
-                '}';
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     private String wrap(String raw) {

@@ -137,6 +137,10 @@ public class AggregateExtensionProcessor extends AbstractSchemaProcessor impleme
                 holder = getProcessor("RouteProcessor").process(plugin, serviceInfo);
                 coverToExtensionPlugin(holder, "envoy.filters.http.fault", true, "ROOT");
                 break;
+            case "waf":
+                holder = getProcessor("WafProcessor").process(plugin, serviceInfo);
+                coverToExtensionPlugin(holder, "proxy.filters.http.waf");
+                break;
             case "trace":
             default:
                 holder = getProcessor("RestyProcessor").process(plugin, serviceInfo);

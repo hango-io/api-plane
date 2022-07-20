@@ -209,6 +209,36 @@
       "instructionForUse": "请求频率限流，限制网关实例节点的服务请求流量",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理"
+    },
+    {
+      "name": "soap-json-transcoder",
+      "displayName": "soap转换",
+      "schema": "plugin/route/soap-json-transcoder.json",
+      "description": "",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "",
+      "pluginPriority": "3400",
+      "instructionForUse": "soap转rest",
+      "categoryKey": "trafficPolicy",
+      "categoryName": "流量管理"
+    },
+    {
+      "name": "waf",
+      "displayName": "waf",
+      "schema": "plugin/route/waf.json",
+      "description": "",
+      "processor": "AggregateGatewayPluginProcessor",
+      "author": "system",
+      "createTime": "1572537600000",
+      "updateTime": "1572537600000",
+      "pluginScope": "routeRule,routeRule",
+      "pluginPriority": "1000",
+      "instructionForUse": "waf插件",
+      "categoryKey": "waf",
+      "categoryName": "安全"
     }
   ]
 }
