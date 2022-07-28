@@ -26,7 +26,9 @@ public interface Const {
     String SERVICE_TYPE_K8S = "Kubernetes";
     String SERVICE_TYPE_DUBBO = "Zookeeper";
     String SERVICE_TYPE_EUREKA = "Eureka";
-    List<String> VAILD_REGISTRY = Arrays.asList(SERVICE_TYPE_CONSUL, SERVICE_TYPE_K8S, SERVICE_TYPE_DUBBO, SERVICE_TYPE_EUREKA);
+
+    String SERVICE_TYPE_NACOS = "Nacos";
+    List<String> VAILD_REGISTRY = Arrays.asList(SERVICE_TYPE_CONSUL, SERVICE_TYPE_K8S, SERVICE_TYPE_DUBBO, SERVICE_TYPE_EUREKA,SERVICE_TYPE_NACOS);
 
     String PROTOCOL_DUBBO = "dubbo";
     String DUBBO_APPLICATION = "application";
