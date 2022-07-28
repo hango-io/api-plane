@@ -299,6 +299,7 @@ public class GatewayServiceImpl implements GatewayService {
         if (type.equalsIgnoreCase(Const.SERVICE_TYPE_K8S) && name.endsWith(".svc.cluster.local")) return true;
         if (type.equalsIgnoreCase(Const.SERVICE_TYPE_DUBBO) && name.endsWith(".dubbo")) return true;
         if (type.equalsIgnoreCase(Const.SERVICE_TYPE_EUREKA) && name.endsWith(".eureka")) return true;
+        if (type.equalsIgnoreCase(Const.SERVICE_TYPE_NACOS) && name.endsWith(".nacos")) return true;
         return false;
     }
 
@@ -306,6 +307,7 @@ public class GatewayServiceImpl implements GatewayService {
     public void updateIstioGateway(PortalIstioGatewayDTO portalGateway) {
         configManager.updateConfig(Trans.portalGW2GW(portalGateway));
     }
+
 
     @Override
     public PortalIstioGatewayDTO getIstioGateway(String clusterName) {
