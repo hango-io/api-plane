@@ -136,21 +136,6 @@
       "categoryName": "安全"
     },
     {
-      "name": "local-cache",
-      "displayName": "本地缓存",
-      "schema": "plugin/route/local-cache.json",
-      "description": "",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "routeRule,global",
-      "pluginPriority": "3000",
-      "instructionForUse": "本地缓存后端应答，以缓存响应请求",
-      "categoryKey": "trafficPolicy",
-      "categoryName": "流量管理"
-    },
-    {
       "name": "redis-cache",
       "displayName": "Redis缓存",
       "schema": "plugin/route/redis-cache.json",
@@ -177,21 +162,6 @@
       "pluginScope": "routeRule,global",
       "pluginPriority": "2200",
       "instructionForUse": "当后端响应结果符合条件时，对返回结果进行静态响应降级",
-      "categoryKey": "trafficPolicy",
-      "categoryName": "流量管理"
-    },
-    {
-      "name": "dynamic-downgrade",
-      "displayName": "动态降级",
-      "schema": "plugin/route/dynamic-downgrade.json",
-      "description": "",
-      "processor": "AggregateGatewayPluginProcessor",
-      "author": "system",
-      "createTime": "1572537600000",
-      "updateTime": "1572537600000",
-      "pluginScope": "routeRule,global",
-      "pluginPriority": "2100",
-      "instructionForUse": "当后端响应结果符合条件时，对返回结果进行缓存降级或接口降级",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理"
     },
