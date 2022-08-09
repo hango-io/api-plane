@@ -1,5 +1,5 @@
 # Api Plane
-[![Hango gateway CI](https://github.com/hango-io/api-plane/actions/workflows/maven.yml/badge.svg)](https://github.com/hango-io/api-plane/actions/workflows/maven.yml)
+[![Hango gateway CI](https://github.com/hango-io/api-plane/actions/workflows/java_ci.yml/badge.svg)](https://github.com/hango-io/api-plane/actions/workflows/java_ci.yml)
 
 ## About
 Generate Slime CRD and Istio CRD for gateway，include VirtualService, DestinationRule, EnvoyPlugin, etc...
