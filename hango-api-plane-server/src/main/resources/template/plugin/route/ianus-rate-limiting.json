@@ -27,6 +27,9 @@
           "help": "满足前置条件的请求才会进入频控流程",
           "alias": "请求头匹配",
           "type": "array",
+          "rules": [
+            "ArrayMaxLength(1)"
+          ],
           "layouts": [
             {
               "key": "operator",
