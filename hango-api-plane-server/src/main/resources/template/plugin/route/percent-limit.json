@@ -1,6 +1,6 @@
 {
   "inject": {
-    "kind": "ianus-percent-limit"
+    "kind": "percent-limit"
   },
   "layouts": [
     {

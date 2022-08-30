@@ -1,9 +1,9 @@
 {
   "item": [
     {
-      "name": "ianus-percent-limit",
+      "name": "percent-limit",
       "displayName": "百分比限流",
-      "schema": "plugin/route/ianus-percent-limit.json",
+      "schema": "plugin/route/percent-limit.json",
       "description": "百分比限流插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
@@ -16,9 +16,9 @@
       "categoryName": "流量管理"
     },
     {
-      "name": "ianus-rate-limiting",
+      "name": "rate-limiting",
       "displayName": "限流",
-      "schema": "plugin/route/ianus-rate-limiting.json",
+      "schema": "plugin/route/rate-limiting.json",
       "description": "频控插件",
       "processor": "AggregateGatewayPluginProcessor",
       "author": "system",
