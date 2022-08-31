@@ -2,6 +2,7 @@ package org.hango.cloud.meta;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 public class API extends CommonModel {
@@ -170,9 +171,59 @@ public class API extends CommonModel {
     private Service mirrorTraffic;
 
     /**
-     * 路由指标，为空不开启
+     * meta数据传输集
+     * Map<mata_type,meta_data>
+     * mata_type meta类型
+     *
+     * @see CRDMetaEnum
+     * mata_type: 路由meta数据类型
+     * meta_data: 路由meta数据值，使用JSON传输
+     * eg.
+     * {
+     * "DubboMeta": {
+     * "ObjectType": "route",
+     * "ObjectId": 259,
+     * "Params": [
+     * {
+     * "Key": "str",
+     * "Value": "java.lang.String",
+     * "GenericInfo": ".dataA:com.demo.B,.dataAA:com.demo.B,.dataA.dataB:com.demo.C,.dataAA.dataB:com.demo.C",
+     * "Required": false,
+     * "DefaultValue": "sdfsdfs",
+     * "_formTableKey": 1660649073793,
+     * "index": 0
+     * },
+     * {
+     * "Key": "wer",
+     * "Value": "java.lang.Integer",
+     * "GenericInfo": null,
+     * "Required": true,
+     * "DefaultValue": null,
+     * "_formTableKey": 1660649073793
+     * }
+     * ],
+     * "Method": "echoStrAndInt",
+     * "CustomParamMapping": true,
+     * "ParamSource": "body",
+     * "Attachment": [
+     * {
+     * "ClientParamName": "xcvxcv",
+     * "Description": "cxvxcv",
+     * "ParamPosition": "Header",
+     * "ServerParamName": "cvcv",
+     * "distinctName": "Headerxcvxcv",
+     * "_formTableKey": 1660648830195
+     * }
+     * ],
+     * "MethodWorks": true
+     * },
+     * "StatsMeta": [
+     * "/test",
+     * "/test1"
+     * ]
+     * }
      */
-    private List<String> statsMeta;
+    private Map<String, String> metaMap;
 
     public Service getMirrorTraffic() {
         return mirrorTraffic;
@@ -471,11 +522,11 @@ public class API extends CommonModel {
         this.virtualClusterHeaders = virtualClusterHeaders;
     }
 
-    public List<String> getStatsMeta() {
-        return statsMeta;
+    public Map<String, String> getMetaMap() {
+        return metaMap;
     }
 
-    public void setStatsMeta(final List<String> statsMeta) {
-        this.statsMeta = statsMeta;
+    public void setMetaMap(Map<String, String> metaMap) {
+        this.metaMap = metaMap;
     }
 }

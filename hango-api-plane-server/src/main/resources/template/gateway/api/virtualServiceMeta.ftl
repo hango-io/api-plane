@@ -29,3 +29,43 @@ metadata:
       - ${stats_meta}
   </#list>
 </#if>
+
+<#if t_virtual_service_dubbo_meta_service?has_content >
+  proxy.upstreams.http.dubbo:
+    context:
+      service: ${t_virtual_service_dubbo_meta_service}
+      version: ${t_virtual_service_dubbo_meta_version}
+      method: ${t_virtual_service_dubbo_meta_method}
+      group: ${t_virtual_service_dubbo_meta_group}
+      source: ${(t_virtual_service_dubbo_meta_source=="body")?string('HTTP_BODY','HTTP_QUERY')}
+      <#if t_virtual_service_dubbo_meta_params?has_content>
+      parameters:
+      <#list t_virtual_service_dubbo_meta_params as p>
+      - type: ${p.value}
+        name: ${p.key}
+        required: ${p.required?c}
+        <#if p.defaultValue ??>
+        default: '${p.defaultJsonValue}'
+        </#if>
+        <#if p.genericMap?has_content>
+        generic:
+        <#list p.genericMap as k,v>
+        - path: ${k}
+          type: ${v}
+        </#list>
+        </#if>
+      </#list>
+      </#if>
+      <#if t_virtual_service_dubbo_meta_attachments?has_content>
+      attachments:
+      <#list t_virtual_service_dubbo_meta_attachments as a>
+      - name: ${a.serverParamName}
+      <#if a.paramPosition == "Header">
+        header: ${a.clientParamName}
+      <#elseif a.paramPosition == "Cookie">
+        cookie: ${a.clientParamName}
+      </#if>
+      </#list>
+      </#if>
+      ignore_null_map_pair: false
+</#if>

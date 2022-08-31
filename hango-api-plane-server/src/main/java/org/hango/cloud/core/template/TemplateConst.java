@@ -74,6 +74,7 @@ public interface TemplateConst {
     String VIRTUAL_SERVICE_MIRROR_SUBSET = "t_virtual_service_mirror_subset";
     String VIRTUAL_SERVICE_MIRROR_YAML = "t_virtual_service_mirror_yaml";
     String VIRTUAL_SERVICE_STATS = "t_virtual_service_stats";
+    String VIRTUAL_SERVICE_DUBBO = "t_virtual_service_dubbo";
 
     /**
      * ServiceInfo
@@ -264,5 +265,16 @@ public interface TemplateConst {
     /**
      *
      */
+
+    /**
+     * Dubbo Meta 相关信息
+     */
+    String VIRTUAL_SERVICE_DUBBO_META_SERVICE ="t_virtual_service_dubbo_meta_service";
+    String VIRTUAL_SERVICE_DUBBO_META_VERSION ="t_virtual_service_dubbo_meta_version";
+    String VIRTUAL_SERVICE_DUBBO_META_METHOD ="t_virtual_service_dubbo_meta_method";
+    String VIRTUAL_SERVICE_DUBBO_META_GROUP ="t_virtual_service_dubbo_meta_group";
+    String VIRTUAL_SERVICE_DUBBO_META_SOURCE ="t_virtual_service_dubbo_meta_source";
+    String VIRTUAL_SERVICE_DUBBO_META_PARAMS ="t_virtual_service_dubbo_meta_params";
+    String VIRTUAL_SERVICE_DUBBO_META_ATTACHMENTS ="t_virtual_service_dubbo_meta_attachments";
 
 }

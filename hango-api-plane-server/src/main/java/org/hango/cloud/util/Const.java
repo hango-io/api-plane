@@ -1,7 +1,10 @@
 package org.hango.cloud.util;
 
+import com.google.common.collect.Maps;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public interface Const {
 

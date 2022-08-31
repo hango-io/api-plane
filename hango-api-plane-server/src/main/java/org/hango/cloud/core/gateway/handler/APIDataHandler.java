@@ -1,23 +1,33 @@
 package org.hango.cloud.core.gateway.handler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import me.snowdrop.istio.api.networking.v1alpha3.VirtualService;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.hango.cloud.core.gateway.handler.meta.UriMatchMeta;
 import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.meta.API;
+import org.hango.cloud.meta.CRDMetaEnum;
 import org.hango.cloud.meta.PairMatch;
 import org.hango.cloud.meta.UriMatch;
+import org.hango.cloud.meta.dto.DubboInfoDto;
 import org.hango.cloud.util.CommonUtil;
 import org.hango.cloud.util.PriorityUtil;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.hango.cloud.core.template.TemplateConst.*;
 
 public abstract class APIDataHandler implements DataHandler<API> {
+
+    private static final Logger logger = LoggerFactory.getLogger(APIDataHandler.class);
 
     @Override
     public List<TemplateParams> handle(API api) {
@@ -75,10 +85,81 @@ public abstract class APIDataHandler implements DataHandler<API> {
                 .put(VIRTUAL_SERVICE_REQUEST_HEADERS, api.getRequestOperation())
                 .put(VIRTUAL_SERVICE_VIRTUAL_CLUSTER_NAME, api.getVirtualClusterName())
                 .put(VIRTUAL_SERVICE_VIRTUAL_CLUSTER_HEADERS, getVirtualClusterHeaders(api))
-                .put(VIRTUAL_SERVICE_STATS, api.getStatsMeta());
+                ;
 
+        return handleApiMetaMap(api,tp);
+    }
+
+    /**
+     * 处理VirtualService metadata 数据
+     *
+     * @param api 上层输入的API数据
+     * @param tp  模板参数
+     * @return TemplateParams
+     */
+    private TemplateParams handleApiMetaMap(API api, TemplateParams tp) {
+        if (CollectionUtils.isEmpty(api.getMetaMap())) {
+            return tp;
+        }
+        Iterator<Map.Entry<String, String>> iterator = api.getMetaMap().entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> next = iterator.next();
+            handleApiMeta(next.getKey(), next.getValue(), tp);
+        }
         return tp;
     }
+
+    /**
+     * 处理VirtualService metadata 数据
+     *
+     * @param name  上层输入的metadata类型
+     * @param value 上层输入的metadata数据
+     * @param tp    模板参数
+     * @return TemplateParams
+     */
+    private TemplateParams handleApiMeta(String name, String value, TemplateParams tp) {
+        CRDMetaEnum metaEnum = CRDMetaEnum.get(VirtualService.class, name);
+        if (metaEnum == null) {
+            logger.warn("find null meta enum ，please check input content , target class is {} , name is {} ", VirtualService.class, name);
+            return tp;
+        }
+        try {
+            switch (metaEnum) {
+                case VIRTUAL_SERVICE_STATS_META:
+                    tp.put(metaEnum.getTemplateName(), metaEnum.getTransData(value));
+                    break;
+                case VIRTUAL_SERVICE_DUBBO_META:
+                    handleDubboMeta(tp, metaEnum.getTransData(value));
+                    break;
+                default:
+                    break;
+            }
+        } catch (JsonProcessingException e) {
+            logger.warn("meta content parse failed , errMsg is {}", e.getMessage());
+        }
+        return tp;
+    }
+
+    /**
+     * 将Dubbo meta 元数据信息加入模板参数中
+     *
+     * @param tp   模板参数
+     * @param info dubbo meta信息
+     * @return TemplateParams
+     */
+    private TemplateParams handleDubboMeta(TemplateParams tp, DubboInfoDto info) {
+        tp.put(VIRTUAL_SERVICE_DUBBO_META_SERVICE, info.getInterfaceName())
+                .put(VIRTUAL_SERVICE_DUBBO_META_VERSION, info.getVersion())
+                .put(VIRTUAL_SERVICE_DUBBO_META_METHOD, info.getMethod())
+                .put(VIRTUAL_SERVICE_DUBBO_META_GROUP, info.getGroup())
+                .put(VIRTUAL_SERVICE_DUBBO_META_SOURCE, info.getParamSource())
+                .put(VIRTUAL_SERVICE_DUBBO_META_PARAMS, info.getParams())
+                .put(VIRTUAL_SERVICE_DUBBO_META_ATTACHMENTS, info.getDubboAttachment())
+        ;
+        return tp;
+    }
+
+
 
     protected String getOrDefault(String value, String defaultValue) {
         return StringUtils.isEmpty(value) ? defaultValue : value;
