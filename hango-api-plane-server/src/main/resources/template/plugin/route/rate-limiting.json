@@ -1,0 +1,136 @@
+{
+  "inject": {
+    "kind": "rate-limiting",
+    "name": "rate-limiting"
+  },
+  "layouts": [
+    {
+      "key": "limit_by_list",
+      "alias": "限制规则列表",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "headers",
+          "alias": "请求头匹配",
+          "type": "array",
+          "layouts": [
+            {
+              "key": "header_key",
+              "alias": "请求头名称",
+              "type": "input",
+              "rules": [
+                "Required",
+                "MaxLength(200)"
+              ]
+            },
+            {
+              "key": "pre_condition",
+              "help": "满足前置条件的请求才会进入频控流程",
+              "alias": "请求头值匹配",
+              "type": "array",
+              "rules": [
+                "ArrayMaxLength(1)"
+              ],
+              "layouts": [
+                {
+                  "key": "match_type",
+                  "alias": "匹配方式",
+                  "type": "select",
+                  "options": [
+                    {
+                      "value": "=",
+                      "text": "等于"
+                    },
+                    {
+                      "value": "!=",
+                      "text": "不等于"
+                    },
+                    {
+                      "value": "≈",
+                      "text": "正则匹配"
+                    },
+                    {
+                      "value": "!≈",
+                      "text": "正则不匹配"
+                    },
+                    {
+                      "value": "present",
+                      "text": "存在"
+                    }
+                  ],
+                  "rules": [
+                    "Required"
+                  ]
+                },
+                {
+                  "key": "invert",
+                  "alias": "invert",
+                  "type": "radio",
+                  "default": "false",
+                  "help": "invert 为false,对于满足该匹配条件的请求进行限流; invert 为 true,对于不满足该匹配条件的请求进行限流",
+                  "visible": {
+                    "this.match_type": "present"
+                  },
+                  "options": [
+                    "true",
+                    "false"
+                  ],
+                  "rules": [
+                    "Required"
+                  ]
+                },
+                {
+                  "key": "value",
+                  "alias": "取值",
+                  "type": "string",
+                  "invisible": {
+                    "this.match_type": "present"
+                  },
+                  "rules": [
+                    "Required"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "day",
+          "alias": "每天请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "hour",
+          "alias": "每小时请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "minute",
+          "alias": "每分钟请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "second",
+          "alias": "每秒请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(0)"
+          ]
+        }
+      ]
+    }
+  ]
+}

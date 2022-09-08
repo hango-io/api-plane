@@ -103,22 +103,22 @@ public class RateLimitProcessor extends AbstractSchemaProcessor implements Schem
                     case "≈":
                         expression = escapeBackSlash(rightValue);
                         vs.addJsonElement("$.actions[0].header_value_match.headers",
-                                String.format(header_safe_regex_invert, matchHeader, expression, invertMatch));
+                                String.format(safe_regex_with_invert_string_match, matchHeader, expression, invertMatch));
                         break;
                     case "!≈":
                         expression = escapeBackSlash(rightValue);
                         vs.addJsonElement("$.actions[0].header_value_match.headers",
-                                String.format(header_safe_regex_invert, matchHeader, expression, !invertMatch));
+                                String.format(safe_regex_with_invert_string_match, matchHeader, expression, !invertMatch));
                         break;
                     case "=":
                         expression = rightValue;
                         vs.addJsonElement("$.actions[0].header_value_match.headers",
-                                String.format(header_exact_invert, matchHeader, expression, invertMatch));
+                                String.format(exact_invert_string_match, matchHeader, expression, invertMatch));
                         break;
                     case "!=":
                         expression = rightValue;
                         vs.addJsonElement("$.actions[0].header_value_match.headers",
-                                String.format(header_exact_invert, matchHeader, expression, !invertMatch));
+                                String.format(exact_invert_string_match, matchHeader, expression, !invertMatch));
                         break;
                     case "present":
                         vs.addJsonElement("$.actions[0].header_value_match.headers",

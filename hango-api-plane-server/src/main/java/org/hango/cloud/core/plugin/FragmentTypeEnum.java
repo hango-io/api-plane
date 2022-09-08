@@ -7,5 +7,7 @@ public enum FragmentTypeEnum {
 
     VS_MATCH,
 
+    SMART_LIMIT,
+
     OTHERS,
 }

@@ -1,5 +1,8 @@
 package org.hango.cloud.core.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FragmentHolder {
     private FragmentWrapper virtualServiceFragment;
 
@@ -9,7 +12,7 @@ public class FragmentHolder {
     private FragmentWrapper gatewayPluginsFragment;
 
     // ratelimit插件的smartLimiter
-    private FragmentWrapper smartLimiterFragment;
+    private List<FragmentWrapper> smartLimiterFragment = new ArrayList<>();
 
 
     public FragmentWrapper getVirtualServiceFragment() {
@@ -36,11 +39,11 @@ public class FragmentHolder {
         this.gatewayPluginsFragment = gatewayPluginsFragment;
     }
 
-    public FragmentWrapper getSmartLimiterFragment() {
+    public List<FragmentWrapper> getSmartLimiterFragment() {
         return smartLimiterFragment;
     }
 
-    public void setSmartLimiterFragment(FragmentWrapper smartLimiterFragment) {
+    public void setSmartLimiterFragment(List<FragmentWrapper> smartLimiterFragment) {
         this.smartLimiterFragment = smartLimiterFragment;
     }
 }

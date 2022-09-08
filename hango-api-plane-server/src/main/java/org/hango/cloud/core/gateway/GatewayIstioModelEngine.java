@@ -1,8 +1,10 @@
 package org.hango.cloud.core.gateway;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.IstioModelEngine;
 import org.hango.cloud.core.editor.EditorContext;
+import org.hango.cloud.core.gateway.handler.*;
 import org.hango.cloud.core.gateway.processor.DefaultModelProcessor;
 import org.hango.cloud.core.gateway.processor.NeverReturnNullModelProcessor;
 import org.hango.cloud.core.gateway.processor.RenderTwiceModelProcessor;
@@ -21,16 +23,8 @@ import org.hango.cloud.core.template.TemplateTranslator;
 import org.hango.cloud.service.PluginService;
 import org.hango.cloud.util.Const;
 import org.hango.cloud.util.constant.LogConstant;
-import org.hango.cloud.util.constant.PluginConstant;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import istio.networking.v1alpha3.VirtualServiceOuterClass;
-import org.hango.cloud.core.gateway.handler.GatewayPluginConfigMapDataHandler;
-import org.hango.cloud.core.gateway.handler.GatewayPluginDataHandler;
-import org.hango.cloud.core.gateway.handler.PluginOrderDataHandler;
-import org.hango.cloud.core.gateway.handler.PortalDestinationRuleServiceDataHandler;
-import org.hango.cloud.core.gateway.handler.PortalGatewayDataHandler;
-import org.hango.cloud.core.gateway.handler.PortalServiceEntryServiceDataHandler;
-import org.hango.cloud.core.gateway.handler.PortalVirtualServiceAPIDataHandler;
 import org.hango.cloud.meta.API;
 import org.hango.cloud.meta.GatewayPlugin;
 import org.hango.cloud.meta.IstioGateway;
@@ -46,11 +40,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class GatewayIstioModelEngine extends IstioModelEngine {
@@ -102,6 +94,9 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
     private static final String pluginManager = "gateway/pluginManager";
     private static final String serviceServiceEntry = "gateway/service/serviceEntry";
     private static final String gatewayPlugin = "gateway/gatewayPlugin";
+    private static final String smartLimiter = "gateway/smartLimiter";
+    private static final String envoyFilter = "gateway/envoyFilter";
+    private static final String grpcConfigPatch = "gateway/grpcConfigPatch";
     private static final String VIRTUAL_SERVICE = "VirtualService";
 
     public List<K8sResourcePack> translate(API api) {
@@ -170,34 +165,39 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
      */
     private List<K8sResourcePack> generateAndAddK8sResource(RawResourceContainer rawResourceContainer,
                                                             GatewayPlugin plugin) {
-        // 插件渲染GatewayPlugin资源
-        logger.info("{}{} start render raw GatewayPlugin CRDs",
+        // 插件渲染网关插件CR资源
+        logger.info("{}{} start render raw Plugin CRs",
                 LogConstant.TRANSLATE_LOG_NOTE, LogConstant.PLUGIN_LOG_NOTE);
-        List<K8sResourcePack> resourcePacks = configureGatewayPlugin(rawResourceContainer, plugin);
 
-        // 路由级别的限流插件要渲染ConfigMap资源
-        if (isNeedToRenderConfigMap(plugin)) {
-            logger.info("{}{} start render raw ConfigMap CRDs",
-                    LogConstant.TRANSLATE_LOG_NOTE, LogConstant.PLUGIN_LOG_NOTE);
-            configureRateLimitConfigMap(rawResourceContainer, resourcePacks, plugin);
-        }
+        // 渲染EnvoyPlugin和SmartPlugin资源
+        List<K8sResourcePack> envoyPlugins = configureEnvoyPlugin(rawResourceContainer, plugin);
+        List<K8sResourcePack> smartLimiters = configureSmartLimiter(rawResourceContainer, plugin);
 
-        return resourcePacks;
+        // 聚合插件CR资源
+        return Stream.of(envoyPlugins, smartLimiters)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     /**
-     * 插件流程只有两个场景需要渲染ConfigMap资源
-     * 1.路由级别的限流插件
-     * 2.没有传插件类型，即批量操作的场景，此时可能会有限流插件，因此需要无差别渲染（匹配路由启用、禁用、下线场景）
-     * 注：限流插件只有路由级别，因此路由插件是先决条件
+     * 插件转换为SmartLimiter CRD资源
      *
-     * @param plugin 网关插件实例（内含插件配置）
-     * @return 是否需要渲染ConfigMap资源
+     * @param rawResourceContainer 存放资源的容器对象
+     * @param plugin               插件对象
+     * @return k8s资源集合
      */
-    private boolean isNeedToRenderConfigMap(GatewayPlugin plugin) {
-        return plugin.isRoutePlugin() &&
-                (StringUtils.isEmpty(plugin.getPluginType()) || plugin.getPluginType().equals(
-                    PluginConstant.RATE_LIMIT_PLUGIN_TYPE));
+    private List<K8sResourcePack> configureSmartLimiter(RawResourceContainer rawResourceContainer,
+                                                        GatewayPlugin plugin) {
+        List<K8sResourcePack> resourcePacks = new ArrayList<>();
+        // 将插件配置转换为SmartLimiters
+        List<String> rawSmartLimiters = defaultModelProcessor.process(smartLimiter, plugin,
+                new SmartLimiterDataHandler(rawResourceContainer.getSmartLimiters(), globalConfig.getResourceNamespace()));
+
+        resourcePacks.addAll(generateK8sPack(rawSmartLimiters));
+        logger.info("{}{} raw SmartLimiter CRs added ok",
+                LogConstant.TRANSLATE_LOG_NOTE, LogConstant.PLUGIN_LOG_NOTE);
+
+        return resourcePacks;
     }
 
     /**
@@ -207,8 +207,8 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
      * @param plugin               插件对象
      * @return k8s资源集合
      */
-    private List<K8sResourcePack> configureGatewayPlugin(RawResourceContainer rawResourceContainer,
-                                                         GatewayPlugin plugin) {
+    private List<K8sResourcePack> configureEnvoyPlugin(RawResourceContainer rawResourceContainer,
+                                                       GatewayPlugin plugin) {
         List<K8sResourcePack> resourcePacks = new ArrayList<>();
         // 插件配置放在GatewayPlugin的CRD上
         List<String> rawGatewayPlugins = renderTwiceModelProcessor.process(gatewayPlugin, plugin,
@@ -227,28 +227,6 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
                 LogConstant.TRANSLATE_LOG_NOTE, LogConstant.PLUGIN_LOG_NOTE);
 
         return resourcePacks;
-    }
-
-    /**
-     * 限流插件转换为ConfigMap CRD资源
-     *
-     * @param rawResourceContainer 存放资源的容器对象
-     * @param resourcePacks        k8s资源集合
-     * @param plugin               插件对象
-     */
-    private void configureRateLimitConfigMap(RawResourceContainer rawResourceContainer,
-                                             List<K8sResourcePack> resourcePacks,
-                                             GatewayPlugin plugin) {
-        // 限流插件需要额外的configMap配置
-        List<String> rawConfigMaps = neverNullRenderTwiceProcessor.process(rateLimitConfigMap, plugin,
-                new GatewayPluginConfigMapDataHandler(
-                        rawResourceContainer.getSharedConfigs(), rateLimitConfigMapName, rateLimitNamespace));
-        // 加入限流插件configMap配置
-        resourcePacks.addAll(generateK8sPack(rawConfigMaps,
-                new GatewayRateLimitConfigMapMerger(),
-                new GatewayRateLimitConfigMapSubtracter(plugin.getGateway(), plugin.getRouteId()),
-                new EmptyResourceGenerator(new EmptyConfigMap(rateLimitConfigMapName, rateLimitNamespace))));
-        logger.info("{}{} raw ConfigMap CRDs added ok", LogConstant.TRANSLATE_LOG_NOTE, LogConstant.PLUGIN_LOG_NOTE);
     }
 
     public List<K8sResourcePack> translate(Service service) {

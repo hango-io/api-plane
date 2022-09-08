@@ -5,12 +5,6 @@
   },
   "layouts": [
     {
-      "key": "IsSafe",
-      "alias": "线程独立",
-      "type": "switch",
-      "help": "默认使用锁机制保证安全；如果打开该字段，代表线程独立。限流规则上限为rate*proxy worker"
-    },
-    {
       "key": "limit_by_list",
       "alias": "限制规则列表",
       "type": "array",
@@ -23,7 +17,11 @@
             {
               "key": "headerKey",
               "alias": "请求头名称",
-              "type": "input"
+              "type": "input",
+              "rules": [
+                "Required",
+                "MaxLength(200)"
+              ]
             },
             {
               "key": "match_type",
@@ -39,16 +37,18 @@
                   "text": "正则表达式",
                   "value": "safe_regex_match"
                 }
+              ],
+              "rules": [
+                "Required"
               ]
             },
             {
               "key": "value",
               "type": "input",
               "alias": "取值",
-              "invisible": {
-                "present_match": ["this", "match_type"],
-                "present_match_invert": ["this", "match_type"]
-              }
+              "rules": [
+                "Required"
+              ]
             }
           ]
         },
