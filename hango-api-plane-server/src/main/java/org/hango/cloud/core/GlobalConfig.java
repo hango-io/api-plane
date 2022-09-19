@@ -21,6 +21,9 @@ public class GlobalConfig {
     @Value("${telnet.connect.timeout:3000}")
     private Integer telnetConnectTimeout;
 
+    @Value("${customDefaultRespCode:500}")
+    private int customDefaultRespCode;
+
     public String getResourceNamespace() {
         return resourceNamespace;
     }
@@ -39,5 +42,9 @@ public class GlobalConfig {
 
     public Integer getTelnetConnectTimeout() {
         return telnetConnectTimeout;
+    }
+
+    public int getCustomDefaultRespCode() {
+        return customDefaultRespCode;
     }
 }

@@ -76,6 +76,9 @@ public interface TemplateConst {
     String VIRTUAL_SERVICE_STATS = "t_virtual_service_stats";
     String VIRTUAL_SERVICE_DUBBO = "t_virtual_service_dubbo";
 
+    String VIRTUAL_SERVICE_RESP_EXCEPTION_CODE ="t_virtual_service_resp_exception_code";
+
+
     /**
      * ServiceInfo
      **/

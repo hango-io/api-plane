@@ -32,6 +32,9 @@ metadata:
 
 <#if t_virtual_service_dubbo_meta_service?has_content >
   proxy.upstreams.http.dubbo:
+    <#if t_virtual_service_resp_exception_code??>
+    resp_exception_code: ${t_virtual_service_resp_exception_code}
+    </#if>
     context:
       service: ${t_virtual_service_dubbo_meta_service}
       version: ${t_virtual_service_dubbo_meta_version}

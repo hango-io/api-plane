@@ -225,6 +225,11 @@ public class API extends CommonModel {
      */
     private Map<String, String> metaMap;
 
+    private Long version;
+
+
+    private int customDefaultRespCode;
+
     public Service getMirrorTraffic() {
         return mirrorTraffic;
     }
@@ -528,5 +533,21 @@ public class API extends CommonModel {
 
     public void setMetaMap(Map<String, String> metaMap) {
         this.metaMap = metaMap;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public int getCustomDefaultRespCode() {
+        return customDefaultRespCode;
+    }
+
+    public void setCustomDefaultRespCode(int customDefaultRespCode) {
+        this.customDefaultRespCode = customDefaultRespCode;
     }
 }

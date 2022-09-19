@@ -121,6 +121,9 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
                     .map(FragmentHolder::getVirtualServiceFragment)
                     .collect(Collectors.toList());
         }
+        if (NumberUtils.INTEGER_ZERO.equals(api.getCustomDefaultRespCode())){
+            api.setCustomDefaultRespCode(globalConfig.getCustomDefaultRespCode());
+        }
         List<String> rawVirtualServices = renderTwiceModelProcessor
                 .process(apiVirtualService, api,
                         new PortalVirtualServiceAPIDataHandler(
