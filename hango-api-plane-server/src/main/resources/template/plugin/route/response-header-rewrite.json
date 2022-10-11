@@ -4,7 +4,7 @@
   },
   "layouts": [
     {
-      "key": "headerKey",
+      "key": "header",
       "alias": "修改规则",
       "type": "array",
       "layouts": [
@@ -29,7 +29,7 @@
               "value": "create"
             },
             {
-              "text": "更新（如果不存在则不操作）",
+              "text": "更新（若不存在则创建）",
               "value": "update"
             },
             {
@@ -38,9 +38,7 @@
             }
           ],
           "rules": [
-            "Required",
-            "MaxNumber(3)",
-            "MinNumber(0)"
+            "Required"
           ]
         },
         {
@@ -52,7 +50,8 @@
             "this.operation": "delete"
           },
           "rules": [
-            "Required"
+            "Required",
+            "MaxLength(200)"
           ]
         }
       ]
