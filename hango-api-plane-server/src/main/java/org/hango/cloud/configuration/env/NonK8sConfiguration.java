@@ -1,5 +1,6 @@
 package org.hango.cloud.configuration.env;
 
+import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import org.hango.cloud.configuration.ext.K8sMultiClusterProperties;
 import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.editor.EditorContext;
@@ -36,7 +37,6 @@ import org.hango.cloud.mcp.status.StatusProductorImpl;
 import org.hango.cloud.service.GatewayService;
 import org.hango.cloud.service.impl.GatewayServiceImpl;
 import io.grpc.Server;
-import io.grpc.netty.NettyServerBuilder;
 import istio.mcp.nsf.SnapshotOuterClass;
 import istio.mcp.v1alpha1.Mcp;
 import istio.mcp.v1alpha1.ResourceOuterClass;

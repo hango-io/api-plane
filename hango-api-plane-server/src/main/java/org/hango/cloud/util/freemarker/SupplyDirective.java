@@ -68,7 +68,7 @@ public class SupplyDirective implements TemplateDirectiveModel {
         gen.createOrUpdateValue("$[?]", "name", Keyword.API.replacement, Criteria.where("name").exists(false));
 
         String yaml = gen.yamlString();
-        yaml = yaml.replaceAll("(?m)^(-?\\s*)nsf-template-.*?:(?:\\s*)(<.*>)", "$1$2");
+        yaml = yaml.replaceAll("(?m)^(-?\\s*)nsf-template-.*?:(?:\\s*)\"(<.*>)\"", "$1$2");
 
         environment.getOut().write(yaml);
         writer.close();
