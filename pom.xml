@@ -16,6 +16,13 @@
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.language>java</sonar.language>
     </properties>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.14</version>
+    </parent>
+
     <modules>
         <module>hango-proto</module>
         <module>hango-api-plane-server</module>
