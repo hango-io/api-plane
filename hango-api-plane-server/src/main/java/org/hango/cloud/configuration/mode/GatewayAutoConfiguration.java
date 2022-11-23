@@ -1,7 +1,7 @@
 package org.hango.cloud.configuration.mode;
 
+import net.devh.boot.grpc.server.serverfactory.GrpcServerLifecycle;
 import org.hango.cloud.configuration.ApiPlaneAutoBaseConfiguration;
-import net.devh.springboot.autoconfigure.grpc.server.GrpcServerLifecycle;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

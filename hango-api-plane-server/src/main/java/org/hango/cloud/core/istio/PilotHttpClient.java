@@ -10,15 +10,13 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServicePort;
-import net.minidev.json.JSONObject;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.k8s.KubernetesClient;
 import org.hango.cloud.meta.Endpoint;
-import org.hango.cloud.meta.dto.PortalServiceDTO;
 import org.hango.cloud.util.Const;
 import org.hango.cloud.util.exception.ApiPlaneException;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.hango.cloud.util.exception.ExceptionConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +29,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class PilotHttpClient {
     @Value(value = "${istioName:istiod}")
     private String ISTIO_NAME;
 
-    @Value(value = "${meshRegistryName:galley}")
+    @Value(value = "${meshRegistryName:slime}")
     private String MESH_REGISTRY_NAME;
 
     private static final String GET_ENDPOINTZ_PATH = "/debug/endpointz?brief=true&servicePort=true";
@@ -87,6 +88,9 @@ public class PilotHttpClient {
 
     public static final Integer ERROR_PORT = -1;
 
+    private static final String ISTIOD_DEBUG_PORT_NAME = "http-legacy-discovery";
+    private static final String MESH_REGISTRY_DEBUG_PORT_NAME = "aux-port";
+
     @PostConstruct
     void cacheInit() {
         endpointsCache = CacheBuilder.newBuilder()
@@ -104,12 +108,12 @@ public class PilotHttpClient {
 
     private String getIstioUrl() {
         if (!StringUtils.isEmpty(istioHttpUrl)) return istioHttpUrl;
-        return getSvcUrl(ISTIO_NAME);
+        return getSvcUrl(ISTIO_NAME, ISTIOD_DEBUG_PORT_NAME);
     }
 
     private String getMeshRegistryUrl() {
         if (!StringUtils.isEmpty(meshRegistryHttpUrl)) return meshRegistryHttpUrl;
-        return getSvcUrl(MESH_REGISTRY_NAME);
+        return getSvcUrl(MESH_REGISTRY_NAME, MESH_REGISTRY_DEBUG_PORT_NAME);
     }
 
     public List<Endpoint> getDubboEndpoints(String igv){
@@ -266,7 +270,7 @@ public class PilotHttpClient {
         return entity;
     }
 
-    public String getSvcUrl(String svcName) {
+    public String getSvcUrl(String svcName, String portName) {
         List<Service> pilotServices = client.getObjectList(K8sResourceEnum.Service.name(), NAMESPACE, ImmutableMap.of("app", svcName));
         if (CollectionUtils.isEmpty(pilotServices)) throw new ApiPlaneException(ExceptionConst.PILOT_SERVICE_NON_EXIST);
         Service service = pilotServices.get(0);
@@ -274,7 +278,7 @@ public class PilotHttpClient {
         List<ServicePort> ports = service.getSpec().getPorts();
         //get port by name equal  http-legacy-discovery
         for (ServicePort port : ports) {
-            if ("http-legacy-discovery".equalsIgnoreCase(port.getName())) {
+            if (StringUtils.equalsIgnoreCase(portName, port.getName())){
                 return String.format("http://%s:%s", ip, port.getPort());
             }
         }
