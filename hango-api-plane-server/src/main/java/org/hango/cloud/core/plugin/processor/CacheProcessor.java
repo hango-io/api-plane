@@ -35,13 +35,13 @@ public class CacheProcessor extends AbstractSchemaProcessor implements SchemaPro
                 String headerValue = item.get("value");
                 if (haveNull(matchType, headerKey)) return;
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.enable_rqx.headers", String.format(safe_regex, headerKey, headerValue));
+                    builder.addJsonElement("$.enable_rqx.headers", String.format(safe_regex_string_match, headerKey, headerValue));
                 } else if ("present_match".equals(matchType)) {
                     builder.addJsonElement("$.enable_rqx.headers", String.format("{\"name\":\"%s\",\"present_match\":true}", headerKey));
                 } else if ("present_match_invert".equals(matchType)) {
                     builder.addJsonElement("$.enable_rqx.headers", String.format("{\"name\":\"%s\", \"present_match\":true, \"invert_match\":true}", headerKey));
                 } else {
-                    builder.addJsonElement("$.enable_rqx.headers", String.format(exact, headerKey, headerValue));
+                    builder.addJsonElement("$.enable_rqx.headers", String.format(exact_string_match, headerKey, headerValue));
                 }
             });
         }
@@ -50,9 +50,9 @@ public class CacheProcessor extends AbstractSchemaProcessor implements SchemaPro
             String host = source.getValue("$.condition.request.host.value", String.class);
             if (nonNull(matchType, host)) {
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.enable_rqx.headers", String.format(safe_regex, ":authority", host));
+                    builder.addJsonElement("$.enable_rqx.headers", String.format(safe_regex_string_match, ":authority", host));
                 } else {
-                    builder.addJsonElement("$.enable_rqx.headers", String.format(exact, ":authority", host));
+                    builder.addJsonElement("$.enable_rqx.headers", String.format(exact_string_match, ":authority", host));
                 }
             }
         }
@@ -60,9 +60,9 @@ public class CacheProcessor extends AbstractSchemaProcessor implements SchemaPro
             List<String> method = source.getValue("$.condition.request.method", List.class);
             if (nonNull(method)) {
                 if (method.size() == 1) {
-                    builder.addJsonElement("$.enable_rqx.headers", String.format(exact, ":method", method.get(0)));
+                    builder.addJsonElement("$.enable_rqx.headers", String.format(exact_string_match, ":method", method.get(0)));
                 } else if (method.size() > 1) {
-                    builder.addJsonElement("$.enable_rqx.headers", String.format(safe_regex, ":method", String.join("|", method)));
+                    builder.addJsonElement("$.enable_rqx.headers", String.format(safe_regex_string_match, ":method", String.join("|", method)));
                 }
             }
         }
@@ -71,9 +71,9 @@ public class CacheProcessor extends AbstractSchemaProcessor implements SchemaPro
             String path = source.getValue("$.condition.request.path.value", String.class);
             if (nonNull(matchType, path)) {
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.enable_rqx.headers", String.format(safe_regex, ":path", path));
+                    builder.addJsonElement("$.enable_rqx.headers", String.format(safe_regex_string_match, ":path", path));
                 } else {
-                    builder.addJsonElement("$.enable_rqx.headers", String.format(exact, ":path", path));
+                    builder.addJsonElement("$.enable_rqx.headers", String.format(exact_string_match, ":path", path));
                 }
             }
         }
@@ -89,20 +89,20 @@ public class CacheProcessor extends AbstractSchemaProcessor implements SchemaPro
                 String headerValue = item.get("value");
                 if (haveNull(matchType, headerKey)) return;
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.enable_rpx.headers", String.format(safe_regex, headerKey, headerValue));
+                    builder.addJsonElement("$.enable_rpx.headers", String.format(safe_regex_string_match, headerKey, headerValue));
                 } else if ("present_match".equals(matchType)) {
                     builder.addJsonElement("$.enable_rpx.headers", String.format("{\"name\":\"%s\",\"present_match\":true}", headerKey));
                 } else if ("present_match_invert".equals(matchType)) {
                     builder.addJsonElement("$.enable_rpx.headers", String.format("{\"name\":\"%s\", \"present_match\":true, \"invert_match\":true}", headerKey));
                 } else {
-                    builder.addJsonElement("$.enable_rpx.headers", String.format(exact, headerKey, headerValue));
+                    builder.addJsonElement("$.enable_rpx.headers", String.format(exact_string_match, headerKey, headerValue));
                 }
             });
         }
         if (source.contain("$.condition.response.code.value")) {
             String code = source.getValue("$.condition.response.code.value", String.class);
             if (nonNull(code)) {
-                builder.addJsonElement("$.enable_rpx.headers", String.format(safe_regex, ":status", code+"|"));
+                builder.addJsonElement("$.enable_rpx.headers", String.format(safe_regex_string_match, ":status", code+"|"));
             }
         }
 

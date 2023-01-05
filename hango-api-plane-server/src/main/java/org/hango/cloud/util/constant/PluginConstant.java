@@ -23,7 +23,11 @@ public class PluginConstant {
     public static final String DEFAULT_USER_ID = "";
 
     /**
-     * 限流插件名称
+     * 集群限流插件名
      */
-    public static final String RATE_LIMIT_PLUGIN_TYPE = "ianus-rate-limiting";
+    public static final String CLUSTER_LIMITER = "rate-limiting";
+    /**
+     * 本地限流插件名
+     */
+    public static final String LOCAL_LIMITER = "local-limiting";
 }

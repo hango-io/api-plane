@@ -36,19 +36,43 @@ public abstract class AbstractSchemaProcessor implements SchemaProcessor<Service
         }
      }
      */
-    public String safe_regex = "{\"name\":\"%s\",\"string_match\":{\"safe_regex\":{\"google_re2\":{},\"regex\":\"%s\"}}}";
+    public String safe_regex_string_match = "{\"name\":\"%s\",\"string_match\":{\"safe_regex\":{\"google_re2\":{},\"regex\":\"%s\"}}}";
 
-    public String exact = "{\"name\":\"%s\",\"string_match\":{\"exact\": \"%s\"}}";
+    public String exact_string_match = "{\"name\":\"%s\",\"string_match\":{\"exact\": \"%s\"}}";
 
-    public String header_safe_regex_invert = "{\"name\":\"%s\",\"string_match\":{\"safe_regex_match\":{\"google_re2\":{},\"regex\":\"%s\"}},\"invert_match\": %s}";
+    public String safe_regex_with_invert_string_match = "{\"name\":\"%s\",\"string_match\":{\"safe_regex_match\":{\"google_re2\":{},\"regex\":\"%s\"}},\"invert_match\": %s}";
 
-    public String header_exact_invert = "{\"name\":\"%s\",\"string_match\":{\"exact\": \"%s\"},\"invert_match\": %s}";
+    public String exact_invert_string_match = "{\"name\":\"%s\",\"string_match\":{\"exact\": \"%s\"},\"invert_match\": %s}";
 
-    public String prefix = "{\"name\":\"%s\",\"string_match\":{\"prefix\": \"%s\"}}";
+    public String prefix_string_match = "{\"name\":\"%s\",\"string_match\":{\"prefix\": \"%s\"}}";
 
-    public String present_match = "{\"name\":\"%s\", \"present_match\":true, \"invert_match\":true}";
+    public String present_match = "{\"name\":\"%s\", \"present_match\":true}";
 
     public String present_invert_match = "{\"name\":\"%s\", \"present_match\":true, \"invert_match\":true}";
+
+    public String exact_match = "{\"name\":\"%s\", \"exact_match\":\"%s\"}";
+
+    public String exact_invert_match = "{\"name\":\"%s\", \"exact_match\":\"%s\", \"invert_match\":true}";
+
+    public String regex_match = "{\"name\":\"%s\", \"regex_match\":\"%s\"}";
+
+    public String regex_invert_match = "{\"name\":\"%s\", \"regex_match\":\"%s\", \"invert_match\":true}";
+
+    public String present_match_separate = "{\"name\":\"%s\", \"present_match_separate\":true}";
+
+    public String presentMatch = "{\"name\":\"%s\", \"presentMatch\":true}";
+
+    public String presentInvertMatch = "{\"name\":\"%s\", \"presentMatch\":true, \"invertMatch\":true}";
+
+    public String exactMatch = "{\"name\":\"%s\", \"exactMatch\":\"%s\"}";
+
+    public String exactInvertMatch = "{\"name\":\"%s\", \"exactMatch\":\"%s\", \"invertMatch\":true}";
+
+    public String regexMatch = "{\"name\":\"%s\", \"regexMatch\":\"%s\"}";
+
+    public String regexInvertMatch = "{\"name\":\"%s\", \"regexMatch\":\"%s\", \"invertMatch\":true}";
+
+    public String presentMatchSeparate = "{\"name\":\"%s\", \"presentMatchSeparate\":true}";
 
 
     protected SchemaProcessor getProcessor(String name) {

@@ -14,7 +14,7 @@ public class RateLimitProcessorTest extends BasePluginTest {
     public void process() {
 
         String plugin1 = "{\n" +
-                "  \"kind\": \"ianus-rate-limiting\",\n" +
+                "  \"kind\": \"rate-limiting\",\n" +
                 "  \"limit_by_list\": [\n" +
                 "  {\n" +
                 "    \"identifier_extractor\": \"Header[plugin]\",\n" +
@@ -31,7 +31,7 @@ public class RateLimitProcessorTest extends BasePluginTest {
                 "}";
 
         String plugin2 = "{\n" +
-                "  \"kind\": \"ianus-rate-limiting\",\n" +
+                "  \"kind\": \"rate-limiting\",\n" +
                 "  \"limit_by_list\": [\n" +
                 "  {\n" +
                 "    \"identifier_extractor\": \"Header[plugin]\",\n" +
@@ -47,7 +47,7 @@ public class RateLimitProcessorTest extends BasePluginTest {
                 "}";
 
         String plugin3 = "{\n" +
-                "  \"kind\": \"ianus-rate-limiting\",\n" +
+                "  \"kind\": \"rate-limiting\",\n" +
                 "  \"limit_by_list\": [\n" +
                 "  {\n" +
                 "    \"pre_condition\": [\n" +
@@ -67,7 +67,7 @@ public class RateLimitProcessorTest extends BasePluginTest {
                 "  ]\n" +
                 "}";
         String plugin4 = "{\n" +
-                "  \"kind\": \"ianus-rate-limiting\",\n" +
+                "  \"kind\": \"rate-limiting\",\n" +
                 "  \"limit_by_list\": [\n" +
                 "  {\n" +
                 "    \"pre_condition\": [\n" +
@@ -89,7 +89,7 @@ public class RateLimitProcessorTest extends BasePluginTest {
                 "}";
 
         String plugin5 = "{\n" +
-                "  \"kind\": \"ianus-rate-limiting\",\n" +
+                "  \"kind\": \"rate-limiting\",\n" +
                 "  \"limit_by_list\": [\n" +
                 "    {\n" +
                 "      \"hour\": 1\n" +
@@ -98,7 +98,7 @@ public class RateLimitProcessorTest extends BasePluginTest {
                 "}";
 
         String plugin6 = "{\n" +
-                "  \"kind\": \"ianus-rate-limiting\",\n" +
+                "  \"kind\": \"rate-limiting\",\n" +
                 "  \"limit_by_list\": [\n" +
                 "  {\n" +
                 "    \"identifier_extractor\": \"Header[plugin]\",\n" +
@@ -109,7 +109,7 @@ public class RateLimitProcessorTest extends BasePluginTest {
                 "}";
 
         String plugin7 = "{\n" +
-                "  \"kind\": \"ianus-rate-limiting\",\n" +
+                "  \"kind\": \"rate-limiting\",\n" +
                 "  \"limit_by_list\": [\n" +
                 "  {\n" +
                 "    \"identifier_extractor\": \"Header[plugin]\",\n" +
@@ -143,7 +143,7 @@ public class RateLimitProcessorTest extends BasePluginTest {
     @Test
     public void hash() {
         String plugin1 = "{\n" +
-                "  \"kind\": \"ianus-rate-limiting\",\n" +
+                "  \"kind\": \"rate-limiting\",\n" +
                 "  \"limit_by_list\": [\n" +
                 "    {\n" +
                 "      \"pre_condition\": [\n" +

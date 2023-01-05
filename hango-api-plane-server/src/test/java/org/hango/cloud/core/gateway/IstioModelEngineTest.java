@@ -34,10 +34,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.util.CollectionUtils;
 import slime.microservice.plugin.v1alpha1.EnvoyPluginOuterClass;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -108,6 +105,37 @@ public class IstioModelEngineTest extends BaseTest {
         s.setProtocol(protocol);
         s.setServiceTag(serviceTag);
         return s;
+    }
+
+    @Test
+    public void plugin() {
+        // 集群限流插件case
+        String clusterPlugin = "{\"kind\":\"rate-limiting\",\"name\":\"rate-limiting\",\"limit_by_list\":[{\"headers\":[{\"header_key\":\"header1\",\"pre_condition\":[{\"match_type\":\"=\",\"value\":\"value1\"}]}],\"hour\":111,\"day\":1111,\"second\":1},{\"headers\":[{\"header_key\":\"header2\",\"pre_condition\":[]}],\"hour\":222,\"day\":2222,\"minute\":22,\"second\":2}]}";
+        // 本地限流插件case
+        String localPlugin = "{\"kind\":\"local-limiting\",\"name\":\"local-limiting\",\"limit_by_list\":[{\"headers\":[{\"match_type\":\"=\",\"headerKey\":\"header1\",\"value\":\"value1\"}],\"hour\":111,\"day\":1111,\"minute\":11,\"second\":1}]}";
+        // 请求中断插件case
+        String routerPlugin = "{\"kind\":\"ianus-router\",\"rule\":[{\"name\":\"return\",\"action\":{\"return_target\":{\"code\":\"456\",\"body\":\"javax.servlet\"}}}],\"version\":\"1.0\"}";
+
+        List<String> plugins = new ArrayList<>();
+        plugins.add(clusterPlugin);
+        plugins.add(localPlugin);
+        plugins.add(routerPlugin);
+
+        List<String> hosts = new ArrayList<>();
+        hosts.add("127.0.0.1");
+
+        GatewayPlugin gatewayPlugin = new GatewayPlugin();
+        gatewayPlugin.setPlugins(plugins);
+        gatewayPlugin.setRouteId("88");
+        gatewayPlugin.setGateway("test-gateway");
+        gatewayPlugin.setHosts(hosts);
+        gatewayPlugin.setCode(null);
+        gatewayPlugin.setPluginType("");
+        gatewayPlugin.setPort(80);
+
+        List<K8sResourcePack> translate = gatewayIstioModelEngine.translate(gatewayPlugin);
+        // 一个EnvoyPlugin；一个SmartLimiter
+        assertEquals(translate.size(), 2);
     }
 
     @Test
@@ -414,7 +442,8 @@ public class IstioModelEngineTest extends BaseTest {
         gp1.setPort(80);
         List<K8sResourcePack> resources = gatewayIstioModelEngine.translate(gp1);
 
-        assertEquals(1, resources.size());
+        // SmartLimiter和EnvoyPlugin
+        assertEquals(2, resources.size());
 
         K8sTypes.EnvoyPlugin gatewayPlugin =
                 (K8sTypes.EnvoyPlugin) resources.get(0).getResource();

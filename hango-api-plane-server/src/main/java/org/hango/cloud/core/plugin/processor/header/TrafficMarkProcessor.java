@@ -136,13 +136,13 @@ public class TrafficMarkProcessor extends AbstractSchemaProcessor {
                 }
                 switch (matchType) {
                     case "safe_regex_match":
-                        headerOperation.addJsonElement("$.matcher.headers", String.format(safe_regex, headerKey, headerValue));
+                        headerOperation.addJsonElement("$.matcher.headers", String.format(safe_regex_string_match, headerKey, headerValue));
                         break;
                     case "exact_match":
-                        headerOperation.addJsonElement("$.matcher.headers", String.format(exact, headerKey, headerValue));
+                        headerOperation.addJsonElement("$.matcher.headers", String.format(exact_string_match, headerKey, headerValue));
                         break;
                     default:
-                        headerOperation.addJsonElement("$.matcher.headers", String.format(prefix, headerKey, headerValue));
+                        headerOperation.addJsonElement("$.matcher.headers", String.format(prefix_string_match, headerKey, headerValue));
                         break;
                 }
             });
@@ -158,13 +158,13 @@ public class TrafficMarkProcessor extends AbstractSchemaProcessor {
                 }
                 switch (matchType) {
                     case "safe_regex_match":
-                        headerOperation.addJsonElement("$.matcher.parameters", String.format(safe_regex, parameterKey, headerValue));
+                        headerOperation.addJsonElement("$.matcher.parameters", String.format(safe_regex_string_match, parameterKey, headerValue));
                         break;
                     case "exact_match":
-                        headerOperation.addJsonElement("$.matcher.parameters", String.format(exact, parameterKey, headerValue));
+                        headerOperation.addJsonElement("$.matcher.parameters", String.format(exact_string_match, parameterKey, headerValue));
                         break;
                     default:
-                        headerOperation.addJsonElement("$.matcher.parameters", String.format(prefix, parameterKey, headerValue));
+                        headerOperation.addJsonElement("$.matcher.parameters", String.format(prefix_string_match, parameterKey, headerValue));
                         break;
                 }
 

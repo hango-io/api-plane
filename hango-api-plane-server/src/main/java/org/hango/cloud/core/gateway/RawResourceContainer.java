@@ -12,6 +12,7 @@ public class RawResourceContainer {
     List<FragmentWrapper> virtualServices = new ArrayList<>();
     List<FragmentWrapper> sharedConfigs = new ArrayList<>();
     List<FragmentWrapper> gatewayPlugins = new ArrayList<>();
+    List<FragmentWrapper> smartLimiters = new ArrayList<>();
 
     public void add(FragmentHolder holder) {
 
@@ -25,6 +26,10 @@ public class RawResourceContainer {
         }
         if (holder.getGatewayPluginsFragment() != null) {
             gatewayPlugins.add(holder.getGatewayPluginsFragment());
+        }
+
+        if (holder.getSmartLimiterFragment() != null) {
+            smartLimiters.addAll(holder.getSmartLimiterFragment());
         }
     }
 
@@ -43,5 +48,9 @@ public class RawResourceContainer {
 
     public List<FragmentWrapper> getGatewayPlugins() {
         return gatewayPlugins;
+    }
+
+    public List<FragmentWrapper> getSmartLimiters() {
+        return smartLimiters;
     }
 }

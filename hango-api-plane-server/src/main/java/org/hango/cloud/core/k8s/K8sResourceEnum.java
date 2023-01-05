@@ -160,9 +160,9 @@ public enum K8sResourceEnum {
             ImmutableMap.of(K8sVersion.V1_11_0, "/api/v1/namespaces/%s/configmaps")),
     /** DestinationRule resource */
     SmartLimiter(
-            com.netease.slime.api.microservice.v1alpha1.SmartLimiter.class,
-            SmartLimiterList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/microservice.netease.com/v1alpha1/namespaces/%s/smartlimiters")),
+            K8sTypes.SmartLimiter.class,
+            K8sTypes.SmartLimiterList.class,
+            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/microservice.slime.io/v1alpha2/namespaces/%s/smartlimiters")),
     /** DestinationRule resource */
     Sidecar(
             me.snowdrop.istio.api.networking.v1alpha3.Sidecar.class,

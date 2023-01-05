@@ -58,9 +58,9 @@ public class LocalLimitProcessor extends AbstractSchemaProcessor implements Sche
                 String headerValue = item.get("value");
                 if (haveNull(matchType, headerKey, headerValue)) return;
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.matcher.headers", String.format(safe_regex, headerKey, headerValue));
+                    builder.addJsonElement("$.matcher.headers", String.format(safe_regex_string_match, headerKey, headerValue));
                 } else {
-                    builder.addJsonElement("$.matcher.headers", String.format(exact, headerKey, headerValue));
+                    builder.addJsonElement("$.matcher.headers", String.format(exact_string_match, headerKey, headerValue));
                 }
             });
         }
