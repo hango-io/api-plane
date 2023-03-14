@@ -1,17 +1,23 @@
 package org.hango.cloud.service.impl;
 
 import freemarker.template.Configuration;
-import io.fabric8.kubernetes.api.model.HasMetadata;
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.*;
+import me.snowdrop.istio.api.networking.v1alpha3.Port;
+import me.snowdrop.istio.api.networking.v1alpha3.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.hango.cloud.core.GlobalConfig;
+import org.hango.cloud.core.envoy.EnvoyHttpClient;
 import org.hango.cloud.core.gateway.service.GatewayConfigManager;
 import org.hango.cloud.core.gateway.service.ResourceManager;
 import org.hango.cloud.core.istio.PilotHttpClient;
+import org.hango.cloud.core.k8s.K8sClient;
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.k8s.K8sTypes;
+import org.hango.cloud.meta.Secret;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.*;
 import org.hango.cloud.service.GatewayService;
@@ -26,7 +32,9 @@ import org.hango.cloud.util.exception.ApiPlaneException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
+import me.snowdrop.istio.api.networking.v1alpha3.Gateway;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -46,6 +54,23 @@ public class GatewayServiceImpl implements GatewayService {
     private static final Pattern DUBBO_INFO_PATTRERN = Pattern.compile("^(\\S*) (\\S*)\\((\\S*)\\)$");
     private static final Pattern DUBBO_TELNET_RETURN_PATTERN = Pattern.compile("[\\s\\S]*?\\(as (provider|consumer)\\):");
     public static final String GW_CLUSTER = "gw_cluster";
+    public static final String DEFAULT_PORT_PROTOCOL = "TCP";
+    public static final String DEFAULT_PORT_NAME = "http80";
+    public static final Integer DEFAULT_PORT = 80;
+
+    public static final String HOST_NETWORK = "HostNetwork";
+
+    public static final String CLUSTER_IP = "ClusterIP";
+
+    public static final String NODE_PORT = "NodePort";
+
+    public static final String LOAD_BALANCER = "LoadBalancer";
+
+
+
+
+    @Value(value = "${gatewayName:gateway-proxy}")
+    private String gatewayName;
 
     private ResourceManager resourceManager;
 
@@ -58,6 +83,12 @@ public class GatewayServiceImpl implements GatewayService {
 
     @Autowired
     private PilotHttpClient pilotHttpClient;
+
+    @Autowired
+    private EnvoyHttpClient envoyHttpClient;
+
+    @Autowired
+    private K8sClient k8sClient;
 
     @Autowired
     private PluginService pluginService;
@@ -352,6 +383,7 @@ public class GatewayServiceImpl implements GatewayService {
     public void publishPluginOrder(PluginOrderDTO pluginOrderDto) {
         PluginOrderDTO pluginOrder = pluginService.getPluginOrderTemplate(pluginOrderDto.getGatewayKind());
         pluginOrder.setName(pluginOrderDto.getName());
+        pluginOrder.getPlugins().forEach(o -> o.setPort(pluginOrderDto.getPort()));
         configManager.updateConfig(Trans.pluginOrderDTO2PluginOrder(pluginOrder));
     }
 
@@ -364,12 +396,18 @@ public class GatewayServiceImpl implements GatewayService {
 
     @Override
     public void updateIstioGateway(PortalIstioGatewayDTO portalGateway) {
-        configManager.updateConfig(Trans.portalGW2GW(portalGateway));
+        IstioGateway istioGateway = Trans.portalGW2GW(portalGateway);
+        configManager.updateConfig(istioGateway);
+        //联动创建envoy service端口
+        createEnvoyServicePort(istioGateway);
     }
 
     @Override
     public void deleteIstioGateway(PortalIstioGatewayDTO portalGateway) {
-        configManager.deleteConfig(Trans.portalGW2GW(portalGateway));
+        IstioGateway istioGateway = Trans.portalGW2GW(portalGateway);
+        //联动删除envoy service端口
+        deleteEnvoyServicePort(istioGateway);
+        configManager.deleteConfig(istioGateway);
     }
 
 
@@ -537,5 +575,110 @@ public class GatewayServiceImpl implements GatewayService {
         pluginOrderDto.getPlugins().stream()
                 .filter(plugin -> updatePluginMap.containsKey(plugin.getName()))
                 .forEach(plugin -> plugin.setEnable(updatePluginMap.get(plugin.getName()).get(0).getEnable()));
+    }
+
+    private void createEnvoyServicePort(IstioGateway istioGateway){
+        List<Service> envoyServiceList = envoyHttpClient.getEnvoyServiceList(istioGateway.getGwCluster());
+        if (CollectionUtils.isEmpty(envoyServiceList)){
+            return;
+        }
+
+        List<IstioGatewayServer> servers = istioGateway.getServers();
+        for (Service envoyService : envoyServiceList) {
+            boolean needCreate = Boolean.FALSE;
+            List<ServicePort> servicePortList = envoyService.getSpec().getPorts();
+            List<Integer> ports = servicePortList.stream().map(ServicePort::getPort).collect(Collectors.toList());
+            for (IstioGatewayServer server : servers) {
+                if (ports.contains(server.getNumber())){
+                    //当前端口已存在，不添加
+                    continue;
+                }
+                ServicePort servicePort = new ServicePort();
+                String protocol = Const.PROTOCOL_UDP.equalsIgnoreCase(server.getProtocol()) ? Const.PROTOCOL_UDP : Const.PROTOCOL_TCP;
+                servicePort.setProtocol(protocol);
+                servicePort.setPort(server.getNumber());
+                servicePort.setName(server.getProtocol().toLowerCase() + server.getNumber());
+                servicePortList.add(servicePort);
+                needCreate = Boolean.TRUE;
+            }
+            if (needCreate){
+                configManager.updateK8sService(envoyService);
+            }
+
+        }
+    }
+
+    private void deleteEnvoyServicePort(IstioGateway istioGateway){
+        List<Service> envoyServiceList = envoyHttpClient.getEnvoyServiceList(istioGateway.getGwCluster());
+        if (CollectionUtils.isEmpty(envoyServiceList)){
+            return;
+        }
+        List<Integer> deletePort = getDeletePort(istioGateway.getName());
+        for (Service service : envoyServiceList) {
+            List<ServicePort> servicePorts = service.getSpec().getPorts().stream().filter(o -> !deletePort.contains(o.getPort())).collect(Collectors.toList());
+            service.getSpec().setPorts(servicePorts);
+            configManager.updateK8sService(service);
+        }
+    }
+
+    private List<Integer> getDeletePort(String name){
+        HasMetadata hasMetadata = configManager.getConfig(K8sResourceEnum.Gateway.name(), name);
+        if (hasMetadata == null){
+            return Collections.emptyList();
+        }
+        Gateway gateway = (Gateway)hasMetadata;
+        List<Server> servers = gateway.getSpec().getServers();
+        if (CollectionUtils.isEmpty(servers)){
+            return Collections.emptyList();
+        }
+        //80端口envoy用于健康检查，默认不删除80端口
+        return servers.stream().map(Server::getPort).map(Port::getNumber).distinct().filter(o -> o != 80).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<EnvoyServiceDTO> getEnvoyAddress(String gwClusterName) {
+        Pod envoyPod = envoyHttpClient.getEnvoyPod(gwClusterName);
+        if (Boolean.TRUE.equals(envoyPod.getSpec().getHostNetwork())){
+            EnvoyServiceDTO serviceDTO = new EnvoyServiceDTO();
+            serviceDTO.setGwClusterName(gwClusterName);
+            serviceDTO.setServiceType(HOST_NETWORK);
+            serviceDTO.setIps(envoyHttpClient.getEnvoySchedulableNodeAddress(gwClusterName));
+            return Collections.singletonList(serviceDTO);
+        }
+        List<EnvoyServiceDTO> envoyServiceDTOS = new ArrayList<>();
+        List<Service> services = envoyHttpClient.getEnvoyServiceList(gwClusterName);
+        for (Service service : services) {
+            EnvoyServiceDTO serviceDTO = new EnvoyServiceDTO();
+            serviceDTO.setGwClusterName(gwClusterName);
+            serviceDTO.setServiceType(service.getSpec().getType());
+            List<EnvoyServicePortDTO> ports = service.getSpec().getPorts().stream().map(this::getPorts).collect(Collectors.toList());
+            serviceDTO.setPorts(ports);
+            serviceDTO.setIps(getIps(serviceDTO.getServiceType(), service.getSpec(), gwClusterName));
+            envoyServiceDTOS.add(serviceDTO);
+        }
+        return envoyServiceDTOS;
+    }
+
+    private EnvoyServicePortDTO getPorts(ServicePort port){
+        EnvoyServicePortDTO envoyServicePortDTO = new EnvoyServicePortDTO();
+        envoyServicePortDTO.setName(port.getName());
+        envoyServicePortDTO.setProtocol(port.getProtocol());
+        envoyServicePortDTO.setPort(port.getPort());
+        envoyServicePortDTO.setNodePort(port.getNodePort());
+        return envoyServicePortDTO;
+    }
+
+    private List<String> getIps(String type, ServiceSpec spec, String gwClusterName){
+        switch (type){
+            case NODE_PORT:
+                return envoyHttpClient.getEnvoySchedulableNodeAddress(gwClusterName);
+            case CLUSTER_IP:
+                return Collections.singletonList(spec.getClusterIP());
+            case LOAD_BALANCER:
+                return spec.getExternalIPs();
+            default:
+                return new ArrayList<>();
+        }
     }
 }

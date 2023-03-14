@@ -69,4 +69,15 @@ public interface GatewayService {
     void updateIstioGateway(PortalIstioGatewayDTO portalGateway);
 
     void deleteIstioGateway(PortalIstioGatewayDTO portalGateway);
+
+    /**
+     * 获取envoy proxy service ep 信息
+     * 返回格式为[ip1:port1,ip2:port2,..]
+     * clusterIp:   空列表
+     * nodeport:    ip为envoy所在节点的ip，port为nodeport
+     * loadbalance: ip为loadbalance的外部地址，port为监听端口
+     * hostnetwork: ip为网关pod所在节点的ip地址，port为监听端口。
+     */
+    List<EnvoyServiceDTO> getEnvoyAddress(String gwClusterName);
+
 }

@@ -95,4 +95,9 @@ public interface GatewayConfigManager extends ConfigManager {
 
     List<String> generateEnvoyConfigObjectPatch(IpSourceEnvoyFilterDTO ipSourceEnvoyFilterDTO);
 
+
+    /**
+     * 更新k8s服务
+     */
+    void updateK8sService(io.fabric8.kubernetes.api.model.Service service);
 }

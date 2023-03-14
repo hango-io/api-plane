@@ -25,10 +25,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport implements
@@ -160,6 +157,7 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
         update(resources);
     }
 
+
     @Override
     public void updateConfig(EnvoyFilterOrder envoyFilterOrder) {
         List<K8sResourcePack> resources = modelEngine.translate(envoyFilterOrder);
@@ -186,6 +184,12 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
     public void updateConfig(Secret secret) {
         List<K8sResourcePack> resources = modelEngine.translate(secret);
         update(resources);
+    }
+
+    @Override
+    public void updateK8sService(io.fabric8.kubernetes.api.model.Service service) {
+        K8sResourcePack resource = new K8sResourcePack(service);
+        update(Collections.singletonList(resource));
     }
 
     private void delete(List<K8sResourcePack> resources, Subtracter<HasMetadata> fun) {

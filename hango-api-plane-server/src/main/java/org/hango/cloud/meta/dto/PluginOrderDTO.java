@@ -1,7 +1,6 @@
 package org.hango.cloud.meta.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,12 @@ public class PluginOrderDTO {
      */
     @JsonProperty(value = "GatewayKind")
     private String gatewayKind;
+
+    /**
+     * plm对应端口
+     */
+    @JsonProperty(value = "Port")
+    private Integer port;
 
     @JsonProperty(value = "GatewayLabels")
     private Map<String, String> gatewayLabels;
@@ -52,6 +57,14 @@ public class PluginOrderDTO {
 
     public String getGatewayKind() {
         return gatewayKind;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     public void setGatewayKind(String gatewayKind) {

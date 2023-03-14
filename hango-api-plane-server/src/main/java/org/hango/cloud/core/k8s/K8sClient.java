@@ -1,8 +1,6 @@
 package org.hango.cloud.core.k8s;
 
-import io.fabric8.kubernetes.api.model.Doneable;
-import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.KubernetesResourceList;
+import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.api.model.apiextensions.v1beta1.CustomResourceDefinition;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
@@ -64,7 +62,7 @@ public class K8sClient {
     }
 
 
-    private CustomResourceDefinition getCustomResourceDefinition(String name){
+    private CustomResourceDefinition getCustomResourceDefinition(String name) {
         try {
             return client.customResourceDefinitions().withName(name).get();
         } catch (Exception e) {
@@ -72,4 +70,20 @@ public class K8sClient {
             return null;
         }
     }
+
+    public List<Service> getServices(String namespaces, Map<String, String> labels){
+        return client.services().inNamespace(namespaces).withLabels(labels).list().getItems();
+    }
+
+    public List<Pod> getPods(String namespaces, Map<String, String> labels){
+        return client.pods().inNamespace(namespaces).withLabels(labels).list().getItems();
+    }
+
+
+
+
+    public List<Node> getNode(){
+        return client.nodes().list().getItems();
+    }
+
 }

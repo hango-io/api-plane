@@ -58,18 +58,6 @@ public class KubernetesClient extends DefaultK8sHttpClient {
         return getObjectList(url);
     }
 
-    /**
-     * @param kind      资源类型
-     * @param namespace 命名空间
-     * @param name      资源名
-     * @param labels    标签
-     * @param <T>       返回资源类型
-     * @return 资源对象
-     */
-    public <T> T getObject(String kind, String namespace, String name, Map<String, String> labels) {
-        String url = getUrlWithLabels(kind, namespace, name, labels);
-        return getObject(url);
-    }
 
     /**
      * @param kind      资源类型

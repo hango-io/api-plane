@@ -18,11 +18,6 @@ import java.util.stream.Collectors;
 
 public class Trans {
 
-    public static final String HTTP = "HTTP";
-    public static final String HTTPS = "HTTPS";
-    public static final int DEFAULT_PORT = 80;
-
-
     public static API portalAPI2API(PortalAPIDTO portalAPI) {
 
         API api = new API();
@@ -96,7 +91,7 @@ public class Trans {
             istioGatewayServer.setNumber(server.getNumber());
             istioGatewayServer.setHosts(server.getHosts());
             PortalIstioGatewayTLSDTO portalIstioGatewayTLSDTO = server.getPortalIstioGatewayTLSDTO();
-            if (HTTPS.equals(server.getProtocol()) && portalIstioGatewayTLSDTO != null){
+            if (Const.PROTOCOL_HTTPS.equals(server.getProtocol()) && portalIstioGatewayTLSDTO != null){
                 IstioGatewayTLS istioGatewayTLS = new IstioGatewayTLS();
                 istioGatewayTLS.setMode(portalIstioGatewayTLSDTO.getMode());
                 istioGatewayTLS.setCredentialName(portalIstioGatewayTLSDTO.getCredentialName());
