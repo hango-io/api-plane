@@ -1,0 +1,149 @@
+[
+  {
+    "gatewayKind": "NetworkProxy",
+    "name": "通用网关",
+    "plugins": [
+      {"schema": "ianus-percent-limit","plugin": "envoy.filters.http.fault","display": false},
+      {"schema": "local-limiting","plugin": "envoy.filters.http.local_ratelimit","display": true},
+      {"schema": "rate-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "cluster-group-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "ianus-router","plugin": "envoy.filters.http.fault","display": false},
+      {"schema": "ip-restriction","plugin": "proxy.filters.http.iprestriction","display": true},
+      {"schema": "ua-restriction","plugin": "proxy.filters.http.ua_restriction","display": true},
+      {"schema": "referer-restriction","plugin": "proxy.filters.http.referer_restriction","display": true},
+      {"schema": "header-restriction","plugin": "proxy.filters.http.header_restriction","display": true},
+      {"schema": "cors","plugin": "envoy.filters.http.cors","display": true},
+      {"schema": "jsonp","plugin": "proxy.filters.http.jsonpfilter","display": true},
+      {"schema": "rewrite","plugin": "proxy.filters.http.path_rewrite","display": true},
+      {"schema": "transformer","plugin": "proxy.filters.http.transformation","display": true},
+      {"schema": "response-header-rewrite","plugin": "proxy.filters.http.header_rewrite","display": true},
+      {"schema": "local-cache","plugin": "proxy.filters.http.local_cache","display": true},
+      {"schema": "redis-cache","plugin": "proxy.filters.http.redis_cache","display": true},
+      {"schema": "static-downgrade","plugin": "proxy.filters.http.staticdowngrade","display": true},
+      {"schema": "dynamic-downgrade","plugin": "proxy.filters.http.dynamicdowngrade","display": true},
+      {"schema": "circuit-breaker","plugin": "proxy.filters.http.circuitbreaker","display": true},
+      {"schema": "jwt-auth","plugin": "envoy.filters.http.jwt_authn","display": true},
+      {"schema": "oauth2-auth","plugin": "proxy.filters.http.super_authz","display": true},
+      {"schema": "sign-auth","plugin": "proxy.filters.http.super_authz","display": true},
+      {"schema": "basic-rbac","plugin": "envoy.filters.http.rbac","display": true},
+      {"schema": "waf","plugin": "proxy.filters.http.waf","display": true},
+      {"schema": "resty","plugin": "proxy.filters.http.rider","display": true},
+      {"schema": "traffic-mark","plugin": "proxy.filters.http.traffic_mark","display": true},
+      {"schema": "parameters-validate","plugin": "proxy.filters.http.parameter_validate","display": true},
+
+      {"schema": "","plugin": "proxy.filters.http.metadatahub","display": false},
+      {"schema": "","plugin": "proxy.filters.http.detailed_stats","display": false},
+      {"schema": "","plugin": "proxy.filters.http.soapjsontranscoder","display": false}
+    ]
+  },
+  {
+    "gatewayKind": "ApiGateway",
+    "name": "API网关",
+    "plugins": [
+      {"schema": "ianus-percent-limit","plugin": "envoy.filters.http.fault","display": false},
+      {"schema": "local-limiting","plugin": "envoy.filters.http.local_ratelimit","display": true},
+      {"schema": "rate-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "cluster-group-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "ianus-router","plugin": "envoy.filters.http.fault","display": false},
+      {"schema": "ip-restriction","plugin": "proxy.filters.http.iprestriction","display": true},
+      {"schema": "ua-restriction","plugin": "proxy.filters.http.ua_restriction","display": true},
+      {"schema": "referer-restriction","plugin": "proxy.filters.http.referer_restriction","display": true},
+      {"schema": "header-restriction","plugin": "proxy.filters.http.header_restriction","display": true},
+      {"schema": "cors","plugin": "envoy.filters.http.cors","display": true},
+      {"schema": "jsonp","plugin": "proxy.filters.http.jsonpfilter","display": true},
+      {"schema": "rewrite","plugin": "proxy.filters.http.path_rewrite","display": true},
+      {"schema": "transformer","plugin": "proxy.filters.http.transformation","display": true},
+      {"schema": "response-header-rewrite","plugin": "proxy.filters.http.header_rewrite","display": true},
+      {"schema": "local-cache","plugin": "proxy.filters.http.local_cache","display": true},
+      {"schema": "redis-cache","plugin": "proxy.filters.http.redis_cache","display": true},
+      {"schema": "static-downgrade","plugin": "proxy.filters.http.staticdowngrade","display": true},
+      {"schema": "dynamic-downgrade","plugin": "proxy.filters.http.dynamicdowngrade","display": true},
+      {"schema": "circuit-breaker","plugin": "proxy.filters.http.circuitbreaker","display": true},
+      {"schema": "jwt-auth","plugin": "envoy.filters.http.jwt_authn","display": true},
+      {"schema": "oauth2-auth","plugin": "proxy.filters.http.super_authz","display": true},
+      {"schema": "sign-auth","plugin": "proxy.filters.http.super_authz","display": true},
+      {"schema": "basic-rbac","plugin": "envoy.filters.http.rbac","display": true},
+      {"schema": "waf","plugin": "proxy.filters.http.waf","display": true},
+      {"schema": "resty","plugin": "proxy.filters.http.rider","display": true},
+      {"schema": "traffic-mark","plugin": "proxy.filters.http.traffic_mark","display": false},
+      {"schema": "parameters-validate","plugin": "proxy.filters.http.parameter_validate","display": true},
+
+      {"schema": "","plugin": "proxy.filters.http.metadatahub","display": false},
+      {"schema": "","plugin": "proxy.filters.http.detailed_stats","display": false},
+      {"schema": "","plugin": "proxy.filters.http.soapjsontranscoder","display": false}
+    ]
+  },
+  {
+    "gatewayKind": "LoadBalance",
+    "name": "负载均衡",
+    "plugins": [
+      {"schema": "local-limiting","plugin": "envoy.filters.http.local_ratelimit","display": true},
+      {"schema": "rate-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "cluster-group-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "ianus-router","plugin": "envoy.filters.http.fault","display": false},
+      {"schema": "ip-restriction","plugin": "proxy.filters.http.iprestriction","display": true},
+      {"schema": "cors","plugin": "envoy.filters.http.cors","display": true},
+      {"schema": "waf","plugin": "proxy.filters.http.waf","display": true},
+      {"schema": "rewrite","plugin": "proxy.filters.http.path_rewrite","display": true},
+      {"schema": "transformer","plugin": "proxy.filters.http.transformation","display": true},
+      {"schema": "resty","plugin": "proxy.filters.http.rider","display": true},
+      {"schema": "parameters-validate","plugin": "proxy.filters.http.parameter_validate","display": true},
+
+      {"schema": "","plugin": "proxy.filters.http.metadatahub","display": false},
+      {"schema": "","plugin": "proxy.filters.http.detailed_stats","display": false},
+      {"schema": "","plugin": "proxy.filters.http.soapjsontranscoder","display": false}
+    ]
+  },
+  {
+    "gatewayKind": "KubernetesIngress",
+    "name": "Kubernetes Ingress",
+    "plugins": [
+      {"schema": "resty","plugin": "proxy.filters.http.rider","display": true},
+      {"schema": "ua-restriction","plugin": "proxy.filters.http.ua_restriction","display": true},
+      {"schema": "","plugin": "proxy.filters.http.metadatahub","display": false},
+      {"schema": "","plugin": "proxy.filters.http.detailed_stats","display": false},
+      {"schema": "","plugin": "proxy.filters.http.soapjsontranscoder","display": false},
+      {"schema": "","plugin": "envoy.filters.http.fault","display": false}
+    ]
+  },
+  {
+    "gatewayKind": "KubernetesGateway",
+    "name": "Gateway",
+    "plugins": [
+      {"schema": "local-limiting","plugin": "envoy.filters.http.local_ratelimit","display": true},
+      {"schema": "rate-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "cluster-group-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "ianus-router","plugin": "envoy.filters.http.fault","display": false},
+      {"schema": "static-downgrade","plugin": "proxy.filters.http.staticdowngrade","display": true},
+      {"schema": "dynamic-downgrade","plugin": "proxy.filters.http.dynamicdowngrade","display": true},
+      {"schema": "circuit-breaker","plugin": "proxy.filters.http.circuitbreaker","display": true},
+      {"schema": "ip-restriction","plugin": "proxy.filters.http.iprestriction","display": true},
+      {"schema": "ua-restriction","plugin": "proxy.filters.http.ua_restriction","display": true},
+      {"schema": "cors","plugin": "envoy.filters.http.cors","display": true},
+      {"schema": "waf","plugin": "proxy.filters.http.waf","display": true},
+      {"schema": "rewrite","plugin": "proxy.filters.http.path_rewrite","display": true},
+      {"schema": "transformer","plugin": "proxy.filters.http.transformation","display": true},
+      {"schema": "jwt-auth","plugin": "envoy.filters.http.jwt_authn","display": true},
+      {"schema": "oauth2-auth","plugin": "proxy.filters.http.super_authz","display": true},
+      {"schema": "resty","plugin": "proxy.filters.http.rider","display": true},
+      {"schema": "parameters-validate","plugin": "proxy.filters.http.parameter_validate","display": true},
+
+      {"schema": "","plugin": "proxy.filters.http.metadatahub","display": false},
+      {"schema": "","plugin": "proxy.filters.http.detailed_stats","display": false},
+      {"schema": "","plugin": "proxy.filters.http.soapjsontranscoder","display": false},
+      {"schema": "","plugin": "envoy.filters.http.fault","display": false}
+    ]
+  },
+  {
+    "gatewayKind": "ServerlessGateway",
+    "name": "Serverless网关",
+    "plugins": [
+      {"schema": "resty","plugin": "proxy.filters.http.rider","display": true},
+
+      {"schema": "","plugin": "proxy.filters.http.metadatahub","display": false},
+      {"schema": "","plugin": "proxy.filters.http.detailed_stats","display": false},
+      {"schema": "","plugin": "proxy.filters.http.soapjsontranscoder","display": false},
+      {"schema": "","plugin": "envoy.filters.http.fault","display": false}
+    ]
+  }
+]

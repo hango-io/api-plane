@@ -1,0 +1,58 @@
+{
+  "inject": {
+    "kind": "response-header-rewrite"
+  },
+  "layouts": [
+    {
+      "key": "headerKey",
+      "alias": "修改规则",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "headerKey",
+          "alias": "响应头名称",
+          "type": "input",
+          "rules": [
+            "MaxLength(200)",
+            "Required"
+          ]
+        },
+        {
+          "key": "operation",
+          "alias": "修改类型",
+          "type": "select",
+          "default": "create",
+          "options": [
+            {
+              "text": "创建或追加（若不存在则创建，存在则追加）",
+              "value": "create"
+            },
+            {
+              "text": "更新（若不存在则创建）",
+              "value": "update"
+            },
+            {
+              "text": "删除",
+              "value": "delete"
+            }
+          ],
+          "rules": [
+            "Required"
+          ]
+        },
+        {
+          "key": "headerValue",
+          "alias": "取值",
+          "type": "input",
+          "invisible": {
+            "this.operation": "delete"
+          },
+          "rules": [
+            "Required",
+            "MaxLength(200)"
+          ]
+        }
+      ]
+    }
+  ]
+}

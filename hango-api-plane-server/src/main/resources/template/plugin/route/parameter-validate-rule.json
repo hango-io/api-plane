@@ -1,0 +1,281 @@
+{
+  "inject": {
+    "kind": "proxy.filters.http.parameter_validate"
+  },
+  "layouts": [
+    {
+      "key": "parametersValidateRules",
+      "alias": "参数校验规则",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "parameterFrom",
+          "alias": "参数位置",
+          "type": "select",
+          "default": "HEADER",
+          "options": [
+            {
+              "text": "请求头",
+              "value": "HEADER"
+            },
+            {
+              "text": "查询参数",
+              "value": "QUERY"
+            }
+          ],
+          "rules": [
+            "Required"
+          ]
+        },
+        {
+          "key": "parametersName",
+          "alias": "参数名",
+          "type": "input",
+          "help": "参数的key值",
+          "rules": [
+            "MaxLength(200)",
+            "Required"
+          ]
+        },
+        {
+          "key": "parameterType",
+          "alias": "类型",
+          "type": "select",
+          "default": "String",
+          "options": [
+            {
+              "text": "字符串",
+              "value": "String"
+            },
+            {
+              "text": "整数",
+              "value": "Integer"
+            },
+            {
+              "text": "浮点数",
+              "value": "Float"
+            },
+            {
+              "text": "布尔值",
+              "value": "Boolean"
+            }
+          ],
+          "rules": [
+            "Required"
+          ]
+        },
+        {
+          "key": "arrayType",
+          "alias": "数组类型",
+          "type": "select",
+          "default": "String",
+          "options": [
+            {
+              "text": "字符串",
+              "value": "String"
+            },
+            {
+              "text": "整数",
+              "value": "Integer"
+            },
+            {
+              "text": "浮点数",
+              "value": "Float"
+            },
+            {
+              "text": "布尔值",
+              "value": "Boolean"
+            },
+            {
+              "text": "数组",
+              "value": "Array"
+            },
+            {
+              "text": "任意类型",
+              "value": "AnyType"
+            }
+          ],
+          "visible": {
+            "Array": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "alias": "是否必填",
+          "key": "required",
+          "type": "switch",
+          "default": true
+        },
+        {
+          "key": "maxStringLength",
+          "alias": "最大长度",
+          "type": "number",
+          "help": "参数类型为字符串时的最大长度",
+          "rules": [
+            "MaxNumber(999)",
+            "MinNumber(0)"
+          ],
+          "visible": {
+            "String": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "minStringLength",
+          "alias": "最小长度",
+          "type": "number",
+          "help": "参数类型为字符串时的最小长度",
+          "rules": [
+            "MaxNumber(999)",
+            "MinNumber(0)"
+          ],
+          "visible": {
+            "String": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "floatMaxValue",
+          "alias": "最大值",
+          "type": "number",
+          "help": "参数类型为浮点数时的最大值",
+          "visible": {
+            "Float": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "integerMaxValue",
+          "alias": "最大值",
+          "type": "input",
+          "help": "参数类型为整数时的最大值",
+          "rules": [
+            {
+              "pattern": "^(0|[1-9][0-9]*|-[1-9][0-9]*)$",
+              "message": "仅支持整数"
+            },
+            "MaxNumber(2147483647)"
+          ],
+          "visible": {
+            "Integer": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "floatMinValue",
+          "alias": "最小值",
+          "type": "number",
+          "help": "参数类型为浮点数时的最小值",
+          "visible": {
+            "Float": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "integerMinValue",
+          "alias": "最小值",
+          "type": "input",
+          "help": "参数类型为整数时的最小值",
+          "rules": [
+            {
+              "pattern": "^(0|[1-9][0-9]*|-[1-9][0-9]*)$",
+              "message": "仅支持整数"
+            },
+            "MaxNumber(2147483647)"
+          ],
+          "visible": {
+            "Integer": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "maxArraySize",
+          "alias": "数组最大长度",
+          "type": "number",
+          "help": "参数类型为数组时,数组的最大长度",
+          "rules": [
+            "MaxLength(200)"
+          ],
+          "visible": {
+            "Array": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "minArraySize",
+          "alias": "数组最小长度",
+          "type": "number",
+          "help": "参数类型为数组时,数组的最小长度",
+          "rules": [
+            "MaxLength(200)"
+          ],
+          "visible": {
+            "Array": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "regexStr",
+          "alias": "正则表达式",
+          "type": "input",
+          "help": "参数类型为字符串时符合该串的正则表达式",
+          "rules": [
+            "MaxLength(200)",
+            "RegExp"
+          ],
+          "visible": {
+            "String": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "enumArray",
+          "type": "multi_input",
+          "alias": "枚举值",
+          "help": "参数等于枚举的值时请求方才通过校验",
+          "visible": {
+            "String": [
+              "this",
+              "parameterType"
+            ]
+          }
+        },
+        {
+          "key": "enumArray",
+          "type": "multi_input",
+          "alias": "枚举值",
+          "help": "参数等于枚举时请求才能通过校验",
+          "rules": [
+            "Number"
+          ],
+          "visible": {
+            "Integer": [
+              "this",
+              "parameterType"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

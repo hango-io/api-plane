@@ -1,0 +1,194 @@
+{
+  "formatter": {
+    "kind": "neUrsAuth",
+    "type": "lua",
+    "need_to_response": "&need_to_response",
+    "config": {
+      "cluster": "&cluster",
+      "timeout": "&timeout",
+      "encryption": "&encryption",
+      "key": "&key",
+      "urs_account_info": "&urs_account_info",
+      "fault_tolerant": "&fault_tolerant",
+      "default_response": {
+        "status": "&default_response.status",
+        "headers": "@default_response.headers",
+        "body": "&default_response.body"
+      },
+      "custom_responses": "&custom_responses"
+    }
+  },
+  "layouts": [
+    {
+      "key": "cluster",
+      "alias": "集群名称",
+      "help": "",
+      "type": "input",
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "timeout",
+      "alias": "超时时间",
+      "type": "input",
+      "default": 1000,
+      "rules": [
+        "Required",
+        "Number",
+        "MinNumber(10)",
+        "MaxNumber(5000)"
+      ]
+    },
+    {
+      "key": "encryption",
+      "alias": "加密方式",
+      "help": "目前只支持aes",
+      "type": "select",
+      "options": [
+        "AES"
+      ]
+    },
+    {
+      "key": "key",
+      "alias": "密码",
+      "help": "加密时需要填写",
+      "type": "input"
+    },
+    {
+      "key": "urs_account_info",
+      "alias": "正常请求头",
+      "help": "当urs响应成功后，会将数据插入此请求头，格式：通行证#登录时间#产品",
+      "default": "X-Urs-Account",
+      "type": "input",
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "fault_tolerant",
+      "alias": "容错",
+      "help": "开启后，当urs响应非200时，请求依然可以打到后端，后端可以临时取user-u或者user-ssn",
+      "type": "switch",
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "default_response",
+      "alias": "默认异常响应",
+      "help": "当认证不通过，并且没有匹配自定义响应key，输出默认响应",
+      "type": "layouts",
+      "layouts": [
+        {
+          "key": "status",
+          "type": "number",
+          "help": "默认500",
+          "default": 500,
+          "alias": "响应状态码",
+          "rules": [
+            "Required",
+            "Number",
+            "MinNumber(200)",
+            "MaxNumber(599)"
+          ]
+        },
+        {
+          "key": "headers",
+          "type": "array",
+          "alias": "响应头",
+          "layouts": [
+            {
+              "key": "key",
+              "type": "input",
+              "alias": "请求头",
+              "rules": [
+                "Required"
+              ]
+            },
+            {
+              "key": "value",
+              "type": "input",
+              "alias": "请求头值",
+              "rules": [
+                "Required"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "body",
+          "type": "input",
+          "alias": "请求响应内容"
+        }
+      ]
+    },
+    {
+      "key": "custom_responses",
+      "alias": "自定义异常响应",
+      "help": "当响应业务码命中对应的key，则使用对应的响应，没有命中，使用默认异常响应",
+      "type": "array",
+      "rules": [
+        "Required"
+      ],
+      "layouts": [
+        {
+          "key": "key",
+          "alias": "key",
+          "type": "input",
+          "rules": [
+            "Number",
+            "Required"
+          ]
+        },
+        {
+          "key": "response",
+          "help": "",
+          "alias": "异常响应",
+          "layouts": [
+            {
+              "key": "status",
+              "type": "number",
+              "help": "默认500",
+              "alias": "响应状态码",
+              "rules": [
+                "Required",
+                "Number",
+                "MinNumber(200)",
+                "MaxNumber(599)"
+              ]
+            },
+            {
+              "key": "headers",
+              "type": "map",
+              "alias": "响应头",
+              "layouts": [
+                {
+                  "key": "key",
+                  "type": "input",
+                  "alias": "请求头",
+                  "rules": [
+                    "Required"
+                  ]
+                },
+                {
+                  "key": "value",
+                  "type": "input",
+                  "alias": "请求头值",
+                  "rules": [
+                    "Required"
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "body",
+              "type": "input",
+              "alias": "请求响应内容"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+option go_package = "ratelimit_config";
+
+package ratelimit.config;
+
+message RateConfig {
+	enum UnitType {
+		UNKNOWN = 0;
+		SECOND = 1;
+		MINUTE = 2;
+		HOUR = 3;
+		DAY = 4;
+	}
+
+    UnitType unit = 1;
+    uint32 requests_per_unit = 2;	
+}
+
+message RateLimitDescriptorConfig{
+    string key = 1;
+    string value = 2;
+    RateConfig rate_limit = 3;
+    repeated RateLimitDescriptorConfig descriptors = 4;
+}
+
+message RateLimitConf {
+    string domain = 1;
+	repeated RateLimitDescriptorConfig descriptors = 2;
+}
+
+message RespCode {
+	enum Code {
+		UNKNOWN = 0;
+		SUCCESS = 1;
+		FAILED = 2;
+		
+		CONFIG_DOMAIN_EXSIST = 3;
+		CONFIG_DOMAIN_NOT_FOUND = 4;
+	}
+	string domain = 1;
+	Code ret_code = 2;
+}
+
+message SyncRatelimitConfReq {
+    repeated RateLimitConf configs = 1;
+}
+
+message SyncRatelimitConfResp {
+    repeated RespCode rets = 1;
+}
+
+message AddRatelimitConfigReq {
+    RateLimitConf config = 1;
+}
+
+message AddRatelimitConfigResp{
+    RespCode ret = 1; //
+}
+
+message GetRatelimitConfigReq {
+    string domain = 1;
+}
+
+message GetRatelimitConfigResp {
+    RateLimitConf config = 1;
+}
+
+message UpdateRatelimitConfigReq {
+    RateLimitConf config = 1;
+}
+
+message UpdateRatelimitConfigResp {
+    RespCode ret = 1;
+}
+
+message DeleteRatelimitConfigReq {
+    string domain = 1;
+}
+
+message DeleteRatelimitConfigResp {
+	RespCode ret = 1;
+}
+
+message ListRatelimitConfigReq {}
+
+message ListRatelimitConfigRes {
+    repeated RateLimitConf configs = 1;
+}
+
+service RatelimitConfigService {
+    rpc SyncAllRatelimitConfig(SyncRatelimitConfReq) returns (SyncRatelimitConfResp);
+    rpc AddRatelimitConfig(AddRatelimitConfigReq) returns (AddRatelimitConfigResp);
+    rpc GetRatelimitConfig(GetRatelimitConfigReq) returns (GetRatelimitConfigResp);
+    rpc UpdateRatelimitConfig(UpdateRatelimitConfigReq) returns (UpdateRatelimitConfigResp);
+    rpc DeleteRatelimitConfig(DeleteRatelimitConfigReq) returns (DeleteRatelimitConfigResp);
+    rpc ListRatelimitConfigs(ListRatelimitConfigReq) returns (stream ListRatelimitConfigRes);
+}

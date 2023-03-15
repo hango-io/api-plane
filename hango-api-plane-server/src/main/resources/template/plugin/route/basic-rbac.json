@@ -1,0 +1,27 @@
+{
+  "inject": {
+    "kind": "basic-rbac"
+  },
+  "layouts": [
+    {
+      "key": "principal_list",
+      "type": "multi_input",
+      "alias": "授权管理",
+      "default": [
+        {}
+      ],
+      "layouts": [
+        {
+          "key": "auth_group",
+          "type": "auth_group",
+          "alias": "外部认证",
+          "placeholder": "请选择外部认证",
+          "default": {
+            "name": "",
+            "auth_type": ""
+          }
+        }
+      ]
+    }
+  ]
+}

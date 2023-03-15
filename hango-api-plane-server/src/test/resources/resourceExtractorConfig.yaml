@@ -1,0 +1,10 @@
+extractor:
+  configList:
+    - keyConfig:
+        type: "exact"
+        pattern: "nsf.skiff.netease.com/project"
+      returnFrom: "value"
+      target: "project"
+      position: "label"
+
+

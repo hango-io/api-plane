@@ -1,0 +1,68 @@
+{
+  "inject": {
+    "kind": "cluster-group-limiting",
+    "name": "cluster-group-limiting"
+  },
+  "layouts": [
+    {
+      "key": "limit_by_list",
+      "alias": "分组请求头信息",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "headers",
+          "alias": "分组请求头信息",
+          "help": "分组请求头名称，请求头与不同的值形成唯一限流组进行限流，例如填写header为key1，则key1: value1与key1: value2为独立的2组",
+          "type": "array",
+          "layouts": [
+            {
+              "key": "header_key",
+              "alias": "请求头名称",
+              "type": "input",
+              "rules": [
+                "Required",
+                "MaxLength(200)"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "day",
+          "alias": "每天请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(1)"
+          ]
+        },
+        {
+          "key": "hour",
+          "alias": "每小时请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(1)"
+          ]
+        },
+        {
+          "key": "minute",
+          "alias": "每分钟请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(1)"
+          ]
+        },
+        {
+          "key": "second",
+          "alias": "每秒请求数",
+          "type": "number",
+          "rules": [
+            "Number",
+            "MinNumber(1)"
+          ]
+        }
+      ]
+    }
+  ]
+}

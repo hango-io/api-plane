@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.netease.cloud.nsf.common.proto";
+option java_outer_classname = "CommonMetaProto";
+option objc_class_prefix = "META";
+
+package meta;
+
+message AgentCommonResponse {
+	// agent唯一性标识.
+	string agentId = 1;
+	int64 code = 2;
+	string msg = 3;
+	int64 serviceId = 4;
+	int64 serviceGroupId = 5;
+	string serviceGroupName = 6;
+	string projectId = 7;
+	string serviceOffline = 8;
+	string tagInfo=9;
+	string instanceName=10;
+	string accessKey=11;
+	string accessSecret=12;
+	string isAuthentication=13;
+	string projectCode=14;
+	string projectEnv=15;
+	TagOverwrite tagOverwrite=16;
+}
+
+message TagOverwrite {
+	map<string, string> systemTags = 1;
+	map<string, string> customTags = 2;
+	string namespace = 3;
+}
