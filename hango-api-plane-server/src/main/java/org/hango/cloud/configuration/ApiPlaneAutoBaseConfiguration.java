@@ -26,9 +26,11 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.InterceptingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
@@ -89,7 +91,8 @@ public class ApiPlaneAutoBaseConfiguration {
     }
 
     @PostConstruct
-    void configureFreemarkerConfig() {
+    void configureFreemarkerConfig() throws IOException {
+        freemarkerConfig.setDirectoryForTemplateLoading(ResourceUtils.getFile("classpath:template"));
         freemarkerConfig.setNumberFormat("#");
         freemarkerConfig.setSharedVariable("indent", new IndentationDirective());
         freemarkerConfig.setSharedVariable("ignore", new IgnoreDirective());
