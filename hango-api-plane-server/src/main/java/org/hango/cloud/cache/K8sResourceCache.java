@@ -80,6 +80,10 @@ public class K8sResourceCache implements ResourceCache {
             log.error("get crd definition error", e);
             return;
         }
+        if (crd == null) {
+            log.error("CRD is null, kind: {}", kind.name());
+            return;
+        }
         CustomResourceDefinitionContext customResourceDefinitionContext = CustomResourceDefinitionContext.fromCrd(crd);
         Indexer<T> indexer = sharedInformerFactory.sharedIndexInformerForCustomResource(
                 customResourceDefinitionContext,
