@@ -5,19 +5,18 @@ sed -i 's/\(<Connector port="\)[0-9]\{1,5\}\(" protocol="HTTP\/1.1"\)/\1'"$NCE_P
 fi
 
 if [ -z "$NCE_XMS" ]; then
-NCE_XMS=1024m
+NCE_XMS=512m
 fi
 
 if [ -z "$NCE_XMX" ]; then
-NCE_XMX=2048m
+NCE_XMX=512m
 fi
 
 if [ -z "$NCE_PERM" ]; then
 NCE_PERM=256m
 fi
 
-NCE_APPNAME=
-export NCE_JAVA_OPTS="$NCE_JAVA_OPTS -Dlog.dir=${CATALINA_HOME}/logs"
+export NCE_JAVA_OPTS="$NCE_JAVA_OPTS  -Xms${NCE_XMS} -Xmx${NCE_XMX} -Dlog.dir=${CATALINA_HOME}/logs"
 ## 有需要可以按照如下配置案例添加堆内存 元空间等 内存配置
 ## export NCE_JAVA_OPTS="$NCE_JAVA_OPTS -Xms${NCE_XMS} -Xmx${NCE_XMX} -XX:MaxPermSize=${NCE_PERM} -Dlog.dir=${CATALINA_HOME}/logs"
 
