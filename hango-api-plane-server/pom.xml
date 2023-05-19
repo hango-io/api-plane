@@ -15,14 +15,6 @@
     </properties>
 
     <artifactId>hango-api-plane-server</artifactId>
-    <repositories>
-        <repository>
-            <id>hzntes</id>
-            <name>NTES-HZ Maven Repository</name>
-            <url>http://mvn.hz.netease.com/artifactory/repo</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -95,6 +87,8 @@
             <groupId>me.snowdrop</groupId>
             <artifactId>istio-model</artifactId>
             <version>1.0.6-QZ-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/istio-model-1.0.6-QZ-SNAPSHOT.jar</systemPath>
             <exclusions>
                 <exclusion>
                     <groupId>io.fabric8</groupId>
@@ -104,12 +98,18 @@
         </dependency>
 
         <dependency>
+            <groupId>me.snowdrop</groupId>
+            <artifactId>istio-common</artifactId>
+            <version>1.0.6-QZ-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/istio-common-1.0.6-QZ-SNAPSHOT.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>kubernetes-model</artifactId>
             <version>4.13.3</version>
         </dependency>
-
-
 
         <!-- k8s -->
         <dependency>
@@ -223,6 +223,15 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <directory>lib/</directory>
+                            <targetPath>WEB-INF/lib</targetPath>
+                            <includes>
+                                <include>**/*.jar</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
 
