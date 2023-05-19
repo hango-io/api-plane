@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package istio.envoy.config.filter.http.http_cache.v2;
+
+option java_package = "io.envoyproxy.envoy.config.filter.http.http_cache.v2";
+option java_outer_classname = "HttpCacheProto";
+option java_multiple_files = true;
+option go_package = "istio.io/api/envoy/config/filter/http/http_cache/v2";
+
+message Cache {
+    oneof cache_type {
+        LocalImpl local = 4;
+        RedisImpl redis = 5;
+    }
+}
+// RedisHttpCache
+message RedisImpl {
+    string host = 1;
+    uint64 port = 2;
+    uint64 timeout = 3;
+    string password = 4;
+    uint64 database = 5;
+    uint64 poolsize = 6;
+    uint64 idletime = 7;
+}
+
+// LocalHttpCache
+message LocalImpl {
+}
+
+message CacheTTL {
+    uint64 default = 1;
+    // regex : uint64
+    map<string, uint64> customs = 2;
+}
+
+message KeyMaker {
+    bool exclude_scheme = 1;
+
+    bool exclude_host = 2;
+
+    repeated string query_params = 3;
+
+    repeated string headers_keys = 6;
+}
+
+// listener level config
+message HttpCache {
+    // if apis_prefix is not empty filter will
+    // extend admin api and use this as prefix
+    // Keep apis_prefix "unique"
+    string apis_prefix = 1;
+    repeated Cache used_caches = 2;
+}
+
+// route level config
+message CacheConfig {
+    // enable cache by request/response header
+    // string : regex
+    map<string, string> enable_rqx = 1;
+    // string : regex
+    map<string, string> enable_rpx = 2;
+    // expire time of data. 0 expire time
+    // or no expire time will disable cache
+    map<string, CacheTTL> cache_ttls = 3;
+    KeyMaker key_maker = 4;
+
+    bool low_level_fill = 5;
+}

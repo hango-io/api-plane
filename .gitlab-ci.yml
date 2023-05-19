@@ -1,0 +1,92 @@
+image: hub.c.163.com/qingzhou/maven-tomcat:8-jdk8-5
+variables:
+  # Please edit to your GitLab project
+  CI_REGISTRY_IMAGE: ${CI_REGISTRY}/qingzhou/nsf-api-plane-server
+  DOCKER_TLS_CERTDIR: ''
+  DOCKER_DRIVER: overlay2  
+  DOCKER_HOST: tcp://docker:2375/
+  branch_url: $CI_PROJECT_URL/tree/$CI_COMMIT_REF_NAME
+
+
+
+
+stages:
+  - commit-check
+  - test
+  - sonar-check
+  - buildImage
+
+before_script:
+  - export MAVEN_HOME=/usr/local/bin/apache-maven-3.6.3
+#  - git submodule sync
+#  - git submodule update --init
+
+commit-check:
+  stage: commit-check
+  script:
+    - chmod +x scripts/check_mr_messages.sh
+    - scripts/check_mr_messages.sh
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  tags:
+    - qz-gitlab-runner
+
+job_unit_test:
+  stage: test
+  script:
+    - pwd
+    - git status
+    - cd /builds/qingzhou/yx-gateway-api-plane
+    - $MAVEN_HOME/bin/mvn clean package
+    - git status
+    - echo "now unit_test finished."
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  artifacts:
+    paths:
+      - /builds/qingzhou/yx-gateway-api-plane/hango-api-plane-server
+    expire_in: 1 day
+  tags:
+    - qz-gitlab-runner
+
+sonar-check:
+  stage: sonar-check
+  script:
+    - chmod +x scripts/check_sonar.sh
+    - scripts/check_sonar.sh
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  tags:
+    - qz-gitlab-runner
+
+
+job_buildImage:
+    stage: buildImage
+    image: docker:stable
+    services:
+      - docker:dind
+    before_script:
+      - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    artifacts:
+     paths:
+      - /builds/qingzhou/yx-gateway-api-plane/nsf-api-plane-server
+    script:
+      - echo "Building image - hub.c.163.com/qingzhou/nsf-api-plane-server:latest"
+      - cd /builds/qingzhou/yx-gateway-api-plane/nsf-api-plane-server/
+      - HASH=${CI_COMMIT_SHA:0:8}
+      - NOW=`date +%Y%m%d-%H%M%S`
+      - IMAGE=${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}-${NOW}-${HASH}
+      - echo $IMAGE
+      - docker image build --force-rm --no-cache -t $IMAGE .
+      - docker image push $IMAGE
+    only:
+      - release-1.1
+      
+    tags:
+      - qz-gitlab-runner
+
+
+
+
+
+

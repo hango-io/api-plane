@@ -1,0 +1,372 @@
+    {
+      "GatewayLabels": {
+        "gw_cluster": "{{ .Values.gateway_cluster }}"
+      },
+      "Plugins": [
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "decode_headers_to_state": [
+                {
+                  "name": ":path",
+                  "rename": "x-envoy-origin-path"
+                },
+                {
+                  "name": ":method",
+                  "rename": "x-envoy-origin-method"
+                },
+                {
+                  "name": ":authority",
+                  "rename": "x-envoy-origin-host"
+                }
+              ],
+              "encode_headers_to_state": [
+                {
+                  "name": ":status",
+                  "rename": "x-envoy-origin-status"
+                }
+              ],
+              "route_metadata_to_state": [
+                "proxy.filters.http.metadatahub"
+              ]
+            }
+          },
+          "name": "proxy.filters.http.metadatahub"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.parameter_validate"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "domain": "qingzhou",
+              "rate_limit_service": {
+                "grpc_service": {
+                  "envoy_grpc": {
+                    "cluster_name": "rate_limit_service"
+                  }
+                },
+                "transport_api_version": "v3"
+              }
+            }
+          },
+          "name": "envoy.filters.http.ratelimit"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.path_rewrite"
+        },
+        {
+          "enable": "true",
+          "name": "envoy.filters.http.fault"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.transformation"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.request_body_transformation"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.response_body_transformation"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "ip_source_header": "x-real-v112-ip"
+            }
+          },
+          "name": "proxy.filters.http.iprestriction"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "stat_prefix": "http_local_rate_limiter"
+            }
+          },
+          "name": "envoy.filters.http.local_ratelimit"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "authz_response": {
+                "downstream_headers": [
+                  {
+                    "header": "x-auth-failure-reason",
+                    "name": "x-auth-failure-reason"
+                  }
+                ],
+                "upstream_headers": [
+                  {
+                    "header": "x-qz-auth-user-id",
+                    "name": "x-qz-auth-user-id"
+                  },
+                  {
+                    "header": "x-qz-auth-user-name",
+                    "name": "x-qz-auth-user-name"
+                  },
+                  {
+                    "header": "x-accountid",
+                    "name": "x-accountid"
+                  },
+                  {
+                    "header": "x-nsf-authentication",
+                    "name": "x-nsf-authentication"
+                  },
+                  {
+                    "header": "x-accounttype",
+                    "name": "x-accounttype"
+                  },
+                  {
+                    "header": "x-authn-servicename",
+                    "name": "x-authn-servicename"
+                  }
+                ]
+              },
+              "clear_route_cache": "true",
+              "failure_mode_allow": "false",
+              "http_service": {
+                "cluster": "super_auth_service",
+                "timeout": "2s",
+                "uri": "http://{{ .Values.module_domains.platform_service_auth_domain }}/auth?Action=AuthForEnvoyGw&Version=2019-10-08"
+              },
+              "metadata_context": "proxy.filters.http.metadatahub",
+              "status_on_error": 403
+            }
+          },
+          "name": "proxy.filters.http.super_authz"
+        },
+        {
+          "enable": "true",
+          "name": "envoy.filters.http.cors"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.header_restriction"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.ua_restriction"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.referer_restriction"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.staticdowngrade"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "apis_prefix": "dynamic_downgrade",
+              "used_caches": [
+                {
+                  "local": {}
+                },
+                {
+                  "redis": {
+                    "general": {
+                      "host": "{{ .Values.redis.haproxy_url }}",
+                      "port": "{{ .Values.redis.haproxy_port }}"
+                    },
+                    "password": "{{ .Values.redis.apigw.passwd }}",
+                    "timeout": 200
+                  }
+                }
+              ]
+            }
+          },
+          "name": "proxy.filters.http.dynamicdowngrade"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.circuitbreaker"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.header_rewrite"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.jsonpfilter"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "apis_prefix": "envoy_local_cache",
+              "used_caches": [
+                {
+                  "local": {}
+                }
+              ]
+            }
+          },
+          "name": "proxy.filters.http.local_cache"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "apis_prefix": "envoy_redis_cache",
+              "used_caches": [
+                {
+                  "redis": {
+                    "general": {
+                      "host": "{{ .Values.redis.haproxy_url }}",
+                      "port": "{{ .Values.redis.haproxy_port }}"
+                    },
+                    "password": "{{ .Values.redis.apigw.passwd }}",
+                    "timeout": 200
+                  }
+                }
+              ]
+            }
+          },
+          "name": "proxy.filters.http.redis_cache"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "apis_prefix": "removecache",
+              "used_caches": [
+                {
+                  "local": {}
+                },
+                {
+                  "redis": {
+                    "general": {
+                      "host": "{{ .Values.redis.haproxy_url }}",
+                      "port": "{{ .Values.redis.haproxy_port }}"
+                    },
+                    "password": "{{ .Values.redis.apigw.passwd }}",
+                    "timeout": 200
+                  }
+                }
+              ]
+            }
+          },
+          "name": "proxy.filters.http.super_cache"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.soapjsontranscoder"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "all_colors_key": "qz_colors",
+              "header_key": "x-nsf-mark",
+              "match_key": "qz_color"
+            }
+          },
+          "name": "proxy.filters.http.traffic_mark"
+        },
+        {
+          "enable": "false",
+          "name": "proxy.filters.http.waf"
+        },
+        {
+          "enable": "true",
+          "name": "proxy.filters.http.detailed_stats"
+        },
+        {
+          "enable": "true",
+          "inline": {
+            "settings": {
+              "providers": {
+                "provider-0": {
+                  "issuer": "service-auth",
+                  "remote_jwks": {
+                    "http_uri": {
+                      "uri": "http://platform-service-auth.skiff-platform.svc.cluster.local/certificate?Action=DescribeJwks&Version=2022-02-28&ServiceName=external_client",
+                      "cluster": "super_auth_service",
+                      "timeout": "5s"
+                    },
+                    "cache_duration": {
+                      "seconds": 300
+                    }
+                  },
+                  "forward": "true",
+                  "from_headers": [
+                    {
+                      "name": "authorization"
+                    }
+                  ],
+                  "payload_in_metadata": "payload"
+                },
+                "provider-1": {
+                  "issuer": "service-auth",
+                  "remote_jwks": {
+                    "http_uri": {
+                      "uri": "http://platform-service-auth.skiff-platform.svc.cluster.local/certificate?Action=DescribeJwks&Version=2022-02-28&ServiceName=external_client",
+                      "cluster": "super_auth_service",
+                      "timeout": "5s"
+                    },
+                    "cache_duration": {
+                      "seconds": 300
+                    }
+                  },
+                  "forward": "false",
+                  "from_headers": [
+                    {
+                      "name": "authorization"
+                    }
+                  ],
+                  "payload_in_metadata": "payload"
+                }
+              },
+              "requirement_map": {
+                "requirement_forward_and_deny_missing": {
+                  "provider_name": "provider-0"
+                },
+                "requirement_forward_and_allow_missing": {
+                  "requires_any": {
+                    "requirements": [
+                      {
+                        "provider_name": "provider-0"
+                      },
+                      {
+                        "allow_missing": {}
+                      }
+                    ]
+                  }
+                },
+                "requirement_not_forward_and_deny_missing": {
+                  "provider_name": "provider-1"
+                },
+                "requirement_not_forward_and_allow_missing": {
+                  "requires_any": {
+                    "requirements": [
+                      {
+                        "provider_name": "provider-1"
+                      },
+                      {
+                        "allow_missing": {}
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "name": "envoy.filters.http.jwt_authn"
+        },
+        {
+          "enable": "true",
+          "name": "envoy.filters.http.rbac"
+        }
+      ]
+    }

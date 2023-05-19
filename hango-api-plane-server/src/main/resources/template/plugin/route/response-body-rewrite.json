@@ -1,0 +1,296 @@
+{
+  "formatter": {
+    "kind": "response-body-rewrite",
+    "request": "&request",
+    "response": "&response",
+    "bodyTransformList": "&bodyTransformList"
+  },
+  "layouts": [
+    {
+      "key": "request",
+      "alias": "请求",
+      "type": "layouts",
+      "layouts": [
+        {
+          "key": "requestSwitch",
+          "alias": "请求匹配",
+          "type": "switch",
+          "default": false
+        },
+        {
+          "key": "method",
+          "alias": "请求方法",
+          "type": "multi_select",
+          "visible": {
+            "this.requestSwitch": true
+          },
+          "options": [
+            {
+              "text": "GET",
+              "value": "GET"
+            },
+            {
+              "text": "POST",
+              "value": "POST"
+            },
+            {
+              "text": "PUT",
+              "value": "PUT"
+            },
+            {
+              "text": "DELETE",
+              "value": "DELETE"
+            }
+          ]
+        },
+        {
+          "key": "path",
+          "alias": "请求路径",
+          "type": "layouts",
+          "visible": {
+            "this.requestSwitch": true
+          },
+          "layouts": [
+            {
+              "key": "match_type",
+              "alias": "匹配方式",
+              "type": "select",
+              "default": "exact_match",
+              "options": [
+                {
+                  "text": "精确匹配",
+                  "value": "exact_match"
+                },
+                {
+                  "text": "正则表达式",
+                  "value": "safe_regex_match"
+                }
+              ]
+            },
+            {
+              "key": "value",
+              "type": "input",
+              "alias": "取值"
+            }
+          ]
+        },
+        {
+          "key": "host",
+          "alias": "域名",
+          "type": "layouts",
+          "visible": {
+            "this.requestSwitch": true
+          },
+          "layouts": [
+            {
+              "key": "match_type",
+              "alias": "匹配方式",
+              "type": "select",
+              "default": "exact_match",
+              "options": [
+                {
+                  "text": "精确匹配",
+                  "value": "exact_match"
+                },
+                {
+                  "text": "正则表达式",
+                  "value": "safe_regex_match"
+                }
+              ]
+            },
+            {
+              "key": "value",
+              "type": "input",
+              "alias": "取值"
+            }
+          ]
+        },
+        {
+          "key": "headers",
+          "alias": "请求头",
+          "type": "array",
+          "visible": {
+            "this.requestSwitch": true
+          },
+          "layouts": [
+            {
+              "key": "headerKey",
+              "alias": "请求头名称",
+              "type": "input",
+              "rules": [
+                "MaxLength(200)"
+              ]
+            },
+            {
+              "key": "match_type",
+              "alias": "匹配方式",
+              "type": "select",
+              "default": "exact_match",
+              "options": [
+                {
+                  "text": "精确匹配",
+                  "value": "exact_match"
+                },
+                {
+                  "text": "正则表达式",
+                  "value": "safe_regex_match"
+                },
+                {
+                  "text": "参数存在则匹配",
+                  "value": "present_match"
+                },
+                {
+                  "text": "参数不存在则匹配",
+                  "value": "present_match_invert"
+                }
+              ]
+            },
+            {
+              "key": "value",
+              "type": "input",
+              "alias": "取值",
+              "invisible": {
+                "present_match": [
+                  "this",
+                  "match_type"
+                ],
+                "present_match_invert": [
+                  "this",
+                  "match_type"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "response",
+      "alias": "响应",
+      "type": "layouts",
+      "layouts": [
+        {
+          "key": "responseSwitch",
+          "alias": "响应匹配",
+          "type": "switch",
+          "default": false
+        },
+        {
+          "key": "code",
+          "alias": "状态码",
+          "type": "layouts",
+          "visible": {
+            "this.responseSwitch": true
+          },
+          "layouts": [
+            {
+              "key": "match_type",
+              "alias": "匹配方式",
+              "type": "select",
+              "default": "exact_match",
+              "options": [
+                {
+                  "text": "精确匹配",
+                  "value": "exact_match"
+                }
+              ]
+            },
+            {
+              "key": "value",
+              "alias": "取值",
+              "type": "input",
+              "rules": [
+                "Required"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "headers",
+          "alias": "响应头",
+          "type": "array",
+          "visible": {
+            "this.responseSwitch": true
+          },
+          "layouts": [
+            {
+              "key": "headerKey",
+              "alias": "响应头名称",
+              "type": "input",
+              "rules": [
+                "MaxLength(200)"
+              ]
+            },
+            {
+              "key": "match_type",
+              "alias": "匹配方式",
+              "type": "select",
+              "default": "exact_match",
+              "options": [
+                {
+                  "text": "精确匹配",
+                  "value": "exact_match"
+                },
+                {
+                  "text": "正则表达式",
+                  "value": "safe_regex_match"
+                },
+                {
+                  "text": "参数存在则匹配",
+                  "value": "present_match"
+                },
+                {
+                  "text": "参数不存在则匹配",
+                  "value": "present_match_invert"
+                }
+              ]
+            },
+            {
+              "key": "value",
+              "type": "input",
+              "alias": "取值",
+              "invisible": {
+                "present_match": [
+                  "this",
+                  "match_type"
+                ],
+                "present_match_invert": [
+                  "this",
+                  "match_type"
+                ]
+              },
+              "rules": [
+                "MaxLength(200)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "bodyTransformList",
+      "alias": "Body转换配置",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "key",
+          "type": "input",
+          "alias": "参数名",
+          "help": "采用json point指定参数，支持指定数组的元素，例如“/a/b/*”表示数组b的所有元素，/a/b/*/c表示数组b所有对象元素的c成员",
+          "rules": [
+            "Required"
+          ]
+        },
+        {
+          "key": "value",
+          "type": "input",
+          "alias": "取值",
+          "help": "该值将作为字符串替换现有的值",
+          "rules": [
+            "Required"
+          ]
+        }
+      ]
+    }
+  ]
+}

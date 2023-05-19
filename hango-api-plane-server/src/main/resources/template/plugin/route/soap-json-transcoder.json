@@ -1,0 +1,88 @@
+{
+  "formatter": {
+    "kind": "soap-json-transcoder",
+    "soap_service_address": "&soap_service_address",
+    "array_elements": "&array_elements",
+    "parse_query": "&parse_query",
+    "parse_namespace": "&parse_namespace",
+    "remove_response_prefix": "&remove_response_prefix",
+    "operation": {
+      "name": "&operation_name",
+      "response_xml_selector": "&response_xml_selector",
+      "request_xml_template": "&request_xml_template"
+    }
+  },
+  "layouts": [
+    {
+      "key": "soap_service_address",
+      "alias": "soap服务地址",
+      "type": "input",
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "array_elements",
+      "alias": "数组元素",
+      "description": "response中数组类型的element",
+      "type": "multi_input",
+      "default": []
+    },
+    {
+      "key": "parse_query",
+      "alias": "启用query参数",
+      "description": "是否启用query作为模板参数",
+      "type": "switch",
+      "default": false,
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "parse_namespace",
+      "alias": "区分namespace",
+      "description": "如果开启，则可以根据namespace准确区分重名element",
+      "type": "switch",
+      "default": false,
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "remove_response_prefix",
+      "alias": "移除响应namespace",
+      "description": "如果开启，则自动移除namespace中的prefix",
+      "type": "switch",
+      "default": true,
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "operation_name",
+      "alias": "operation",
+      "description": "webservice的operation",
+      "type": "input",
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "response_xml_selector",
+      "alias": "响应xpath",
+      "description": "response中作为响应部分的xpath",
+      "type": "input",
+      "rules": [
+        "Required"
+      ]
+    },
+    {
+      "key": "request_xml_template",
+      "alias": "请求模板",
+      "type": "code",
+      "rules": [
+        "Required"
+      ]
+    }
+  ]
+}

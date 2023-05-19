@@ -1,0 +1,104 @@
+{
+  "formatter": {
+    "kind": "simple-auth",
+    "type": "super-auth",
+    "failureAuthAllow": "&failureAuthAllow",
+    "cacheSwitch": "&cacheSwitch",
+    "appNameSetting": "&appNameSetting",
+    "authz_result_cache": "&authz_result_cache"
+  },
+  "layouts": [
+    {
+      "key": "failureAuthAllow",
+      "alias": "允许匿名访问",
+      "help": "仅对无需鉴权的情况可配置，开启允许匿名访问后，即使认证失败也会将请求继续转发到后端服务，只是转发后相关的认证请求头为空",
+      "type": "switch",
+      "default": false
+    },
+    {
+      "key": "cacheSwitch",
+      "alias": "是否认证缓存",
+      "type": "switch"
+    },
+    {
+      "key": "authz_result_cache",
+      "alias": "认证缓存配置",
+      "type": "layouts",
+      "help": "配置认证缓存相关信息，包括缓存key以及缓存ttl",
+      "visible": {
+        "true": [
+          "this",
+          "cacheSwitch"
+        ]
+      },
+      "layouts": [
+        {
+          "key": "result_cache_key",
+          "alias": "缓存key配置",
+          "help": "配置缓存key，默认情况，JWT认证和Oauth2认证采用header:authority,签名认证采用header：x-nsf-accesskey作为缓存key",
+          "type": "layouts",
+          "layouts":[
+            {
+              "key": "ignore_case",
+              "alias": "忽略大小写",
+              "help": "Key忽略大小写",
+              "type": "switch",
+              "default": true
+            },
+            {
+              "key": "headers_keys",
+              "alias": "自定义请求头",
+              "help": "自定义请求头参与key计算，如果不配置则采用默认计算方式",
+              "type": "multi_input"
+            }
+          ]
+        },
+        {
+          "key": "result_cache_ttl",
+          "alias": "缓存TTL配置",
+          "help": "指定缓存时间，单位s",
+          "type": "input",
+          "rules": [
+            "Required",
+            "Number",
+            "MinNumber(0)",
+            "MaxNumber(99999999)"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "appNameSetting",
+      "alias": "应用名称配置",
+      "type": "layouts",
+      "layouts": [
+        {
+          "key": "parameterType",
+          "alias": "参数来源",
+          "help": "从何处获取应用名称，目前仅支持请求头",
+          "type": "select",
+          "default": "header",
+          "options": [
+            {
+              "text": "请求头",
+              "value": "header"
+            }
+          ],
+          "rules": [
+            "Required"
+          ]
+        },
+        {
+          "key": "parameterName",
+          "alias": "参数名称",
+          "help": "应用名称对应的key，支持大小写字母、数字、中划线，长度小于200。",
+          "type": "input",
+          "rules": [
+            "Required",
+            "^(?![-])(?!.*?[-]$)[a-zA-Z0-9-]{1,200}$"
+          ]
+        }
+      ]
+    }
+  ]
+}

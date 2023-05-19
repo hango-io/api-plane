@@ -1,0 +1,27 @@
+{
+  "inject": {
+    "kind": "rewrite"
+  },
+  "layouts": [
+    {
+      "key": "rewrite_regex",
+      "alias": "重写前前缀",
+      "type": "input",
+      "help": "待修改的Path前缀，需要以/开头",
+      "rules": [
+        "Required",
+        "^/.{1,99}$"
+      ]
+    },
+    {
+      "key": "target",
+      "type": "input",
+      "alias": "重写后前缀",
+      "help": "修改后的Path前缀，需要以/开头，如果要删除前缀，则此值不填写",
+      "rules": [
+        "^/[a-zA-Z0-9-_\\.~]+(/?[a-zA-Z0-9-_\\.~]+)*$",
+        "MaxLength(100)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "inject": {
+    "kind": "ianus-percent-limit"
+  },
+  "layouts": [
+    {
+      "key": "limit_percent",
+      "alias": "限流百分比",
+      "help": "0~100之间的整数, 代表拦截比例",
+      "type": "input",
+      "placeholder": "请输入拦截比例",
+      "rules": [
+        "Required",
+        "Number",
+        "MaxNumber(100)",
+        "MinNumber(0)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "formatter": {
+    "kind": "cors",
+    "corsPolicy": {
+      "kind": "cors",
+      "allowOriginRegex": "&allowOrigin",
+      "allowMethods": "&allowMethods?",
+      "allowHeaders": "&allowHeaders?",
+      "exposeHeaders": "&exposeHeaders?",
+      "allowCredentials": "&allowCredentials",
+      "maxAge": "&maxAge?+s"
+    },
+    "maxAge": "&maxAge?"
+  },
+  "layouts": [
+    {
+      "key": "allowOrigin",
+      "alias": "允许的来源",
+      "help": "Access-Control-Allow-Origin，指示请求的资源能共享给哪些域",
+      "placeholder":"请输入正则表达式",
+      "type": "multi_input",
+      "rules": [
+        "MaxLength(200)",
+        "Required"
+      ]
+    },
+    {
+      "key": "allowMethods",
+      "alias": "允许的方法",
+      "help": "Access-Control-Allow-Methods，指定对预请求的响应中，哪些HTTP方法允许访问请求的资源",
+      "type": "multi_select",
+      "default": [],
+      "rules": [
+        "Unique"
+      ],
+      "options": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "HEAD",
+        "OPTIONS",
+        "TRACE"
+      ]
+    },
+    {
+      "key": "allowHeaders",
+      "alias": "允许的头部",
+      "help": "Access-Control-Allow-Headers，用在对预请求的响应中，指示实际的请求中可以使用哪些HTTP头",
+      "type": "multi_input",
+      "rules": [
+        "Unique",
+        "MaxLength(200)"
+      ]
+    },
+    {
+      "key": "exposeHeaders",
+      "alias": "暴露的头部",
+      "help": "Access-Control-Expose-Headers，指示哪些 HTTP 头的名称能在响应中列出",
+      "type": "multi_input",
+      "rules": [
+        "Unique",
+        "MaxLength(200)"
+      ]
+    },
+    {
+      "key": "allowCredentials",
+      "alias": "允许Cookie",
+      "help": "Access-Control-Allow-Credentials，表示请求中是否允许发送Credentials，包含cookies, authorization headers 或 TLS client certificates",
+      "type": "radio",
+      "options": [
+        "true",
+        "false"
+      ]
+    },
+    {
+      "key": "maxAge",
+      "alias": "缓存时长(秒)",
+      "help": "Access-Control-Max-Age，指示预请求的结果能被缓存多久，单位秒",
+      "type": "number",
+      "rules": [
+        "Number",
+        "MinNumber(0)",
+        "MaxNumber(86400)"
+      ]
+    }
+  ]
+}

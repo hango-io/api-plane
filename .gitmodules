@@ -1,0 +1,3 @@
+[submodule "nsf-proto"]
+	path = nsf-proto
+	url = ../../zhangwu/nsf-proto.git

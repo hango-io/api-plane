@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package istio.envoy.config.filter.bodyextractor.v2;
+
+option java_package = "io.envoyproxy.envoy.config.filter.bodyextractor.v2";
+option java_outer_classname = "BodyExtractorProto";
+option java_multiple_files = true;
+option go_package = "istio.io/api/envoy/config/filter/http/bodyextractor/v2";
+
+// 该插件从Form表单中提取某个Key-Value并写入到header或者querystring
+// 该插件基础配置和路由配置数据模型相同，且基础配置可缺省
+// 该插件目前仅可以支持简单Form表单格式
+
+// 示例配置：该段配置将从body中提取method字段值
+// 并插入到querystring中，使用body-method作为新的key
+// extractors:
+// - src:
+//     name: method
+//   des:
+//     rename: body-method
+//     to: QUERY
+// clear_route_cache: true
+
+
+enum DesType {
+  HEADER = 0;
+  QUERY = 1;
+}
+
+// 指定提取后数据存储位置以及名称
+message Des {
+    string rename = 1;
+    DesType to = 2;
+}
+
+// 指定Form表单中待提取数据名称名称
+message Src {
+    string name = 1;
+}
+
+message FormExtractor {
+    Src src = 1;
+    Des des = 2;
+}
+
+// 路由配置
+message BodyExtractorConfig {
+    // 可多次提取
+    repeated FormExtractor extractors = 1;
+    // 是否重新路由
+    bool clear_route_cache = 2;
+}

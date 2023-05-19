@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.netease.cloud.nsf.common.proto";
+option java_outer_classname = "AgentRegistryProto";
+option objc_class_prefix = "REG";
+
+import "commonmeta.proto";
+package registry;
+
+// Agent向Server注册
+service AgentRegistry {
+    rpc RegAgent (AgentInfo) returns (meta.AgentCommonResponse) {
+    }
+    rpc OfflineAgent (AgentOfflineRequest) returns (meta.AgentCommonResponse) {
+    }
+    rpc ReportServiceInfo (ServiceInfo) returns (meta.AgentCommonResponse) {
+    }
+    rpc ReportCallInfo (CallList) returns (meta.AgentCommonResponse) {
+    }
+    rpc ReportErrorLogInfo (LogList) returns (meta.AgentCommonResponse) {
+    }
+}
+
+message AgentInfo {
+    // agent唯一性标识.
+    string agentId = 1;
+    // The name of the service.
+    string name = 2;
+    // The ip of the service.
+    string ip = 3;
+    // The port of the service.
+    string port = 4;
+    string version = 5;
+    string skey = 6; // secret key(必要)
+    string registryId = 7; // 应用实例的注册中心id.
+    string akey = 8; // access key(必要)
+    repeated tag tags = 9;
+    string type = 10; // 服务类型 "HTTP" "DUBBO" "GRPC"
+    repeated containerInfo containerInfos = 11;
+    string gitBranch = 12;
+    string gitCommit = 13;
+    string projectCode = 14;
+    string projectEnv = 15;
+    string config = 16;
+    string club = 17;
+}
+
+message tag {
+    string key = 1;
+    string value = 2;
+    string type = 3;
+}
+
+message containerInfo {
+    string key = 1;
+    string value = 2;
+}
+
+
+message AgentOfflineRequest {
+    // agent唯一性标识.
+    string agentId = 1;
+    string version = 2;
+}
+
+message ServiceInfo {
+    string agentId = 1; // agent id
+    string version = 2; // 版本号
+    string name = 3; // 服务名称
+    string skey = 4; // 服务码(后续结合认证授权考虑)
+    repeated ClassInfo clazz = 5; // 类信息
+    int32 status = 6; // 服务信息上报状态.0为默认进行中，-1为当次分批结束.
+    string akey = 7; // access key(必要)
+    string projectCode = 8;
+    string projectEnv = 9; // 环境标识
+}
+
+message ClassInfo {
+    string packege = 1;
+    string name = 2; //
+    repeated MethodInfo methodInfo = 3; // 方法信息
+    int32 dubboFlag = 4;
+}
+
+message MethodInfo {
+    string name = 1; //
+    // TODO 后续添加参数、返回等
+}
+
+message CallList {
+    string agentId = 1; // agent id
+    string version = 2; // 版本号
+    string serviceName = 3; //服务名称
+    repeated CallInfo callList = 4;
+    string skey = 5; // secret key(必要)
+    string akey = 6; // access key(必要)
+    string projectCode = 7; //项目标识
+    string projectEnv = 8; // 环境标识
+
+}
+
+message CallInfo {
+    string sourceService = 1; // 调用发起方服务名
+    string targetService = 2; // 调用被调用方服务名
+    string sourceVersion = 3; // 调用发起方服务版本
+    string targetVersion = 4; // 调用发起方服务版本
+    int64 callTime = 5; // 调用时间
+    string sourceRegion = 6; // 调用方发起方服务Region
+    string targetRegion = 7; // 调用被调用方服务Region
+}
+
+message LogList {
+    string agentId = 1; // agent id
+    string version = 2; // 版本号
+    string instanceName = 3; //实例名
+    repeated LogInfo logList = 4;
+    string projectCode = 5; //项目标识
+    string projectEnv = 6; // 环境标识
+}
+
+message LogInfo {
+    int64 first = 1; // 初次出现时间
+    int64 last = 2; // 最后出现时间
+    string content = 3; // 日志内容
+    string type = 4; // 异常类型
+}
