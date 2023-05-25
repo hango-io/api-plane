@@ -2,12 +2,10 @@ package org.hango.cloud.core.k8s;
 
 import com.google.common.collect.ImmutableMap;
 import io.fabric8.kubernetes.api.model.*;
-import io.fabric8.kubernetes.api.model.apps.*;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.client.utils.URLUtils;
-import me.snowdrop.istio.api.authentication.v1alpha1.Policy;
-import me.snowdrop.istio.api.authentication.v1alpha1.PolicyList;
 import me.snowdrop.istio.api.networking.v1alpha3.*;
-import me.snowdrop.istio.api.rbac.v1alpha1.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.util.exception.ApiPlaneException;
@@ -27,172 +25,111 @@ public enum K8sResourceEnum {
     VirtualService(
             K8sTypes.VirtualService.class,
             K8sTypes.VirtualServiceList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/virtualservices")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/virtualservices")),
     /** DestinationRule resource */
     DestinationRule(
             K8sTypes.DestinationRule.class,
             K8sTypes.DestinationRuleList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/destinationrules")),
-    /** DestinationRule resource */
-    ServiceRole(
-            ServiceRole.class,
-            ServiceRoleList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/rbac.istio.io/v1alpha1/namespaces/%s/serviceroles")),
-    /** DestinationRule resource */
-    ServiceRoleBinding(
-            ServiceRoleBinding.class,
-            ServiceRoleBindingList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/rbac.istio.io/v1alpha1/namespaces/%s/servicerolebindings")),
-    /** DestinationRule resource */
-    Policy(
-            Policy.class,
-            PolicyList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/authentication.istio.io/v1alpha1/namespaces/%s/policies")),
-    /** DestinationRule resource */
-    ServiceAccount(
-            ServiceAccount.class,
-            ServiceAccountList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/v1/namespaces/%s/serviceaccounts")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/destinationrules")),
     /** DestinationRule resource */
     Gateway(
             Gateway.class,
             GatewayList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/gateways")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/gateways")),
     /** DestinationRule resource */
     Pod(
             Pod.class,
             PodList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/v1/namespaces/%s/pods")),
-    /** DestinationRule resource */
-    ClusterRbacConfig(
-            RbacConfig.class,
-            RbacConfigList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/rbac.istio.io/v1alpha1/clusterrbacconfigs")),
-    /** DestinationRule resource */
-    RbacConfig(
-            RbacConfig.class,
-            RbacConfigList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/rbac.istio.io/v1alpha1/clusterrbacconfigs")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/api/v1/namespaces/%s/pods")),
+
     /** DestinationRule resource */
     SharedConfig(
             SharedConfig.class,
             SharedConfigList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/sharedconfigs")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/sharedconfigs")),
     /** DestinationRule resource */
     ServiceEntry(
             ServiceEntry.class,
             ServiceEntryList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/serviceentries")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/serviceentries")),
     /** DestinationRule resource */
     PluginManager(
             K8sTypes.PluginManager.class,
             K8sTypes.PluginManagerList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/microservice.slime.io/v1alpha1/namespaces/%s/pluginmanagers")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/microservice.slime.io/v1alpha1/namespaces/%s/pluginmanagers")),
     /** DestinationRule resource */
     EnvoyFilter(
             K8sTypes.EnvoyFilter.class,
             K8sTypes.EnvoyFilterList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/envoyfilters")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/envoyfilters")),
     /** DestinationRule resource */
     Deployment(
             Deployment.class,
             DeploymentList.class,
-            ImmutableMap.of(
-                    K8sVersion.V1_11_0, "/apis/extensions/v1beta1/namespaces/%s/deployments",
-                    K8sVersion.V1_17_0, "/apis/apps/v1/namespaces/%s/deployments"
-            )),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/apps/v1/namespaces/%s/deployments")),
     /** DestinationRule resource */
     Endpoints(
             Endpoints.class,
             EndpointsList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/v1/namespaces/%s/endpoints/")),
-    /** DestinationRule resource */
-    DaemonSet(
-            DaemonSet.class,
-            DaemonSetList.class,
-            ImmutableMap.of(
-                    K8sVersion.V1_11_0, "/apis/extensions/v1beta1/namespaces/%s/daemonsets",
-                    K8sVersion.V1_17_0, "/apis/apps/v1/namespaces/%s/daemonsets"
-            )),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/api/v1/namespaces/%s/endpoints/")),
+
     /** DestinationRule resource */
     Service(
             Service.class,
             ServiceList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/v1/namespaces/%s/services/")),
-    /** DestinationRule resource */
-    StatefulSet(
-            StatefulSet.class,
-            StatefulSetList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/apps/v1/namespaces/%s/statefulsets/")),
-    /** DestinationRule resource */
-    ReplicaSet(
-            ReplicaSet.class,
-            ReplicaSetList.class,
-            ImmutableMap.of(
-                    K8sVersion.V1_11_0, "/apis/extensions/v1beta1/namespaces/%s/replicasets/",
-                    K8sVersion.V1_17_0, "/apis/apps/v1/namespaces/%s/replicasets/"
-            )),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/api/v1/namespaces/%s/services/")),
+
     /** DestinationRule resource */
     VersionManager(
             VersionManager.class,
             VersionManagerList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/versionmanagers")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/versionmanagers")),
     /** DestinationRule resource */
     GlobalConfig(
             GlobalConfig.class,
             GlobalConfigList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/globalconfigs")
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/globalconfigs")
     ),
     /** DestinationRule resource */
     NameSpace(
             Namespace.class,
             NamespaceList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/v1/namespaces/%s")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/api/v1/namespaces/%s")),
     /** DestinationRule resource */
     EnvoyPlugin(
             K8sTypes.EnvoyPlugin.class,
             K8sTypes.EnvoyPluginList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/microservice.slime.io/v1alpha1/namespaces/%s/envoyplugins")),
-    /** DestinationRule resource */
-    MixerUrlPattern(
-            MixerUrlPattern.class,
-            MixerUrlPatternList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/mixerurlpatterns")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/microservice.slime.io/v1alpha1/namespaces/%s/envoyplugins")),
     /** DestinationRule resource */
     ConfigMap(
             ConfigMap.class,
             ConfigMapList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/v1/namespaces/%s/configmaps")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/api/v1/namespaces/%s/configmaps")),
     /** DestinationRule resource */
     SmartLimiter(
             K8sTypes.SmartLimiter.class,
             K8sTypes.SmartLimiterList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/microservice.slime.io/v1alpha2/namespaces/%s/smartlimiters")),
-    /** DestinationRule resource */
-    Sidecar(
-            me.snowdrop.istio.api.networking.v1alpha3.Sidecar.class,
-            SidecarList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/sidecars")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/microservice.slime.io/v1alpha2/namespaces/%s/smartlimiters")),
     Secret(
             Secret.class,
             SecretList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/v1/namespaces/%s/secrets")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/api/v1/namespaces/%s/secrets")),
 
     /** Ingress resource */
     Ingress(
             io.fabric8.kubernetes.api.model.extensions.Ingress.class,
             io.fabric8.kubernetes.api.model.extensions.IngressList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/extensions/v1beta1/namespaces/%s/ingresses")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.k8s.io/v1/ingresses")),
     //#######  Gateway API resource ###########
     KubernetesGateway(
             io.fabric8.kubernetes.api.model.gatewayapi.v1beta1.Gateway.class,
             io.fabric8.kubernetes.api.model.gatewayapi.v1beta1.GatewayList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/gateway.networking.k8s.io/v1beta1/namespaces/%s/gateways")),
+            ImmutableMap.of(K8sVersion.V1_17_0, "/api/gateway.networking.k8s.io/v1beta1/namespaces/%s/gateways")),
 
     HTTPRoute(
             io.fabric8.kubernetes.api.model.gatewayapi.v1beta1.HTTPRoute.class,
             io.fabric8.kubernetes.api.model.gatewayapi.v1beta1.HTTPRouteList.class,
-            ImmutableMap.of(K8sVersion.V1_11_0, "/api/gateway.networking.k8s.io/v1beta1/namespaces/%s/httproutes"))
+            ImmutableMap.of(K8sVersion.V1_17_0, "/api/gateway.networking.k8s.io/v1beta1/namespaces/%s/httproutes"))
 
     ;
 
@@ -208,7 +145,7 @@ public enum K8sResourceEnum {
         if (StringUtils.isNotEmpty(currentK8sVersion)) {
             currentVersion = new K8sVersion(currentK8sVersion);
         } else {
-            currentVersion = K8sVersion.V1_11_0;
+            currentVersion = K8sVersion.V1_17_0;
         }
         K8sVersion closedVersion = select(selfLinkMap.keySet(), currentVersion);
 

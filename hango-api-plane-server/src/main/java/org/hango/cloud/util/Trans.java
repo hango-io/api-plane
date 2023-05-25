@@ -328,14 +328,6 @@ public class Trans {
         return api;
     }
 
-    public static ValidateResultDTO validateResult2ValidateResultDTO(ValidateResult validateResult) {
-        ValidateResultDTO dto = new ValidateResultDTO();
-        dto.setPass(validateResult.isPass());
-        if (validateResult.getItems() != null) {
-            dto.setItems(validateResult.getItems());
-        }
-        return dto;
-    }
 
     /**
      * 插件DTO对象转业务流转对象
