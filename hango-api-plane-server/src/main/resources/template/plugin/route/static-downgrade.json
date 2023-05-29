@@ -1,315 +1,372 @@
 {
-  "formatter": {
-    "kind": "static-downgrade",
-    "condition?": "&condition",
-    "response": {
-      "code": "&response.code",
-      "headers": "@response.headers",
-      "body": "&response.body"
-    }
+  "inject": {
+    "kind": "static-downgrade"
   },
   "layouts": [
     {
-      "key": "condition",
-      "alias": "静态降级条件",
-      "type": "layouts",
-      "layouts": [
+      "alias": "静态降级条件"
+    },
+    {
+      "alias": "请求匹配",
+      "type": "switch",
+      "key": "requestSwitch",
+      "style": {
+        "marginLeft": "60px"
+      }
+    },
+    {
+      "visible": {
+        "true": [
+          "requestSwitch"
+        ]
+      },
+      "alias": "请求方法",
+      "key": "requestMethod",
+      "type": "extend-inline-form",
+      "indent": 3,
+      "style": {
+        "marginLeft": "120px"
+      },
+      "default":{},
+      "moudle": [
         {
-          "key": "request",
-          "alias": "请求",
-          "type": "layouts",
-          "layouts": [
+          "key": "requestMethodList",
+          "type": "multi_select",
+          "options": [
             {
-              "key": "requestSwitch",
-              "alias": "请求匹配",
-              "type": "switch",
-              "default": false
+              "text": "GET",
+              "value": "GET"
             },
             {
-              "key": "method",
-              "alias": "请求方法",
-              "type": "multi_select",
-              "visible": {
-                "this.requestSwitch": true
-              },
-              "options": [
-                {
-                  "text": "GET",
-                  "value": "GET"
-                },
-                {
-                  "text": "POST",
-                  "value": "POST"
-                },
-                {
-                  "text": "PUT",
-                  "value": "PUT"
-                },
-                {
-                  "text": "DELETE",
-                  "value": "DELETE"
-                },
-                {
-                  "text": "OPTIONS",
-                  "value": "OPTIONS"
-                },
-                {
-                  "text": "HEAD",
-                  "value": "HEAD"
-                },
-                {
-                  "text": "TRACE",
-                  "value": "TRACE"
-                },
-                {
-                  "text": "CONNECT",
-                  "value": "CONNECT"
-                },
-                {
-                  "text": "PATCH",
-                  "value": "PATCH"
-                }
-              ]
+              "text": "POST",
+              "value": "POST"
             },
             {
-              "key": "path",
-              "alias": "请求路径",
-              "type": "layouts",
-              "visible": {
-                "this.requestSwitch": true
-              },
-              "layouts": [
-                {
-                  "key": "match_type",
-                  "alias": "匹配方式",
-                  "type": "select",
-                  "default": "exact_match",
-                  "options": [
-                    {
-                      "text": "精确匹配",
-                      "value": "exact_match"
-                    },
-                    {
-                      "text": "正则表达式",
-                      "value": "safe_regex_match"
-                    }
-                  ]
-                },
-                {
-                  "key": "value",
-                  "type": "input",
-                  "alias": "取值"
-                }
-              ]
+              "text": "PUT",
+              "value": "PUT"
             },
             {
-              "key": "host",
-              "alias": "域名",
-              "type": "layouts",
-              "visible": {
-                "this.requestSwitch": true
-              },
-              "layouts": [
-                {
-                  "key": "match_type",
-                  "alias": "匹配方式",
-                  "type": "select",
-                  "default": "exact_match",
-                  "options": [
-                    {
-                      "text": "精确匹配",
-                      "value": "exact_match"
-                    },
-                    {
-                      "text": "正则表达式",
-                      "value": "safe_regex_match"
-                    }
-                  ]
-                },
-                {
-                  "key": "value",
-                  "type": "input",
-                  "alias": "取值"
-                }
-              ]
+              "text": "DELETE",
+              "value": "DELETE"
             },
             {
-              "key": "headers",
-              "alias": "请求头",
-              "type": "array",
-              "visible": {
-                "this.requestSwitch": true
-              },
-              "layouts": [
-                {
-                  "key": "headerKey",
-                  "alias": "请求头名称",
-                  "type": "input",
-                  "rules": [
-                    "MaxLength(200)"
-                  ]
-                },
-                {
-                  "key": "match_type",
-                  "alias": "匹配方式",
-                  "type": "select",
-                  "default": "exact_match",
-                  "options": [
-                    {
-                      "text": "精确匹配",
-                      "value": "exact_match"
-                    },
-                    {
-                      "text": "正则表达式",
-                      "value": "safe_regex_match"
-                    }
-                  ]
-                },
-                {
-                  "key": "value",
-                  "type": "input",
-                  "alias": "取值"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "key": "response",
-          "alias": "响应",
-          "type": "layouts",
-          "layouts": [
-            {
-              "key": "code",
-              "alias": "状态码",
-              "type": "layouts",
-              "layouts": [
-                {
-                  "key": "match_type",
-                  "alias": "匹配方式",
-                  "type": "select",
-                  "default": "exact_match",
-                  "options": [
-                    {
-                      "text": "精确匹配",
-                      "value": "exact_match"
-                    },
-                    {
-                      "text": "正则表达式",
-                      "value": "safe_regex_match"
-                    }
-                  ]
-                },
-                {
-                  "key": "value",
-                  "alias": "取值",
-                  "type": "input",
-                  "rules": [
-                    "Required",
-                    "Number",
-                    "MinNumber(200)",
-                    "MaxNumber(599)"
-                  ],
-                  "customRules": {
-                    "keys": [
-                      "this",
-                      "match_type"
-                    ],
-                    "safe_regex_match": [
-                      "Required",
-                      "RegExp"
-                    ]
-                  }
-                }
-              ]
+              "text": "OPTIONS",
+              "value": "OPTIONS"
             },
             {
-              "key": "headers",
-              "alias": "响应头",
-              "type": "array",
-              "layouts": [
-                {
-                  "key": "headerKey",
-                  "alias": "响应头名称",
-                  "type": "input",
-                  "rules": [
-                    "MaxLength(200)"
-                  ]
-                },
-                {
-                  "key": "match_type",
-                  "alias": "匹配方式",
-                  "type": "select",
-                  "default": "exact_match",
-                  "options": [
-                    {
-                      "text": "精确匹配",
-                      "value": "exact_match"
-                    },
-                    {
-                      "text": "正则表达式",
-                      "value": "safe_regex_match"
-                    }
-                  ]
-                },
-                {
-                  "key": "value",
-                  "type": "input",
-                  "alias": "取值"
-                }
-              ]
+              "text": "HEAD",
+              "value": "HEAD"
+            },
+            {
+              "text": "TRACE",
+              "value": "TRACE"
+            },
+            {
+              "text": "CONNECT",
+              "value": "CONNECT"
+            },
+            {
+              "text": "PATCH",
+              "value": "PATCH"
             }
           ]
         }
       ]
     },
     {
-      "key": "response",
-      "alias": "降级后响应内容",
-      "type": "layouts",
-      "layouts": [
+      "visible": {
+        "true": [
+          "requestSwitch"
+        ]
+      },
+      "style": {
+        "marginLeft": "120px"
+      },
+      "alias": "请求路径",
+      "key": "requestPath",
+      "type": "extend-inline-form",
+      "indent": true,
+      "default":{},
+      "moudle": [
         {
-          "key": "code",
+          "default": "exact_match",
+          "options": [
+            {
+              "text": "精确匹配",
+              "value": "exact_match"
+            },
+            {
+              "text": "正则表达式",
+              "value": "safe_regex_match"
+            }
+          ],
+          "type": "select",
+          "key": "match_type"
+        },
+        {
           "type": "input",
-          "default": "200",
-          "alias": "状态码",
+          "key": "value"
+        }
+      ]
+    },
+    {
+      "visible": {
+        "true": [
+          "requestSwitch"
+        ]
+      },
+      "style": {
+        "marginLeft": "120px"
+      },
+      "alias": "域名",
+      "key": "requestHost",
+      "type": "extend-inline-form",
+      "indent": true,
+      "default":{},
+      "moudle": [
+        {
+          "default": "exact_match",
+          "options": [
+            {
+              "text": "精确匹配",
+              "value": "exact_match"
+            },
+            {
+              "text": "正则表达式",
+              "value": "safe_regex_match"
+            }
+          ],
+          "type": "select",
+          "key": "match_type"
+        },
+        {
+          "type": "input",
+          "key": "value"
+        }
+      ]
+    },
+    {
+      "visible": {
+        "true": [
+          "requestSwitch"
+        ]
+      },
+      "style": {
+        "marginLeft": "120px"
+      },
+      "alias": "请求头",
+      "default": [],
+      "description": "",
+      "key": "requestHeaders",
+      "layouts": null,
+      "indent": true,
+      "type": "extend-form-table",
+      "formTableConfig": {
+        "emptyText": "暂无数据"
+      },
+      "ruleList": [
+        {
+          "label": "请求头名称",
+          "key": "requestHeaderKey",
+          "placeholder": "请输入",
+          "type": "input",
+          "ruleNames": [
+            "MaxLength(99)"
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "精确匹配",
+              "value": "exact_match"
+            },
+            {
+              "text": "正则表达式",
+              "value": "safe_regex_match"
+            }
+          ],
+          "label": "匹配方式",
+          "type": "select",
+          "key": "match_type"
+        },
+        {
+          "label": "取值",
+          "type": "input",
+          "placeholder": "请输入",
+          "key": "requestHeaderValue"
+        }
+      ]
+    },
+    {
+      "alias": "响应匹配",
+      "style": {
+        "marginLeft": "60px"
+      }
+    },
+    {
+      "style": {
+        "marginLeft": "120px"
+      },
+      "alias": "响应码",
+      "key": "responseCode",
+      "type": "extend-inline-form",
+      "indent": true,
+      "default":{},
+      "moudle": [
+        {
+          "default": "exact_match",
+          "options": [
+            {
+              "text": "精确匹配",
+              "value": "exact_match"
+            },
+            {
+              "text": "正则表达式",
+              "value": "safe_regex_match"
+            }
+          ],
+          "rules": [
+            "Required"
+          ],
+          "type": "select",
+          "key": "match_type"
+        },
+        {
+          "type": "input",
+          "key": "value",
           "rules": [
             "Required",
             "Number",
             "MinNumber(200)",
             "MaxNumber(599)"
+          ],
+          "customRules": {
+            "keys": [
+              "this",
+              "match_type"
+            ],
+            "safe_regex_match": [
+              "Required",
+              "RegExp"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "style": {
+        "marginLeft": "120px"
+      },
+      "alias": "响应头",
+      "default": [],
+      "description": "",
+      "key": "responseHeaders",
+      "layouts": null,
+      "indent": true,
+      "type": "extend-form-table",
+      "formTableConfig": {
+        "emptyText": "暂无数据"
+      },
+      "ruleList": [
+        {
+          "label": "响应头名称",
+          "key": "responseHeaderKey",
+          "placeholder": "请输入",
+          "type": "input",
+          "ruleNames": [
+            "MaxLength(200)"
           ]
         },
         {
-          "key": "headers",
-          "type": "array",
-          "alias": "响应头",
-          "layouts": [
+          "options": [
             {
-              "key": "key",
-              "type": "input",
-              "alias": "响应头名称",
-              "rules": [
-                "Required",
-                "MaxLength(200)"
-              ]
+              "text": "精确匹配",
+              "value": "exact_match"
             },
             {
-              "key": "value",
-              "type": "input",
-              "alias": "响应头值",
-              "rules": [
-                "Required",
-                "MaxLength(200)"
-              ]
+              "text": "正则表达式",
+              "value": "safe_regex_match"
             }
+          ],
+          "label": "匹配方式",
+          "type": "select",
+          "key": "match_type"
+        },
+        {
+          "label": "取值",
+          "type": "input",
+          "placeholder": "请输入",
+          "key": "responseHeaderValue"
+        }
+      ]
+    },
+    {
+      "alias": "降级后响应内容",
+      "style": {
+        "marginLeft": "60px"
+      }
+    },
+    {
+      "style": {
+        "marginLeft": "120px"
+      },
+      "key": "downgradeResponseCode",
+      "type": "input",
+      "default": "200",
+      "alias": "状态码",
+      "rules": [
+        "Required",
+        "Number",
+        "MinNumber(200)",
+        "MaxNumber(599)"
+      ]
+    },
+    {
+      "style": {
+        "marginLeft": "120px"
+      },
+      "alias": "响应头",
+      "default": [],
+      "description": "",
+      "key": "downgradeResponseHeaders",
+      "layouts": null,
+      "indent": true,
+      "type": "extend-form-table",
+      "formTableConfig": {
+        "emptyText": "暂无数据"
+      },
+      "ruleList": [
+        {
+          "label": "响应头名称",
+          "key": "downgradeResponseHeaderKey",
+          "placeholder": "请输入",
+          "type": "input",
+          "ruleNames": [
+            "Required",
+            "MaxLength(200)"
           ]
         },
         {
-          "key": "body",
+          "label": "响应头值",
+          "key": "downgradeResponseHeaderValue",
+          "placeholder": "请输入",
           "type": "input",
-          "alias": "响应体"
+          "ruleNames": [
+            "Required",
+            "MaxLength(200)"
+          ]
         }
+      ]
+    },
+    {
+      "style": {
+        "marginLeft": "120px"
+      },
+      "key": "downgradeResponseBody",
+      "type": "input",
+      "alias": "响应体",
+      "rules": [
+        "Required"
       ]
     }
   ]
