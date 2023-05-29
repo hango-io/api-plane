@@ -10,6 +10,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+/**
+ * 熔断插件
+ * example:
+ {"rt":{"consecutiveSlowRequests":"2","rtThreshold":"1"},"breakType":["RTCircuitbreaker","ErrorPercentCircuitbreaker"],"response":{"headers":[{"_formTableKey":1685340549421,"value":"ccc","key":"aaa"},{"_formTableKey":1685340549421,"value":"eee","key":"ddd"}],"code":"456","body":"aasdadasdagsDBSDFDSAD"},"kind":"circuit-breaker","errorPercent":{"minRequestAmount":"2","errorPercentThreshold":"1"},"breakDuration":"10","lookbackDuration":"6"}
+ */
 @Component
 public class CircuitBreakerProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override
@@ -59,29 +64,29 @@ public class CircuitBreakerProcessor extends AbstractSchemaProcessor implements 
     }
 
     private void buildConfig(PluginGenerator source, PluginGenerator builder) {
-        if (!source.contain("$.config")) return;
-        if (source.contain("$.config.consecutive_slow_requests")) {
-            Long consecutive_slow_requests = Long.valueOf(source.getValue("$.config.consecutive_slow_requests"));
+        if (!source.contain("$.breakType")) return;
+        if (source.contain("$.rt.consecutiveSlowRequests")) {
+            Long consecutive_slow_requests = Long.valueOf(source.getValue("$.rt.consecutiveSlowRequests"));
             builder.createOrUpdateValue("$", "consecutive_slow_requests", consecutive_slow_requests);
         }
-        if (source.contain("$.config.average_response_time")) {
-            Double average_response_time = Double.valueOf(source.getValue("$.config.average_response_time"));
+        if (source.contain("$.rt.rtThreshold")) {
+            Double average_response_time = Double.valueOf(source.getValue("$.rt.rtThreshold"));
             builder.createOrUpdateValue("$", "average_response_time", average_response_time + "s");
         }
-        if (source.contain("$.config.min_request_amount")) {
-            Long min_request_amount = Long.valueOf(source.getValue("$.config.min_request_amount"));
+        if (source.contain("$.errorPercent.minRequestAmount")) {
+            Long min_request_amount = Long.valueOf(source.getValue("$.errorPercent.minRequestAmount"));
             builder.createOrUpdateValue("$", "min_request_amount", min_request_amount);
         }
-        if (source.contain("$.config.error_percent_threshold")) {
-            Double error_percent_threshold = Double.valueOf(source.getValue("$.config.error_percent_threshold"));
+        if (source.contain("$.errorPercent.errorPercentThreshold")) {
+            Double error_percent_threshold = Double.valueOf(source.getValue("$.errorPercent.errorPercentThreshold"));
             builder.createOrUpdateJson("$", "error_percent_threshold", String.format("{\"value\":%s}", error_percent_threshold));
         }
-        if (source.contain("$.config.break_duration")) {
-            Double break_duration = Double.valueOf(source.getValue("$.config.break_duration"));
+        if (source.contain("$.breakDuration")) {
+            Double break_duration = Double.valueOf(source.getValue("$.breakDuration"));
             builder.createOrUpdateValue("$", "break_duration", break_duration + "s");
         }
-        if (source.contain("$.config.lookback_duration")) {
-            Double lookback_duration = Double.valueOf(source.getValue("$.config.lookback_duration"));
+        if (source.contain("$.lookbackDuration")) {
+            Double lookback_duration = Double.valueOf(source.getValue("$.lookbackDuration"));
             builder.createOrUpdateValue("$", "lookback_duration", lookback_duration + "s");
         }
         builder.createOrUpdateValue("$", "wait_body",  "true");

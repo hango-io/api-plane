@@ -1,20 +1,6 @@
 {
-  "formatter": {
-    "kind": "circuit-breaker",
-    "config": {
-      "error_percent_threshold": "&errorPercent.errorPercentThreshold",
-      "min_request_amount": "&errorPercent.minRequestAmount",
-      "average_response_time": "&rt.rtThreshold",
-      "consecutive_slow_requests": "&rt.consecutiveSlowRequests",
-      "breakType": "&breakType",
-      "lookback_duration": "&lookbackDuration",
-      "break_duration": "&breakDuration"
-    },
-    "response": {
-      "code": "&response.code",
-      "headers": "&response.headers",
-      "body": "&response.body"
-    }
+  "inject": {
+    "kind": "circuit-breaker"
   },
   "layouts": [
     {
@@ -87,7 +73,7 @@
       "layouts": [
         {
           "key": "rtThreshold",
-          "alias": "慢响应时间(秒)",
+          "alias": "慢响应时间(s)",
           "help": "当后端响应时间超过该阈值时，则认为当前请求响应为慢响应",
           "placeholder": "单位s，范围 (0, 1000.0]",
           "type": "input",
@@ -158,23 +144,26 @@
         },
         {
           "key": "headers",
-          "type": "array",
+          "type": "extend-form-table",
           "alias": "响应头",
-          "layouts": [
+          "default":[],
+          "ruleList": [
             {
+              "label": "响应头名称",
               "key": "key",
+              "placeholder": "请输入",
               "type": "input",
-              "alias": "响应头名称",
-              "rules": [
+              "ruleNames": [
                 "Required",
                 "MaxLength(200)"
               ]
             },
             {
+              "label": "响应头值",
               "key": "value",
+              "placeholder": "请输入",
               "type": "input",
-              "alias": "响应头值",
-              "rules": [
+              "ruleNames": [
                 "Required",
                 "MaxLength(200)"
               ]
