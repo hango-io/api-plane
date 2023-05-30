@@ -72,8 +72,8 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
         return builder;
     }
     private PluginGenerator buildRequestHeaderPluginGenerator(PluginGenerator source,PluginGenerator builder){
+        builder.createOrUpdateJson("$", "downgrade_rqx", "{\"headers\":[]}");
         if (source.contain("$.requestHeaders")) {
-            builder.createOrUpdateJson("$", "downgrade_rqx", "{\"headers\":[]}");
             List<Map<String, String>> headers = source.getValue("$.requestHeaders", List.class);
             headers.forEach(item -> {
                 String matchType = item.get("match_type");
