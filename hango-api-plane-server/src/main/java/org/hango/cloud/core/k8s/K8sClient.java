@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +45,17 @@ public class K8sClient {
 
     public <T extends HasMetadata, L extends KubernetesResourceList<T>> List<T> getCustomResources(CustomResource<T, L> customResource, String namespace, Map<String, String> labels){
         NonNamespaceOperation<T, L, Doneable<T>, Resource<T, Doneable<T>>> operataion = getOperataion(customResource, namespace);
+        if (operataion == null){
+            return new ArrayList<>();
+        }
         return operataion.withLabels(labels).list().getItems();
     }
 
     public <T extends HasMetadata, L extends KubernetesResourceList<T>> T getCustomResource(CustomResource<T, L> customResource, String namespace, String name){
         NonNamespaceOperation<T, L, Doneable<T>, Resource<T, Doneable<T>>> operataion = getOperataion(customResource, namespace);
+        if (operataion == null){
+            return null;
+        }
         return operataion.withName(name).get();
     }
 

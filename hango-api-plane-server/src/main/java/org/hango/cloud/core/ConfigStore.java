@@ -21,6 +21,8 @@ public interface ConfigStore {
 
     List<HasMetadata> get(String kind, String namespace);
 
+    List<HasMetadata> get(String kind);
+
     List<HasMetadata> get(String kind, String namespace, Map<String, String> labels);
 
 }

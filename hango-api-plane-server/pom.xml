@@ -120,7 +120,7 @@
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>kubernetes-model-gatewayapi</artifactId>
-            <version>6.2.0</version>
+            <version>6.6.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.fabric8</groupId>

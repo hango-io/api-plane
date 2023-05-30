@@ -384,7 +384,29 @@ public class GatewayServiceImpl implements GatewayService {
         PluginOrderDTO pluginOrder = pluginService.getPluginOrderTemplate(pluginOrderDto.getGatewayKind());
         pluginOrder.setName(pluginOrderDto.getName());
         pluginOrder.getPlugins().forEach(o -> o.setPort(pluginOrderDto.getPort()));
+        pluginOrder.setGwCluster(pluginOrderDto.getGwCluster());
         configManager.updateConfig(Trans.pluginOrderDTO2PluginOrder(pluginOrder));
+    }
+
+    /**
+     * 校验相同端口的plm资源中是否已经下发
+     */
+    @Override
+    public boolean pluginOrderPortCheck(PluginOrderDTO pluginOrderDto){
+        List<PluginOrderDTO> pluginManagerList = getPluginManagerList(pluginOrderDto.getGwCluster());
+        if (CollectionUtils.isEmpty(pluginManagerList)){
+            return true;
+        }
+        for (PluginOrderDTO pluginOrderDTO : pluginManagerList) {
+            List<PluginOrderItemDTO> plugins = pluginOrderDTO.getPlugins();
+            if (CollectionUtils.isEmpty(plugins)){
+                continue;
+            }
+            if (plugins.get(0).getPort().equals(pluginOrderDto.getPort())){
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -565,6 +587,15 @@ public class GatewayServiceImpl implements GatewayService {
         pluginOrderDTO.setName(name);
         return pluginOrderDTO;
     }
+
+    public List<PluginOrderDTO> getPluginManagerList(String gwCluster){
+        List<HasMetadata> config = configManager.getConfigListWithRev(K8sResourceEnum.PluginManager.name());
+        if (CollectionUtils.isEmpty(config)){
+            return new ArrayList<>();
+        }
+        return config.stream().map(o -> Trans.trans((K8sTypes.PluginManager) o)).filter(o -> gwCluster.contains(o.getGwCluster())).collect(Collectors.toList());
+    }
+
 
     private void processPluginOrder(PluginOrderDTO pluginOrderDto, List<PluginOrderItemDTO> updatePluginList) {
         if (CollectionUtils.isEmpty(updatePluginList)) {

@@ -15,6 +15,8 @@ import slime.microservice.plugin.v1alpha1.PluginManagerOuterClass;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.hango.cloud.service.impl.GatewayServiceImpl.GW_CLUSTER;
+
 
 public class Trans {
 
@@ -242,7 +244,9 @@ public class Trans {
     public static PluginOrder pluginOrderDTO2PluginOrder(PluginOrderDTO pluginOrderDTO) {
 
         PluginOrder po = new PluginOrder();
-        po.setGatewayLabels(pluginOrderDTO.getGatewayLabels());
+        Map<String, String> gatewayLabels = new HashMap<>();
+        gatewayLabels.put(GW_CLUSTER, pluginOrderDTO.getGwCluster());
+        po.setGatewayLabels(gatewayLabels);
         po.setName(pluginOrderDTO.getName());
         List<String> orderItems = new ArrayList<>();
         List<PluginOrderItemDTO> plugins = pluginOrderDTO.getPlugins();
@@ -263,7 +267,8 @@ public class Trans {
 
     public static PluginOrderDTO trans(K8sTypes.PluginManager pluginManager){
         PluginOrderDTO dto = new PluginOrderDTO();
-        dto.setGatewayLabels(pluginManager.getSpec().getWorkloadLabels());
+        Map<String, String> workloadLabels = pluginManager.getSpec().getWorkloadLabels();
+        dto.setGwCluster(workloadLabels.get(GW_CLUSTER));
         dto.setPlugins(new ArrayList<>());
         List<PluginManagerOuterClass.Plugin> plugins = pluginManager.getSpec().getPluginList();
         if (CollectionUtils.isEmpty(plugins)) {

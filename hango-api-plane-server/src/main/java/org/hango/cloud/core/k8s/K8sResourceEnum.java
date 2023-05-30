@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentList;
+import io.fabric8.kubernetes.api.model.networking.v1.IngressList;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.client.utils.URLUtils;
 import me.snowdrop.istio.api.networking.v1alpha3.*;
 import org.apache.commons.lang3.StringUtils;
@@ -117,9 +120,9 @@ public enum K8sResourceEnum {
 
     /** Ingress resource */
     Ingress(
-            io.fabric8.kubernetes.api.model.extensions.Ingress.class,
-            io.fabric8.kubernetes.api.model.extensions.IngressList.class,
-            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.k8s.io/v1/ingresses")),
+            io.fabric8.kubernetes.api.model.networking.v1.Ingress.class,
+            IngressList.class,
+            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.k8s.io/v1/namespaces/%s/ingresses")),
     //#######  Gateway API resource ###########
     KubernetesGateway(
             io.fabric8.kubernetes.api.model.gatewayapi.v1beta1.Gateway.class,

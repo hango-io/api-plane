@@ -49,6 +49,21 @@ public interface GatewayConfigManager extends ConfigManager {
     HasMetadata getConfig(String kind, String name);
 
     /**
+     * 获取资源
+     */
+    HasMetadata getConfig(String kind, String namespace, String name);
+
+    /**
+     * 获取资源列表,基于rev进行过滤
+     */
+    List<HasMetadata> getConfigListWithRev(String kind);
+
+    /**
+     * 获取资源列表,基于rev进行过滤
+     */
+    List<HasMetadata> getConfigList(String kind);
+
+    /**
      * 更新插件优先级
      * @param pluginOrder
      */

@@ -46,6 +46,7 @@ public enum ErrorCodeEnum {
 
     NoSuchAPI("NoSuchApi", "No such api:%s.", "没有请求的API:%s", 404),
 
+    PluginOrderPortError("PluginOrderPortError", "PluginOrder Port Error", "pluginmanager端口冲突", 400),
 
     ConfigAlreadExist("ConfigAlreadyExist", "The configuration you provided is already exist.", "配置已存在", 400),
     TargetAlreadExist("ConfigAlreadyExist", "The target service for rule is already exist.", "该目标服务已匹配治理规则", 400),

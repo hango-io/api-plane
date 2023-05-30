@@ -3,7 +3,6 @@ package org.hango.cloud.meta.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
-import java.util.Map;
 
 public class PluginOrderDTO {
 
@@ -12,6 +11,10 @@ public class PluginOrderDTO {
      */
     @JsonProperty(value = "Name")
     private String name;
+
+
+    @JsonProperty(value = "GwCluster")
+    private String gwCluster;
 
     /**
      * plugin manager 名称
@@ -25,18 +28,16 @@ public class PluginOrderDTO {
     @JsonProperty(value = "Port")
     private Integer port;
 
-    @JsonProperty(value = "GatewayLabels")
-    private Map<String, String> gatewayLabels;
 
     @JsonProperty(value = "Plugins")
     private List<PluginOrderItemDTO> plugins;
 
-    public Map<String, String> getGatewayLabels() {
-        return gatewayLabels;
+    public String getGwCluster() {
+        return gwCluster;
     }
 
-    public void setGatewayLabels(Map<String, String> gatewayLabels) {
-        this.gatewayLabels = gatewayLabels;
+    public void setGwCluster(String gwCluster) {
+        this.gwCluster = gwCluster;
     }
 
     public List<PluginOrderItemDTO> getPlugins() {

@@ -80,4 +80,10 @@ public interface GatewayService {
      */
     List<EnvoyServiceDTO> getEnvoyAddress(String gwClusterName);
 
+    /**
+     * 下发plm资源时校验端口是否冲突
+     * @return
+     */
+    boolean pluginOrderPortCheck(PluginOrderDTO pluginOrderDto);
+
 }

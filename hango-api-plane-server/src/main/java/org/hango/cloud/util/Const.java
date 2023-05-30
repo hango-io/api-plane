@@ -52,6 +52,7 @@ public class Const {
 
     public static final String PROJECT_CODE = "projectCode";
 
+
     /**
      * 认证类型
      */

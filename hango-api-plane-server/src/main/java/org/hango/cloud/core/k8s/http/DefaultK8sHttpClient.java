@@ -165,8 +165,7 @@ public class DefaultK8sHttpClient implements K8sHttpClient {
     }
 
     public String getUrl(String kind, String namespace, String name) {
-        K8sResourceEnum resourceEnum = K8sResourceEnum.get(kind);
-        return URLUtils.pathJoin(resourceEnum.selfLink(config.getMasterUrl(), namespace), name);
+        return URLUtils.pathJoin(getUrl(kind, namespace), name);
     }
 
     public String getUrlWithLabels(String url, Map<String, String> labels) {

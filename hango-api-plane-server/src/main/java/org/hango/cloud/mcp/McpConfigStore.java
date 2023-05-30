@@ -89,6 +89,16 @@ public class McpConfigStore implements ConfigStore {
     }
 
     @Override
+    public List<HasMetadata> get(String kind) {
+        if (isUnSupportedType(kind)) return new ArrayList<>();
+        List<HasMetadata> ret = new ArrayList<>();
+        String collection = getCollectionByKind(kind);
+        List<Resource> rss = resourceDao.list(collection);
+        rss.forEach(rs -> ret.add(toHasMetadata(rs)));
+        return ret;
+    }
+
+    @Override
     public List<HasMetadata> get(String kind, String namespace, Map<String, String> labels) {
         if (isUnSupportedType(kind)) return new ArrayList<>();
         List<HasMetadata> ret = new ArrayList<>();

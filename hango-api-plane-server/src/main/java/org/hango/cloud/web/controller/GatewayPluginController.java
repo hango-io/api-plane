@@ -89,6 +89,10 @@ public class GatewayPluginController extends BaseController {
      */
     @RequestMapping(params = "Action=PublishPluginOrder", method = RequestMethod.POST)
     public String publishPluginOrder(@RequestBody @Valid PluginOrderDTO pluginOrderDTO) {
+        boolean result = gatewayService.pluginOrderPortCheck(pluginOrderDTO);
+        if (!result){
+            return apiReturn(ApiPlaneErrorCode.PluginOrderPortError);
+        }
         gatewayService.publishPluginOrder(pluginOrderDTO);
         return apiReturn(ApiPlaneErrorCode.Success);
     }
