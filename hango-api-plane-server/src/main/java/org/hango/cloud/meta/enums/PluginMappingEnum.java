@@ -49,7 +49,7 @@ public enum PluginMappingEnum {
     REQUEST_BODY_REWRITE("proxy.filters.http.request_body_transformation", "", Collections.singletonList("request-body-rewrite"), PluginCategoryEnum.DATA_FORMAT, 3),
     RESPONSE_BODY_REWRITE("proxy.filters.http.response_body_transformation", "", Collections.singletonList("response-body-rewrite"), PluginCategoryEnum.DATA_FORMAT, 4),
     TRANSFORMER("proxy.filters.http.transformation", "", Collections.singletonList("transformer"), PluginCategoryEnum.DATA_FORMAT, 5),
-
+    MSHA_PLUGIN("msha-plugin", "type.googleapis.com/proxy.filters.http.rider.v3alpha1.RouteFilterConfig", Collections.singletonList("msha-plugin"), PluginCategoryEnum.DATA_FORMAT, 6 ),
     //系统后置插件
     TRAFFIC_MARK("proxy.filters.http.traffic_mark", "", Collections.EMPTY_LIST, POST_BUILTIN, 1),
     DETAILED_STATS("proxy.filters.http.detailed_stats", "", Collections.EMPTY_LIST, POST_BUILTIN, 2),
@@ -58,7 +58,7 @@ public enum PluginMappingEnum {
 
     //自定义插件
     RIDER("rider", "type.googleapis.com/proxy.filters.http.rider.v3alpha1.RouteFilterConfig", Collections.singletonList("rider"), null, -1 ),
-    WASM("wasm", "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm", Collections.singletonList("wasm"), null, -1 )
+    WASM("wasm", "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm", Collections.singletonList("wasm"), null, -1 ),
     ;
 
     //插件映射map,key:displayName,value:internalName

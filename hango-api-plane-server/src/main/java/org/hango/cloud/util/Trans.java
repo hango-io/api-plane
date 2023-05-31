@@ -317,7 +317,7 @@ public class Trans {
         dto.setPluginName(rider.getPluginName());
         dto.setUrl(rider.getUrl());
         dto.setImagePullSecretName(rider.getImagePullSecretName());
-        dto.setSetting(rider.getSettings());
+        dto.setSettings(rider.getSettings());
         return dto;
     }
 
@@ -326,7 +326,7 @@ public class Trans {
         dto.setPluginName(wasm.getPluginName());
         dto.setUrl(wasm.getUrl());
         dto.setImagePullSecretName(wasm.getImagePullSecretName());
-        dto.setSetting(wasm.getSettings());
+        dto.setSettings(wasm.getSettings());
         return dto;
     }
 

@@ -11,7 +11,7 @@ public class RiderDTO {
 
     private String url;
 
-    private Object setting;
+    private Object settings;
 
     public String getPluginName() {
         return pluginName;
@@ -37,11 +37,11 @@ public class RiderDTO {
         this.url = url;
     }
 
-    public Object getSetting() {
-        return setting;
+    public Object getSettings() {
+        return settings;
     }
 
-    public void setSetting(Object setting) {
-        this.setting = setting;
+    public void setSettings(Object settings) {
+        this.settings = settings;
     }
 }

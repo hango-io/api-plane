@@ -365,6 +365,13 @@ public class GatewayServiceImpl implements GatewayService {
     }
 
     @Override
+    public void reloadPluginOrder(PluginOrderDTO pluginManager) {
+        //重新load更新资源
+        PluginOrder pluginOrder = Trans.pluginOrderDTO2PluginOrder(pluginManager);
+        configManager.updateConfig(pluginOrder);
+    }
+
+    @Override
     public void publishPluginOrder(PluginOrderDTO pluginOrderDto) {
         PluginOrderDTO pluginOrder = pluginService.getPluginOrderTemplate(pluginOrderDto.getGatewayKind());
         pluginOrder.setName(pluginOrderDto.getName());

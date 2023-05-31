@@ -40,6 +40,7 @@ public class GatewayPluginController extends BaseController {
     @Autowired
     private GatewayService gatewayService;
 
+
     /**
      * 查询插件schema
      */
@@ -128,6 +129,14 @@ public class GatewayPluginController extends BaseController {
     @RequestMapping(params = "Action=ResortPluginOrder", method = RequestMethod.GET)
     public String resortPluginOrder(@RequestParam("Names") List<String> names) {
         gatewayService.resortPluginOrder(names);
+        return apiReturn(ApiPlaneErrorCode.Success);
+    }
+    /**
+     * 重新全量加载全局插件
+     */
+    @RequestMapping(params = "Action=ReloadPluginOrder", method = RequestMethod.POST)
+    public String reloadPluginOrder(@RequestBody @Valid PluginOrderDTO pluginOrderDTO) {
+        gatewayService.reloadPluginOrder(pluginOrderDTO);
         return apiReturn(ApiPlaneErrorCode.Success);
     }
 }

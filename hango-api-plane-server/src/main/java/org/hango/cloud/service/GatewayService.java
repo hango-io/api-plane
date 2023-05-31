@@ -66,6 +66,8 @@ public interface GatewayService {
 
 
 
+    void reloadPluginOrder(PluginOrderDTO pluginOrderDto);
+
     void publishPluginOrder(PluginOrderDTO pluginOrderDto);
 
     void deletePluginOrder(PluginOrderDTO pluginOrderDTO);

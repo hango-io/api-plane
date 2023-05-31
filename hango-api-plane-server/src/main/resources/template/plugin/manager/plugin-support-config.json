@@ -67,6 +67,7 @@
       {"schema": "oauth2-auth","plugin": "proxy.filters.http.super_authz"},
       {"schema": "basic-rbac","plugin": "envoy.filters.http.rbac"},
       {"schema": "waf","plugin": "proxy.filters.http.waf"},
+      {"schema": "","plugin": "msha-plugin"},
       {"schema": "","plugin": "proxy.filters.http.traffic_mark"},
       {"schema": "parameters-validate","plugin": "proxy.filters.http.parameter_validate"},
       {"schema": "simple-auth","plugin": "proxy.filters.http.super_authz"},
@@ -120,6 +121,7 @@
       {"schema": "request-rewrite","plugin": "proxy.filters.http.header_rewrite"},
       {"schema": "jwt-auth","plugin": "envoy.filters.http.jwt_authn"},
       {"schema": "oauth2-auth","plugin": "proxy.filters.http.super_authz"},
+
 
       {"schema": "","plugin": "proxy.filters.http.metadatahub"},
       {"schema": "","plugin": "proxy.filters.http.detailed_stats"},
