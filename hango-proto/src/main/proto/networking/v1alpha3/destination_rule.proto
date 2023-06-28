@@ -17,6 +17,8 @@ import "google/protobuf/duration.proto";
 import "networking/v1alpha3/virtual_service.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/struct.proto";
+
 
 // $title: Destination Rule
 // $description: Configuration affecting load balancing, outlier detection, etc.
@@ -147,6 +149,11 @@ message DestinationRule {
 
     // mark default cluster for specific proxy(envoy)
     map<string, string> gwLabels = 21;
+
+    google.protobuf.Struct meta = 22;
+
+    // metadata info for qz,'stats_meta' fields here
+    map<string, google.protobuf.Struct> metadata = 23;
 }
 
 // Traffic policies to apply for a specific destination, across all
@@ -261,6 +268,11 @@ message Subset {
 
     // mark subset for specific proxy(envoy)
     map<string, string> gwLabels = 22;
+
+    google.protobuf.Struct meta = 23;
+
+    // metadata info for qz,  'stats_meta' fields here
+    map<string, google.protobuf.Struct> metadata = 24;
 }
 
 // Load balancing policies to apply for a specific destination. See Envoy's

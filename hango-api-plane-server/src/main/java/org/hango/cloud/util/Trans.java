@@ -1,6 +1,9 @@
 package org.hango.cloud.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
 import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.k8s.K8sTypes;
@@ -173,6 +176,7 @@ public class Trans {
 
         s.setServiceTag(portalService.getServiceTag());
         s.setSubsets(subsetDTO2Subset(portalService.getSubsets()));
+        s.setMetaMap(portalService.getMetaMap());
         return s;
     }
 
@@ -216,6 +220,9 @@ public class Trans {
                         ss.setName(sd.getName());
                         ss.setTrafficPolicy(subsetTrafficPolicyDtoTosubsetTrafficPolicy(sd.getTrafficPolicy()));
                         ss.setStaticAddrs(sd.getStaticAddrs());
+                        if(!CollectionUtils.isEmpty(sd.getMetaMap())){
+                            ss.setMetaLabelMap(sd.getMetaMap().get(CRDMetaEnum.DESTINATION_RULE_STATS_META.getName()));
+                        }
                         return ss;
                     })
                     .collect(Collectors.toList());

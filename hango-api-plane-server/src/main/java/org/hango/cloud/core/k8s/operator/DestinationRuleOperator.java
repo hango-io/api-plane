@@ -1,5 +1,6 @@
 package org.hango.cloud.core.k8s.operator;
 
+import com.google.protobuf.Struct;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.k8s.K8sTypes;
@@ -10,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,8 @@ public class DestinationRuleOperator implements k8sResourceOperator<K8sTypes.Des
         if (!StringUtils.isEmpty(freshSpec.getHost())){
             builder.setHost(freshSpec.getHost());
         }
+        builder.clearMetadata();
+        builder.putAllMetadata(fresh.getSpec().getMetadataMap());
 
         List subList = mergeList(oldSpec.getSubsetsList(), freshSpec.getSubsetsList(), new SubsetEquals());
         if (!CollectionUtils.isEmpty(subList)){

@@ -77,6 +77,9 @@ public interface TemplateConst {
 
     String VIRTUAL_SERVICE_RESP_EXCEPTION_CODE ="t_virtual_service_resp_exception_code";
 
+    String DESTINATION_RULE_METADATA_HUB = "t_destination_rule_metadata_hub";
+
+
 
     /**
      * ServiceInfo
