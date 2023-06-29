@@ -9,6 +9,13 @@ metadata:
 spec:
   host: ${t_destination_rule_host}
   altStatName: ${t_destination_rule_alt_stat_name}
+<#if t_destination_rule_metadata_hub?has_content>
+  metadata:
+    LABELS:
+  <#list t_destination_rule_metadata_hub?keys as tagKey>
+      "${tagKey}": "${t_destination_rule_metadata_hub[tagKey]}"
+  </#list>
+</#if>
 <#--- 默认所有subset都继承同一份trafficPolicy --->
   subsets:
 <#--- 默认生成的subset --->
@@ -16,6 +23,13 @@ spec:
     altStatName: ${t_destination_rule_alt_stat_name}
     gwLabels:
       gw_cluster: ${t_api_gateway}
+<#if t_destination_rule_metadata_hub?has_content>
+    metadata:
+      LABELS:
+  <#list t_destination_rule_metadata_hub?keys as tagKey>
+        "${tagKey}": "${t_destination_rule_metadata_hub[tagKey]}"
+  </#list>
+</#if>
 <@indent count=4><@autoremove><#include "destinationRule_trafficPolicy.ftl"/></@autoremove></@indent>
 <#--- 自定义的subset --->
 <#if t_destination_rule_extra_subsets?has_content>
@@ -28,6 +42,13 @@ spec:
     labels:
 <#list ss.labels?keys as k>
       ${k}: ${ss.labels[k]}
+  <#if ss.metaLabelMap?has_content>
+    metadata:
+      LABELS:
+    <#list ss.metaLabelMap?keys as tagKey>
+        "${tagKey}": "${ss.metaLabelMap[tagKey]}"
+    </#list>
+  </#if>
 </#list>
 </#if>
     <#if ss.trafficPolicy?has_content>
