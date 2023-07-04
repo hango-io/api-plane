@@ -1,10 +1,9 @@
 package org.hango.cloud.core.plugin.processor;
 
-import org.hango.cloud.core.plugin.PluginGenerator;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
+import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.meta.ServiceInfo;
 import org.springframework.stereotype.Component;
 
@@ -34,12 +33,10 @@ public class IpRestrictionProcessor extends AbstractSchemaProcessor implements S
         }
         FragmentHolder fragmentHolder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
-                .withXUserId(getAndDeleteXUserId(rg))
-                .withFragmentType(FragmentTypeEnum.VS_API)
-                .withResourceType(K8sResourceEnum.VirtualService)
+                .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .withContent(ret.yamlString())
                 .build();
-        fragmentHolder.setVirtualServiceFragment(wrapper);
+        fragmentHolder.setGatewayPluginsFragment(wrapper);
         return fragmentHolder;
     }
 }

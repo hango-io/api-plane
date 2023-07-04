@@ -7,7 +7,6 @@ import istio.networking.v1alpha3.DestinationRuleOuterClass;
 import istio.networking.v1alpha3.VirtualServiceOuterClass;
 import me.snowdrop.istio.api.networking.v1alpha3.ServiceEntry;
 import me.snowdrop.istio.api.networking.v1alpha3.VirtualService;
-import org.assertj.core.util.Lists;
 import org.hango.cloud.core.BaseTest;
 import org.hango.cloud.core.editor.EditorContext;
 import org.hango.cloud.core.editor.ResourceType;
@@ -83,11 +82,6 @@ public class IstioModelEngineTest extends BaseTest {
         return api;
     }
 
-    private API setAPIVirtualCluster(API api,  String virtualClusterName, List<PairMatch> virtualClusterHeaders){
-        api.setVirtualClusterName(virtualClusterName);
-        api.setVirtualClusterHeaders(virtualClusterHeaders);
-        return api;
-    }
 
     private Service getService(String type, String backend, int weight, String code, String gateway, String protocol, String serviceTag) {
         Service s = new Service();
@@ -215,26 +209,6 @@ public class IstioModelEngineTest extends BaseTest {
                         K8sTypes.VirtualService vs = (K8sTypes.VirtualService) r;
                         List<VirtualServiceOuterClass.HTTPRoute> httpList = vs.getSpec().getHttpList();
                         Assert.assertTrue(httpList.get(0).getRouteCount() == 3);
-                    }
-                });
-
-
-        //virtualCluster test
-        //base api test
-        API api2 = setAPIVirtualCluster(api, "test-vc", Lists.newArrayList());
-
-        List<K8sResourcePack> resources2 = gatewayIstioModelEngine.translate(api2);
-
-        Assert.assertTrue(resources2.size() == 2);
-
-        resources2.stream()
-                .map(r -> r.getResource())
-                .forEach(r -> {
-                    if (r.getKind().equals(VirtualService.class.getSimpleName())) {
-                        K8sTypes.VirtualService vs = (K8sTypes.VirtualService) r;
-                        VirtualServiceOuterClass.VirtualCluster virtualCluster = vs.getSpec().getVirtualCluster(0);
-
-                        Assert.assertTrue(virtualCluster.getName().equals("test-vc"));
                     }
                 });
     }

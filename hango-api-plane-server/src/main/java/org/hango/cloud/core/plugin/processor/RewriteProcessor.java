@@ -1,7 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -46,12 +45,10 @@ public class RewriteProcessor extends AbstractSchemaProcessor implements SchemaP
         PluginGenerator builder = PluginGenerator.newInstance(String.format(formatter, rewriteRegex, target));
         FragmentHolder holder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
-                .withXUserId(getAndDeleteXUserId(source))
                 .withContent(builder.yamlString())
-                .withResourceType(K8sResourceEnum.VirtualService)
-                .withFragmentType(FragmentTypeEnum.VS_API)
+                .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .build();
-        holder.setVirtualServiceFragment(wrapper);
+        holder.setGatewayPluginsFragment(wrapper);
         return holder;
     }
 }

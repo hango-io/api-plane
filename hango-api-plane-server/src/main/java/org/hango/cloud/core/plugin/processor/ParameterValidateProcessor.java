@@ -3,7 +3,6 @@ package org.hango.cloud.core.plugin.processor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hango.cloud.core.editor.ResourceGenerator;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -83,11 +82,10 @@ public class ParameterValidateProcessor extends AbstractSchemaProcessor implemen
         PluginGenerator pluginGenerator = transformDataToYamlBuilder(source);
         FragmentHolder fragmentHolder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
-                .withFragmentType(FragmentTypeEnum.VS_API)
-                .withResourceType(K8sResourceEnum.VirtualService)
+                .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .withContent(pluginGenerator.yamlString())
                 .build();
-        fragmentHolder.setVirtualServiceFragment(wrapper);
+        fragmentHolder.setGatewayPluginsFragment(wrapper);
         return fragmentHolder;
     }
 

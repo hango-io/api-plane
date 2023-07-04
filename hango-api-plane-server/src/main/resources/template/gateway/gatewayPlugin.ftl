@@ -26,21 +26,10 @@ spec:
   route:
   - "${t_gateway_plugin_route}"
 </#if>
-<#if t_gateway_plugin_users?has_content>
-  user:
-<#list t_gateway_plugin_users as u>
-  - ${u}
-</#list>
-</#if>
 <#if t_gateway_plugin_plugins?has_content>
   plugins:
-    <#list t_gateway_plugin_plugins as k,plugins>
-    <#list plugins as p>
+    <#list t_gateway_plugin_plugins as p>
     -
-<#if k?has_content>
-      user: ${k}
-</#if>
 <@indent count=6>${p}</@indent>
-    </#list>
     </#list>
 </#if>

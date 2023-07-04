@@ -1,5 +1,6 @@
 package org.hango.cloud.core.gateway.service;
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import org.hango.cloud.core.ConfigManager;
 import org.hango.cloud.meta.*;
@@ -115,4 +116,10 @@ public interface GatewayConfigManager extends ConfigManager {
      * 更新k8s服务
      */
     void updateK8sService(io.fabric8.kubernetes.api.model.Service service);
+
+
+    /**
+     * 更新Configmap资源
+     */
+    void updateConfig(ConfigMap configMap);
 }

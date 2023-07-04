@@ -1,7 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
 import org.hango.cloud.core.editor.ResourceType;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -9,7 +8,10 @@ import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.meta.ServiceInfo;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class LocalLimitProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
@@ -37,12 +39,10 @@ public class LocalLimitProcessor extends AbstractSchemaProcessor implements Sche
 
         FragmentHolder fragmentHolder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
-                .withXUserId(getAndDeleteXUserId(source))
-                .withFragmentType(FragmentTypeEnum.VS_API)
-                .withResourceType(K8sResourceEnum.VirtualService)
+                .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .withContent(builder.yamlString())
                 .build();
-        fragmentHolder.setVirtualServiceFragment(wrapper);
+        fragmentHolder.setGatewayPluginsFragment(wrapper);
         return fragmentHolder;
     }
 

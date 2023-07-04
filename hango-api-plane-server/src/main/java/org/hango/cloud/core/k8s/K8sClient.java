@@ -87,7 +87,9 @@ public class K8sClient {
     }
 
 
-
+    public ConfigMap getConfigMap(String namespaces, String name){
+        return client.configMaps().inNamespace(namespaces).withName(name).get();
+    }
 
     public List<Node> getNode(){
         return client.nodes().list().getItems();

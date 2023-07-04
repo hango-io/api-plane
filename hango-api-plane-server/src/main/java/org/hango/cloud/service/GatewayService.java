@@ -86,4 +86,24 @@ public interface GatewayService {
      */
     boolean pluginOrderPortCheck(PluginOrderDTO pluginOrderDto);
 
+
+    /**
+     * 发布configmap资源
+     * @return
+     */
+    boolean publishConfigMap(ConfigMapDTO configMapDTO);
+
+
+
+    /**
+     * 发布自定义插件
+     */
+    boolean publishCustomPlugin(CustomPluginDTO customPluginDTO);
+
+    /**
+     * 删除自定义插件
+     */
+    boolean deleteCustomPlugin(String pluginName, String language);
+
+
 }

@@ -1,5 +1,6 @@
 package org.hango.cloud.core.gateway.service.impl;
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import me.snowdrop.istio.api.networking.v1alpha3.ServiceEntry;
 import org.hango.cloud.core.AbstractConfigManagerSupport;
@@ -206,6 +207,12 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
     @Override
     public void updateK8sService(io.fabric8.kubernetes.api.model.Service service) {
         K8sResourcePack resource = new K8sResourcePack(service);
+        update(Collections.singletonList(resource));
+    }
+
+    @Override
+    public void updateConfig(ConfigMap configMap) {
+        K8sResourcePack resource = new K8sResourcePack(configMap);
         update(Collections.singletonList(resource));
     }
 

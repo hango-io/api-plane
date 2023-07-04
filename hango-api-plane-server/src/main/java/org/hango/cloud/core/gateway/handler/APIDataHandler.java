@@ -8,7 +8,6 @@ import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.API;
 import org.hango.cloud.meta.CRDMetaEnum;
-import org.hango.cloud.meta.PairMatch;
 import org.hango.cloud.meta.UriMatch;
 import org.hango.cloud.meta.dto.DubboInfoDto;
 import org.hango.cloud.util.CommonUtil;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +54,6 @@ public abstract class APIDataHandler implements DataHandler<API> {
                 .put(API_LOADBALANCER, api.getLoadBalancer())
                 .put(API_REQUEST_URIS, uriMatchMeta.getUri())
                 .put(VIRTUAL_SERVICE_URL_MATCH, uriMatchMeta.getUriMatch())
-                .put(API_MATCH_PLUGINS, api.getPlugins())
                 .put(API_METHODS, methods)
                 .put(API_RETRIES, api.getRetries())
                 .put(API_PRESERVE_HOST, api.getPreserveHost())
@@ -86,8 +83,6 @@ public abstract class APIDataHandler implements DataHandler<API> {
                 .put(SERVICE_INFO_API_REQUEST_URIS, getOrDefault(uriMatchMeta.getUri(), ".*"))
                 .put(SERVICE_INFO_VIRTUAL_SERVICE_HOST_HEADERS, getOrDefault(hostHeaders, ".*"))
                 .put(VIRTUAL_SERVICE_REQUEST_HEADERS, api.getRequestOperation())
-                .put(VIRTUAL_SERVICE_VIRTUAL_CLUSTER_NAME, api.getVirtualClusterName())
-                .put(VIRTUAL_SERVICE_VIRTUAL_CLUSTER_HEADERS, getVirtualClusterHeaders(api))
                 .put(VIRTUAL_SERVICE_RESP_EXCEPTION_CODE, api.getCustomDefaultRespCode())
                 ;
 
@@ -181,47 +176,8 @@ public abstract class APIDataHandler implements DataHandler<API> {
         return String.join("|", api.getMethods());
     }
 
-    private List<PairMatch> getVirtualClusterHeaders(API api){
-        List<PairMatch> virtualClusterHeaders = new ArrayList<>();
-        if (StringUtils.isEmpty(api.getVirtualClusterName())){
-            return virtualClusterHeaders;
-        }
-        //headers
-        if (api.getHeaders() != null) {
-            virtualClusterHeaders.addAll(api.getHeaders());
-        }
-        //构造method
-        String methods = getMethods(api);
-        if (!StringUtils.isEmpty(methods)) {
-            virtualClusterHeaders.add(new PairMatch(":method", methods, "regex"));
-        }
-        //构造path
-        if (CollectionUtils.isEmpty(api.getVirtualClusterHeaders())) {
-            virtualClusterHeaders.add(new PairMatch(":path", getVirtualClusterUris(api), "regex"));
-        }else {
-            //支持前端传入:path，匹配query
-            virtualClusterHeaders.addAll(api.getVirtualClusterHeaders());
-        }
-        //authority
-        String authority = produceHostHeaders(api);
-        if (!StringUtils.isEmpty(authority)) {
-            virtualClusterHeaders.add(new PairMatch(":authority", authority, "regex"));
-        }
-        return virtualClusterHeaders;
-    }
 
     abstract List<TemplateParams> doHandle(TemplateParams tp, API api);
-
-    String getVirtualClusterUris(API api){
-        final StringBuffer suffix = new StringBuffer();
-        if (api.getUriMatch().equals(UriMatch.prefix) || api.getUriMatch().equals(UriMatch.exact)) {
-            suffix.append(".*");
-        }
-        String  uri = String.join("|", api.getRequestUris().stream()
-                    .map(u -> u + suffix.toString())
-                    .collect(Collectors.toList()));
-        return StringEscapeUtils.escapeJava(uri);
-    }
 
     UriMatchMeta getUris(API api) {
         //only one path，return

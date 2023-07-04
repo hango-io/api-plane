@@ -32,12 +32,12 @@ public class GatewayPluginDataHandler implements DataHandler<GatewayPlugin> {
             plugin.setPort(80);
         }
         List<TemplateParams> params = new ArrayList<>();
-        Map<String, List<String>> gatewayPluginMap = HandlerUtil.getGatewayPlugins(fragments);
+        List<String> gatewayPlugins = HandlerUtil.getGatewayPlugins(fragments);
         TemplateParams gatewayPluginParams = TemplateParams.instance()
                 .put(TemplateConst.VERSION, plugin.getVersion())
                 .put(TemplateConst.GATEWAY_PLUGIN_GATEWAYS, getGatewayName(plugin))
                 .put(TemplateConst.GATEWAY_PLUGIN_NAME, HandlerUtil.getGatewayPluginName(plugin))
-                .put(TemplateConst.GATEWAY_PLUGIN_PLUGINS, gatewayPluginMap);
+                .put(TemplateConst.GATEWAY_PLUGIN_PLUGINS, gatewayPlugins);
 
 
         // 路由和全局插件模板渲染数据区分填充

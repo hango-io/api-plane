@@ -1,7 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
 import org.hango.cloud.core.editor.ResourceType;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -21,11 +20,9 @@ public class SoapJsonTranscoderProcessor extends AbstractSchemaProcessor impleme
         FragmentHolder holder = new FragmentHolder();
         PluginGenerator total = PluginGenerator.newInstance(plugin, ResourceType.JSON, editorContext);
         total.removeElement("$.kind");
-        holder.setVirtualServiceFragment(
+        holder.setGatewayPluginsFragment(
                 new FragmentWrapper.Builder()
-                        .withXUserId(getAndDeleteXUserId(total))
-                        .withFragmentType(FragmentTypeEnum.VS_API)
-                        .withResourceType(K8sResourceEnum.VirtualService)
+                        .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                         .withContent(total.yamlString())
                         .build()
         );

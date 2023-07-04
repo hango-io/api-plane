@@ -1,12 +1,11 @@
 package org.hango.cloud.core.plugin.processor;
 
-import org.hango.cloud.core.k8s.K8sResourceEnum;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.meta.ServiceInfo;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,12 +36,10 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
         buildResponsePluginGenerator(source,builder);
         FragmentHolder fragmentHolder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
-                .withXUserId(getAndDeleteXUserId(source))
-                .withFragmentType(FragmentTypeEnum.VS_API)
-                .withResourceType(K8sResourceEnum.VirtualService)
+                .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .withContent(builder.yamlString())
                 .build();
-        fragmentHolder.setVirtualServiceFragment(wrapper);
+        fragmentHolder.setGatewayPluginsFragment(wrapper);
         return fragmentHolder;
     }
     private PluginGenerator buildRequestPluginGenerator(PluginGenerator source,PluginGenerator builder){

@@ -3,6 +3,7 @@ package org.hango.cloud.service.impl;
 import freemarker.template.Configuration;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.*;
+import me.snowdrop.istio.api.networking.v1alpha3.Gateway;
 import me.snowdrop.istio.api.networking.v1alpha3.Port;
 import me.snowdrop.istio.api.networking.v1alpha3.Server;
 import org.apache.commons.lang3.StringUtils;
@@ -34,12 +35,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
-import me.snowdrop.istio.api.networking.v1alpha3.Gateway;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static org.hango.cloud.util.Const.RIDER_PLUGIN;
 
 
 public class GatewayServiceImpl implements GatewayService {
@@ -54,9 +56,11 @@ public class GatewayServiceImpl implements GatewayService {
     private static final Pattern DUBBO_INFO_PATTRERN = Pattern.compile("^(\\S*) (\\S*)\\((\\S*)\\)$");
     private static final Pattern DUBBO_TELNET_RETURN_PATTERN = Pattern.compile("[\\s\\S]*?\\(as (provider|consumer)\\):");
     public static final String GW_CLUSTER = "gw_cluster";
-    public static final String DEFAULT_PORT_PROTOCOL = "TCP";
-    public static final String DEFAULT_PORT_NAME = "http80";
-    public static final Integer DEFAULT_PORT = 80;
+    //插件路径
+    public static final String PLUGIN_CONTENT_PATH = "var/lib/istio/data";
+
+    public static final String CUSTOM_PLUGIN_CONFIG = "custom-plugin-config.json";
+
 
     public static final String HOST_NETWORK = "HostNetwork";
 
@@ -65,9 +69,6 @@ public class GatewayServiceImpl implements GatewayService {
     public static final String NODE_PORT = "NodePort";
 
     public static final String LOAD_BALANCER = "LoadBalancer";
-
-
-
 
     @Value(value = "${gatewayName:gateway-proxy}")
     private String gatewayName;
@@ -367,6 +368,9 @@ public class GatewayServiceImpl implements GatewayService {
 
     @Override
     public void updatePluginOrder(PluginOrderDTO pluginOrderDto) {
+        if (CollectionUtils.isEmpty(pluginOrderDto.getPlugins())){
+            return;
+        }
         //查询plm资源
         PluginOrderDTO pluginManager = getPluginManager(pluginOrderDto.getName());
         if (CollectionUtils.isEmpty(pluginManager.getPlugins())){
@@ -601,20 +605,49 @@ public class GatewayServiceImpl implements GatewayService {
         if (CollectionUtils.isEmpty(updatePluginList)) {
             return;
         }
-        Map<String, List<PluginOrderItemDTO>> updatePluginMap = updatePluginList.stream().collect(Collectors.groupingBy(PluginOrderItemDTO::getName));
-
-        pluginOrderDto.getPlugins().stream()
-                .filter(plugin -> updatePluginMap.containsKey(plugin.getName()))
-                .forEach(plugin -> plugin.setEnable(updatePluginMap.get(plugin.getName()).get(0).getEnable()));
+        List<PluginOrderItemDTO> plugins = pluginOrderDto.getPlugins();
+        for (PluginOrderItemDTO pluginOrderItemDTO : updatePluginList) {
+            String pluginName = RIDER_PLUGIN.equals(pluginOrderItemDTO.getName()) ? pluginOrderItemDTO.getSubName() : pluginOrderItemDTO.getName();
+            if ("delete".equals(pluginOrderItemDTO.getOperate())){
+                //删除item
+                plugins.removeIf(plugin -> Trans.getPluginName(plugin).equals(pluginName));
+                continue;
+            }
+            PluginOrderItemDTO source = plugins.stream().filter(plugin -> Trans.getPluginName(plugin).equals(pluginName)).findFirst().orElse(null);
+            if (source == null){
+                //不存在item，新增
+                plugins.add(pluginOrderItemDTO);
+            }else {
+                //存在item，更新
+                plugins = plugins.stream().filter(plugin -> !Trans.getPluginName(plugin).equals(pluginName)).collect(Collectors.toList());
+                plugins.add(processorPluginItem(source, pluginOrderItemDTO));
+            }
+        }
+        pluginOrderDto.setPlugins(plugins);
     }
+
+    private PluginOrderItemDTO processorPluginItem(PluginOrderItemDTO source, PluginOrderItemDTO target){
+        if (source == null){
+            return target;
+        }
+        source.setEnable(target.getEnable());
+        if (target.getInline() != null){
+            source.setInline(target.getInline());
+        }
+        if (target.getRider() != null){
+            source.setRider(target.getRider());
+        }
+        return source;
+    }
+
+
 
     private void createEnvoyServicePort(IstioGateway istioGateway){
         List<Service> envoyServiceList = envoyHttpClient.getEnvoyServiceList(istioGateway.getGwCluster());
-        if (CollectionUtils.isEmpty(envoyServiceList)){
+        List<IstioGatewayServer> servers = istioGateway.getServers();
+        if (CollectionUtils.isEmpty(envoyServiceList) || CollectionUtils.isEmpty(servers)){
             return;
         }
-
-        List<IstioGatewayServer> servers = istioGateway.getServers();
         for (Service envoyService : envoyServiceList) {
             boolean needCreate = Boolean.FALSE;
             List<ServicePort> servicePortList = envoyService.getSpec().getPorts();
@@ -683,7 +716,7 @@ public class GatewayServiceImpl implements GatewayService {
             EnvoyServiceDTO serviceDTO = new EnvoyServiceDTO();
             serviceDTO.setGwClusterName(gwClusterName);
             serviceDTO.setServiceType(service.getSpec().getType());
-            List<EnvoyServicePortDTO> ports = service.getSpec().getPorts().stream().map(this::getPorts).collect(Collectors.toList());
+            List<EnvoyServicePortDTO> ports = service.getSpec().getPorts().stream().map(Trans::getPorts).collect(Collectors.toList());
             serviceDTO.setPorts(ports);
             serviceDTO.setIps(getIps(serviceDTO.getServiceType(), service.getSpec(), gwClusterName));
             envoyServiceDTOS.add(serviceDTO);
@@ -691,14 +724,7 @@ public class GatewayServiceImpl implements GatewayService {
         return envoyServiceDTOS;
     }
 
-    private EnvoyServicePortDTO getPorts(ServicePort port){
-        EnvoyServicePortDTO envoyServicePortDTO = new EnvoyServicePortDTO();
-        envoyServicePortDTO.setName(port.getName());
-        envoyServicePortDTO.setProtocol(port.getProtocol());
-        envoyServicePortDTO.setPort(port.getPort());
-        envoyServicePortDTO.setNodePort(port.getNodePort());
-        return envoyServicePortDTO;
-    }
+
 
     private List<String> getIps(String type, ServiceSpec spec, String gwClusterName){
         switch (type){
@@ -711,5 +737,104 @@ public class GatewayServiceImpl implements GatewayService {
             default:
                 return new ArrayList<>();
         }
+    }
+
+    @Override
+    public boolean publishConfigMap(ConfigMapDTO configMapDTO) {
+        ConfigMap configMap = k8sClient.getConfigMap(globalConfig.getResourceNamespace(), configMapDTO.getName());
+        if (configMap == null){
+            logger.error("config map not existed, name");
+            return false;
+        }
+        Map<String, String> data = configMap.getData();
+        if (data == null){
+            data = new HashMap<>();
+        }
+        //如果value为空，则需要删除key
+        if (StringUtils.isBlank(configMapDTO.getContentValue())){
+            if (!data.containsKey(configMapDTO.getContentKey())){
+               return true;
+            }
+            data.remove(configMapDTO.getContentKey());
+        }else {
+            data.put(configMapDTO.getContentKey(), configMapDTO.getContentValue());
+        }
+        configMap.setData(data);
+        configManager.updateConfig(configMap);
+        return true;
+    }
+
+    @Override
+    public boolean publishCustomPlugin(CustomPluginDTO customPluginDTO) {
+        //发布自定义代码
+        boolean result = publishCustomCode(customPluginDTO.getPluginName(), customPluginDTO.getLanguage(), customPluginDTO.getPluginContent());
+        if (!result){
+            logger.error("publish custom code failed, pluginName:{}", customPluginDTO.getPluginName());
+            return false;
+        }
+        //发布schema
+        result = publishSchema(customPluginDTO);
+        if (!result){
+            logger.error("publish schema failed, pluginName:{}", customPluginDTO.getPluginName());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteCustomPlugin(String pluginName, String language) {
+        //删除自定义代码
+        boolean result = publishCustomCode(pluginName, language, null);
+        if (!result){
+            logger.error("delete custom code failed, pluginName:{}", pluginName);
+            return false;
+        }
+        //删除schema
+        CustomPluginDTO customPluginDTO = new CustomPluginDTO();
+        customPluginDTO.setPluginName(pluginName);
+        result = publishSchema(customPluginDTO);
+        if (!result){
+            logger.error("delete schema failed, pluginName:{}", pluginName);
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * 发布自定义代码
+     * @param pluginName 插件名称
+     * @param language 语言
+     * @param code 代码
+     * @return 是否发布成功
+     */
+    private boolean publishCustomCode(String pluginName, String language, String code){
+        ConfigMapDTO configMapDTO = new ConfigMapDTO();
+        configMapDTO.setName(globalConfig.getPluginContentConfigName());
+        //contentKey格式为：pluginName.language,例如：uri-restriction.lua
+        configMapDTO.setContentKey(Trans.getCustomCodePath(pluginName, language));
+        configMapDTO.setContentValue(code);
+        return publishConfigMap(configMapDTO);
+    }
+
+    /**
+     * 发布schema详情
+     * @param customPluginDTO 自定义插件
+     * @return 是否发布成功
+     */
+    private boolean publishSchema(CustomPluginDTO customPluginDTO){
+        /**
+         * 发布schema
+         */
+        ConfigMapDTO configMapDTO = new ConfigMapDTO();
+        configMapDTO.setName(globalConfig.getPluginSchemaConfigName());
+        configMapDTO.setContentKey(Trans.getSchemaPath(customPluginDTO.getPluginName()));
+        configMapDTO.setContentValue(customPluginDTO.getSchema());
+        boolean result = publishConfigMap(configMapDTO);
+        if (!result){
+            logger.error("publish schema failed, pluginName:{}", customPluginDTO.getPluginName());
+            return false;
+        }
+        return true;
     }
 }

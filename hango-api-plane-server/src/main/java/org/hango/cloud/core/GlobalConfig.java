@@ -40,6 +40,15 @@ public class GlobalConfig {
     @Value("${ingressClass:hango}")
     private String ingressClass;
 
+    //自定义插件代码挂载cm 名称
+    @Value("${pluginContentConfigName:hango-rider-plugin}")
+    private String pluginContentConfigName;
+
+    //自定义插件schema挂载cm 名称
+    @Value("${pluginSchemaConfigName:hango-plugin-schema}")
+    private String pluginSchemaConfigName;
+
+
     private final String ALL = "all";
 
     @Value("${ignorePlugins:#{null}}")
@@ -92,4 +101,13 @@ public class GlobalConfig {
     public String getIngressClass() {
         return ingressClass;
     }
+
+    public String getPluginContentConfigName() {
+        return pluginContentConfigName;
+    }
+
+    public String getPluginSchemaConfigName() {
+        return pluginSchemaConfigName;
+    }
+
 }

@@ -1,8 +1,8 @@
 package org.hango.cloud.core.gateway.handler;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.hango.cloud.core.gateway.processor.ModelProcessor;
-import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.meta.API;
 import org.hango.cloud.meta.Endpoint;
@@ -11,13 +11,14 @@ import org.hango.cloud.util.HandlerUtil;
 import org.hango.cloud.util.PriorityUtil;
 import org.hango.cloud.util.exception.ApiPlaneException;
 import org.hango.cloud.util.exception.ExceptionConst;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hango.cloud.core.template.TemplateConst.*;
 
+
+@SuppressWarnings("java:S3740")
 public class BaseVirtualServiceAPIDataHandler extends APIDataHandler {
 
     static final String API_VIRTUAL_SERVICE_MATCH = "gateway/api/virtualServiceMatch";
@@ -29,7 +30,6 @@ public class BaseVirtualServiceAPIDataHandler extends APIDataHandler {
     static final String API_VIRTUAL_SERVICE_MIRROR = "gateway/api/virtualServiceMirror";
 
     ModelProcessor subModelProcessor;
-    List<FragmentWrapper> fragments;
     List<Endpoint> endpoints;
     boolean simple;
 
@@ -37,23 +37,14 @@ public class BaseVirtualServiceAPIDataHandler extends APIDataHandler {
         this.subModelProcessor = modelProcessor;
     }
 
-    public BaseVirtualServiceAPIDataHandler(ModelProcessor subModelProcessor, List<FragmentWrapper> fragments, List<Endpoint> endpoints, boolean simple) {
+    public BaseVirtualServiceAPIDataHandler(ModelProcessor subModelProcessor, List<Endpoint> endpoints, boolean simple) {
         this.subModelProcessor = subModelProcessor;
-        this.fragments = fragments;
         this.endpoints = endpoints;
         this.simple = simple;
     }
 
     @Override
     List<TemplateParams> doHandle(TemplateParams baseParams, API api) {
-
-        // 插件分为match、api、host三个级别
-        List<String> matchPlugins = new ArrayList<>();
-        // api下的插件 可以根据插件划分
-        Map<String, List<String>> apiPlugins = new HashMap<>();
-        List<String> hostPlugins = new ArrayList<>();
-
-        HandlerUtil.distributePlugins(fragments, matchPlugins, apiPlugins, hostPlugins);
 
         int pluginPriority = calculatePluginPriority(api, baseParams.get(VIRTUAL_SERVICE_MATCH_PRIORITY));
 
@@ -66,13 +57,12 @@ public class BaseVirtualServiceAPIDataHandler extends APIDataHandler {
                 .setParent(baseParams)
                 .put(VIRTUAL_SERVICE_MATCH_YAML, matchYaml)
                 .put(VIRTUAL_SERVICE_MATCH_PRIORITY_YAML, matchPriorityYaml)
-                .put(API_MATCH_PLUGINS, matchPlugins)
                 .put(VIRTUAL_SERVICE_HTTP_RETRY_YAML, httpRetryYaml)
                 .put(VIRTUAL_SERVICE_PLUGIN_MATCH_PRIORITY, pluginPriority)
                 .put(SERVICE_INFO_VIRTUAL_SERVICE_PLUGIN_MATCH_PRIORITY, pluginPriority)
                 .put(VIRTUAL_SERVICE_MIRROR_YAML,mirrorYaml);
 
-        List<TemplateParams> collect = api.getGateways().stream()
+        return api.getGateways().stream()
                 .map(gw -> {
                     String subset = buildVirtualServiceSubsetName(api.getService(), api.getName(), gw);
                     String route = produceRoute(api, endpoints, subset);
@@ -81,7 +71,6 @@ public class BaseVirtualServiceAPIDataHandler extends APIDataHandler {
                             .setParent(vsParams)
                             .put(VERSION, api.getVersion())
                             .put(GATEWAY_NAME, buildGatewayName(api.getService(), gw))
-                            .put(VIRTUAL_GATEWAY_CODE, api.getVirtualClusterName())
                             .put(VIRTUAL_SERVICE_NAME, HandlerUtil.buildVirtualServiceName(api.getName(), api.getProjectId(), gw))
                             .put(VIRTUAL_SERVICE_SUBSET_NAME, subset)
                             .put(VIRTUAL_SERVICE_ROUTE_YAML, route)
@@ -92,8 +81,6 @@ public class BaseVirtualServiceAPIDataHandler extends APIDataHandler {
                     return tmpParams;
                 })
                 .collect(Collectors.toList());
-
-        return collect;
     }
 
     String productExtra(TemplateParams params) {

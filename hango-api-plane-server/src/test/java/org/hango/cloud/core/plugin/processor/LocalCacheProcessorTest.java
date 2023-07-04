@@ -59,6 +59,6 @@ public class LocalCacheProcessorTest extends BasePluginTest {
             + "        regex: \"200|\"\n"
             + "cache_ttls:\n"
             + "  LocalHttpCache:\n"
-            + "    default: 2000000", f.getVirtualServiceFragment().getContent().trim());
+            + "    default: 2000000", f.getGatewayPluginsFragment().getContent().trim());
     }
 }

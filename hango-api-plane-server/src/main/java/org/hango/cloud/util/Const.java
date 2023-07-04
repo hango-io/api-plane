@@ -72,4 +72,33 @@ public class Const {
      * 项目隔离服务host正则表达式
      */
     public static final String SERVICE_PROJECT_ISOLATION_FORMAT = "^.+\\.nsf\\..+\\.(eureka|nacos)$";
+
+    /**
+     * 插件配置路径前缀
+     */
+    public static final String PLUGIN_PATH_PREFIX = "plugin/route/";
+
+    public static final String PLUGIN_MANAGER_TEMPLATE = "pluginmanager-template.json";
+
+    /**
+     * 插件处理器
+     */
+    public static final String PLUGIN_PROCESSOR = "AggregateGatewayPluginProcessor";
+
+    /**
+     * 自定义插件默认作者
+     */
+    public static final String SYSTEM = "system";
+
+    /**
+     * 文件
+     */
+    public static final String FILE = "file";
+
+
+    public static final String LUA = "lua";
+
+    public static final String RIDER_PLUGIN = "proxy.filters.http.rider";
+
+
 }

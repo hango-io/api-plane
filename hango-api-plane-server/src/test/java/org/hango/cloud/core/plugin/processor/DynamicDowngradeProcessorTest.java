@@ -182,6 +182,6 @@ public class DynamicDowngradeProcessorTest extends BasePluginTest {
             + "      \"200\": 50\n"
             + "key_maker:\n"
             + "  query_params: []\n"
-            + "  headers_keys: []", f3.getVirtualServiceFragment().getContent().trim());
+            + "  headers_keys: []", f3.getGatewayPluginsFragment().getContent().trim());
     }
 }

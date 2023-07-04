@@ -1,7 +1,6 @@
 package org.hango.cloud.core.gateway.handler;
 
 import org.hango.cloud.core.gateway.processor.ModelProcessor;
-import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.meta.API;
 import org.hango.cloud.meta.Endpoint;
@@ -15,14 +14,15 @@ import java.util.*;
 
 import static org.hango.cloud.core.template.TemplateConst.VIRTUAL_SERVICE_DESTINATIONS;
 
+@SuppressWarnings("java:S3740")
 public class PortalVirtualServiceAPIDataHandler extends BaseVirtualServiceAPIDataHandler {
 
     public PortalVirtualServiceAPIDataHandler(ModelProcessor modelProcessor){
         super(modelProcessor);
     };
 
-    public PortalVirtualServiceAPIDataHandler(ModelProcessor subModelProcessor, List<FragmentWrapper> fragments, boolean simple) {
-        super(subModelProcessor, fragments, Collections.emptyList(), simple);
+    public PortalVirtualServiceAPIDataHandler(ModelProcessor subModelProcessor, boolean simple) {
+        super(subModelProcessor, Collections.emptyList(), simple);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PortalVirtualServiceAPIDataHandler extends BaseVirtualServiceAPIDat
             param.put("weight", service.getWeight());
             param.put("subset", StringUtils.isEmpty(service.getSubset()) ? service.getCode() + "-" + gateway : service.getSubset());
 
-            Integer port = -1;
+            int port = -1;
             String host = decorateHost(service.getCode());
 
             if (Const.PROXY_SERVICE_TYPE_DYNAMIC.equals(service.getType())) {
@@ -58,8 +58,7 @@ public class PortalVirtualServiceAPIDataHandler extends BaseVirtualServiceAPIDat
             destinations.add(param);
         }
 
-        String destinationStr = subModelProcessor.process(API_VIRTUAL_SERVICE_ROUTE, TemplateParams.instance().put(VIRTUAL_SERVICE_DESTINATIONS, destinations));
-        return destinationStr;
+        return subModelProcessor.process(API_VIRTUAL_SERVICE_ROUTE, TemplateParams.instance().put(VIRTUAL_SERVICE_DESTINATIONS, destinations));
     }
 
 

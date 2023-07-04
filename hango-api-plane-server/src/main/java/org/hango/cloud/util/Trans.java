@@ -1,9 +1,9 @@
 package org.hango.cloud.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
+import com.google.protobuf.Value;
+import io.fabric8.kubernetes.api.model.ServicePort;
+import org.apache.logging.log4j.util.Strings;
 import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.k8s.K8sTypes;
@@ -19,10 +19,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hango.cloud.service.impl.GatewayServiceImpl.GW_CLUSTER;
+import static org.hango.cloud.util.Const.RIDER_PLUGIN;
 
 
 public class Trans {
-
     public static API portalAPI2API(PortalAPIDTO portalAPI) {
 
         API api = new API();
@@ -52,10 +52,6 @@ public class Trans {
             api.setRetryOn(portalAPI.getHttpRetry().getRetryOn());
         }
         api.setRequestOperation(requestOperationDTO2requestOperation(portalAPI.getRequestOperation()));
-        if (portalAPI.getVirtualClusterDTO() != null){
-            api.setVirtualClusterName(portalAPI.getVirtualClusterDTO().getVirtualClusterName());
-            api.setVirtualClusterHeaders(pairsDTO2Pairs(portalAPI.getVirtualClusterDTO().getHeaders()));
-        }
         //流量镜像配置
         if(portalAPI.getMirrorTrafficDto() != null){
             PortalMirrorTrafficDto mirrorTrafficDto = portalAPI.getMirrorTrafficDto();
@@ -68,6 +64,16 @@ public class Trans {
         api.setMetaMap(portalAPI.getMetaMap());
         return api;
     }
+
+    public static EnvoyServicePortDTO getPorts(ServicePort port){
+        EnvoyServicePortDTO envoyServicePortDTO = new EnvoyServicePortDTO();
+        envoyServicePortDTO.setName(port.getName());
+        envoyServicePortDTO.setProtocol(port.getProtocol());
+        envoyServicePortDTO.setPort(port.getPort());
+        envoyServicePortDTO.setNodePort(port.getNodePort());
+        return envoyServicePortDTO;
+    }
+
 
     private static RequestOperation requestOperationDTO2requestOperation(
         RequestOperationDTO requestOperation) {
@@ -272,6 +278,28 @@ public class Trans {
         return po;
     }
 
+    public static String getPluginName(PluginOrderItemDTO itemDTO){
+        if (itemDTO == null){
+            return Strings.EMPTY;
+        }
+        String name = itemDTO.getName();
+        if (!RIDER_PLUGIN.equals(name)){
+            return name;
+        }
+        Object inlineObj = itemDTO.getInline();
+        if (!(inlineObj instanceof PluginManagerOuterClass.Inline)){
+            return Strings.EMPTY;
+        }
+        PluginManagerOuterClass.Inline inline = (PluginManagerOuterClass.Inline) inlineObj;
+        Map<String, Value> fieldsMap = inline.getSettings().getFieldsMap();
+        Value plugin = fieldsMap.get("plugin");
+        if (plugin == null){
+            return Strings.EMPTY;
+        }
+        Value pluginName = plugin.getStructValue().getFieldsMap().get("name");
+        return pluginName == null ? Strings.EMPTY : pluginName.getStringValue();
+    }
+
     public static PluginOrderDTO trans(K8sTypes.PluginManager pluginManager){
         PluginOrderDTO dto = new PluginOrderDTO();
         Map<String, String> workloadLabels = pluginManager.getSpec().getWorkloadLabels();
@@ -359,6 +387,15 @@ public class Trans {
         Long version = dto.getVersion();
         gatewayPlugin.setVersion(version == null ? 0 : version);
         return gatewayPlugin;
+    }
+
+
+    public static String getSchemaPath(String pluginName){
+        return pluginName + ".json";
+    }
+
+    public static String getCustomCodePath(String pluginName, String language){
+        return pluginName + "." + language;
     }
 
 }

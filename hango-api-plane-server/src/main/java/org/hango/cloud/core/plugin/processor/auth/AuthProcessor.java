@@ -1,14 +1,12 @@
 package org.hango.cloud.core.plugin.processor.auth;
 
 import org.hango.cloud.core.editor.ResourceGenerator;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.core.plugin.processor.AbstractSchemaProcessor;
 import org.hango.cloud.core.plugin.processor.SchemaProcessor;
 import org.hango.cloud.meta.ServiceInfo;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
@@ -66,12 +64,10 @@ public abstract class AuthProcessor extends AbstractSchemaProcessor implements S
         }
         FragmentHolder fragmentHolder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
-                .withXUserId(getAndDeleteXUserId(source))
-                .withFragmentType(FragmentTypeEnum.VS_API)
-                .withResourceType(K8sResourceEnum.VirtualService)
+                .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .withContent(builder.yamlString())
                 .build();
-        fragmentHolder.setVirtualServiceFragment(wrapper);
+        fragmentHolder.setGatewayPluginsFragment(wrapper);
         return fragmentHolder;
     }
 

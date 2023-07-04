@@ -2,7 +2,6 @@ package org.hango.cloud.core.plugin.processor.header;
 
 import com.google.gson.*;
 import net.minidev.json.JSONArray;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -64,8 +63,8 @@ public class TrafficMarkProcessor extends AbstractSchemaProcessor {
         PluginGenerator builder = transformDataToYamlBuilder(pluginInfo);
 
         FragmentHolder fragmentHolder = new FragmentHolder();
-        FragmentWrapper wrapper = new FragmentWrapper.Builder().withXUserId(getAndDeleteXUserId(pluginInfo)).withFragmentType(FragmentTypeEnum.VS_API).withResourceType(K8sResourceEnum.VirtualService).withContent(builder.yamlString()).build();
-        fragmentHolder.setVirtualServiceFragment(wrapper);
+        FragmentWrapper wrapper = new FragmentWrapper.Builder().withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN).withContent(builder.yamlString()).build();
+        fragmentHolder.setGatewayPluginsFragment(wrapper);
         return fragmentHolder;
     }
 
