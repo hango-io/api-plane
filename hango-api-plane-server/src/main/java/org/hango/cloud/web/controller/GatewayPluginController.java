@@ -136,5 +136,13 @@ public class GatewayPluginController extends BaseController {
         return apiReturn(code.getStatusCode(), code.getCode(), null, result);
     }
 
-
+    /**
+     * 删除plm
+     * @param pluginOrderDTO
+     */
+    @RequestMapping(params = "Action=DeletePluginOrder", method = RequestMethod.POST)
+    public String deletePluginOrder(@RequestBody PluginOrderDTO pluginOrderDTO) {
+        gatewayService.deletePluginOrder(pluginOrderDTO);
+        return apiReturn(ApiPlaneErrorCode.Success);
+    }
 }
