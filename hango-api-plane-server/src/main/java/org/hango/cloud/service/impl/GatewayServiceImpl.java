@@ -79,8 +79,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.hango.cloud.util.Const.RIDER_PLUGIN;
-
 
 public class GatewayServiceImpl implements GatewayService {
 
@@ -645,13 +643,12 @@ public class GatewayServiceImpl implements GatewayService {
         }
         List<PluginOrderItemDTO> plugins = pluginOrderDto.getPlugins();
         for (PluginOrderItemDTO pluginOrderItemDTO : updatePluginList) {
-            String pluginName = RIDER_PLUGIN.equals(pluginOrderItemDTO.getName()) ? pluginOrderItemDTO.getSubName() : pluginOrderItemDTO.getName();
             if ("delete".equals(pluginOrderItemDTO.getOperate())){
                 //删除item
-                plugins.removeIf(plugin -> Trans.getPluginName(plugin).equals(pluginName));
+                plugins.removeIf(plugin -> plugin.getName().equals(pluginOrderItemDTO.getName()));
                 continue;
             }
-            PluginOrderItemDTO source = plugins.stream().filter(plugin -> Trans.getPluginName(plugin).equals(pluginName)).findFirst().orElse(null);
+            PluginOrderItemDTO source = plugins.stream().filter(plugin -> plugin.getName().equals(pluginOrderItemDTO.getName())).findFirst().orElse(null);
             if (source == null){
                 //不存在item，新增
                 plugins.add(pluginOrderItemDTO);
@@ -668,7 +665,6 @@ public class GatewayServiceImpl implements GatewayService {
             source.setEnable(target.getEnable());
         }
         if (target.getRider() != null){
-            source.setInline(null);
             source.setRider(target.getRider());
             return;
         }

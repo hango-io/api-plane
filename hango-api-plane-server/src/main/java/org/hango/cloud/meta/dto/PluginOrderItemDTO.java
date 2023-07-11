@@ -16,9 +16,6 @@ public class PluginOrderItemDTO {
     @NotNull(message = "name")
     private String name;
 
-    @JsonProperty("subName")
-    private String subName;
-
     @JsonProperty("port")
     @NotNull(message = "port")
     private Integer port;
@@ -90,13 +87,5 @@ public class PluginOrderItemDTO {
 
     public void setOperate(String operate) {
         this.operate = operate;
-    }
-
-    public String getSubName() {
-        return subName;
-    }
-
-    public void setSubName(String subName) {
-        this.subName = subName;
     }
 }

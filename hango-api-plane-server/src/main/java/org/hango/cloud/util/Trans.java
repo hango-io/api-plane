@@ -9,7 +9,6 @@ import io.fabric8.kubernetes.api.model.ServiceSpec;
 import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
 import com.google.protobuf.Value;
 import io.fabric8.kubernetes.api.model.ServicePort;
-import org.apache.logging.log4j.util.Strings;
 import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.k8s.K8sTypes;
@@ -25,7 +24,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hango.cloud.service.impl.GatewayServiceImpl.GW_CLUSTER;
-import static org.hango.cloud.util.Const.RIDER_PLUGIN;
 
 
 public class Trans {
@@ -285,28 +283,6 @@ public class Trans {
         return po;
     }
 
-    public static String getPluginName(PluginOrderItemDTO itemDTO){
-        if (itemDTO == null){
-            return Strings.EMPTY;
-        }
-        String name = itemDTO.getName();
-        if (!RIDER_PLUGIN.equals(name)){
-            return name;
-        }
-        Object inlineObj = itemDTO.getInline();
-        if (!(inlineObj instanceof PluginManagerOuterClass.Inline)){
-            return Strings.EMPTY;
-        }
-        PluginManagerOuterClass.Inline inline = (PluginManagerOuterClass.Inline) inlineObj;
-        Map<String, Value> fieldsMap = inline.getSettings().getFieldsMap();
-        Value plugin = fieldsMap.get("plugin");
-        if (plugin == null){
-            return Strings.EMPTY;
-        }
-        Value pluginName = plugin.getStructValue().getFieldsMap().get("name");
-        return pluginName == null ? Strings.EMPTY : pluginName.getStringValue();
-    }
-
     public static PluginOrderDTO trans(K8sTypes.PluginManager pluginManager){
         PluginOrderDTO dto = new PluginOrderDTO();
         Map<String, String> workloadLabels = pluginManager.getSpec().getWorkloadLabels();
@@ -320,12 +296,21 @@ public class Trans {
             PluginOrderItemDTO itemDTO = new PluginOrderItemDTO();
             itemDTO.setEnable(p.getEnable());
             itemDTO.setName(p.getName());
-            itemDTO.setInline(p.getInline());
+            buildPluginSetting(itemDTO, p);
             itemDTO.setPort(p.getPort());
             dto.getPlugins().add(itemDTO);
         });
         return dto;
     }
+
+    public static void buildPluginSetting(PluginOrderItemDTO itemDTO, PluginManagerOuterClass.Plugin plugin){
+        if (StringUtils.hasText(plugin.getRider().getPluginName())){
+            itemDTO.setRider(plugin.getRider());
+            return;
+        }
+        itemDTO.setInline(plugin.getInline());
+    }
+
 
     public static Secret secretDTO2Secret(PortalSecretDTO portalSecretDTO) {
         Secret secret = new Secret();
