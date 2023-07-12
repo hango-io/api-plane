@@ -187,7 +187,10 @@
           ],
           "label": "匹配方式",
           "type": "select",
-          "key": "match_type"
+          "key": "match_type",
+          "ruleNames": [
+            "Required"
+          ]
         },
         {
           "label": "取值",
@@ -212,6 +215,9 @@
       "type": "extend-inline-form",
       "indent": true,
       "default":{},
+      "rules": [
+        "Required"
+      ],
       "moudle": [
         {
           "default": "exact_match",
@@ -290,7 +296,10 @@
           ],
           "label": "匹配方式",
           "type": "select",
-          "key": "match_type"
+          "key": "match_type",
+          "ruleNames": [
+            "Required"
+          ]
         },
         {
           "label": "取值",
