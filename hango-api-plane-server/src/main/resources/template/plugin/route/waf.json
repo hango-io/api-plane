@@ -13,6 +13,7 @@
           "help": "防止拒绝服务攻击，针对 IP 级别的请求数统计实现防御。在指定时间窗口内，某一个IP的请求数超过阈值时，在惩罚时间内拦截来自该IP的请求",
           "alias": "DOS",
           "type": "switch",
+          "visible": false,
           "default": false
         },
         {
