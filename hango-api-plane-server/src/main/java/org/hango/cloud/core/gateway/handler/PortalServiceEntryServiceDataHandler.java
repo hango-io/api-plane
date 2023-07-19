@@ -86,6 +86,10 @@ public class PortalServiceEntryServiceDataHandler extends ServiceDataHandler {
                 return "TLS";
             case "grpc":
                 return "GRPC";
+            case "tcp":
+                return "TCP";
+            case "udp":
+                return "UDP";
             default:
                 return "HTTP";
         }

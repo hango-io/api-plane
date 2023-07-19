@@ -6,7 +6,17 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.IstioModelEngine;
 import org.hango.cloud.core.editor.EditorContext;
-import org.hango.cloud.core.gateway.handler.*;
+import org.hango.cloud.core.gateway.handler.EnvoyFilterOrderDataHandler;
+import org.hango.cloud.core.gateway.handler.GatewayPluginDataHandler;
+import org.hango.cloud.core.gateway.handler.GrpcEnvoyFilterDataHandler;
+import org.hango.cloud.core.gateway.handler.IpSourceEnvoyFilterDataHandler;
+import org.hango.cloud.core.gateway.handler.PluginOrderDataHandler;
+import org.hango.cloud.core.gateway.handler.PortalDestinationRuleServiceDataHandler;
+import org.hango.cloud.core.gateway.handler.PortalGatewayDataHandler;
+import org.hango.cloud.core.gateway.handler.PortalServiceEntryServiceDataHandler;
+import org.hango.cloud.core.gateway.handler.PortalVirtualServiceAPIDataHandler;
+import org.hango.cloud.core.gateway.handler.SecretDataHandler;
+import org.hango.cloud.core.gateway.handler.SmartLimiterDataHandler;
 import org.hango.cloud.core.gateway.processor.DefaultModelProcessor;
 import org.hango.cloud.core.gateway.processor.NeverReturnNullModelProcessor;
 import org.hango.cloud.core.gateway.processor.RenderTwiceModelProcessor;
@@ -20,7 +30,14 @@ import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.template.TemplateTranslator;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.k8s.K8sTypes.VirtualService;
-import org.hango.cloud.meta.*;
+import org.hango.cloud.meta.API;
+import org.hango.cloud.meta.EnvoyFilterOrder;
+import org.hango.cloud.meta.GatewayPlugin;
+import org.hango.cloud.meta.IstioGateway;
+import org.hango.cloud.meta.PluginOrder;
+import org.hango.cloud.meta.Secret;
+import org.hango.cloud.meta.Service;
+import org.hango.cloud.meta.ServiceInfo;
 import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
 import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
 import org.hango.cloud.service.PluginService;
@@ -36,7 +53,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -300,6 +321,7 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
                     .addAllExportTo(originalSpec.getExportToList())
                     .addAllVirtualCluster(originalSpec.getVirtualClusterList())
                     .addAllTcp(originalSpec.getTcpList())
+                    .addAllUdp(originalSpec.getUdpList())
                     .addAllThrift(originalSpec.getThriftList())
                     .addAllTls(originalSpec.getTlsList())
                     .setPriority(originalSpec.getPriority())

@@ -84,6 +84,7 @@ public abstract class APIDataHandler implements DataHandler<API> {
                 .put(SERVICE_INFO_VIRTUAL_SERVICE_HOST_HEADERS, getOrDefault(hostHeaders, ".*"))
                 .put(VIRTUAL_SERVICE_REQUEST_HEADERS, api.getRequestOperation())
                 .put(VIRTUAL_SERVICE_RESP_EXCEPTION_CODE, api.getCustomDefaultRespCode())
+                .put(VIRTUAL_SERVICE_PROTOCOL, api.getProtocol().toLowerCase())
                 ;
 
         return handleApiMetaMap(api,tp);

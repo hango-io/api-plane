@@ -177,6 +177,13 @@ public class PortalAPIDTO {
     @JsonProperty(value = "Version")
     private Long version;
 
+    /**
+     * 协议，默认HTTP
+     */
+    @JsonProperty(value = "Protocol")
+    private String protocol = "HTTP";
+
+
     public PortalMirrorTrafficDto getMirrorTrafficDto() {
         return mirrorTrafficDto;
     }
@@ -336,5 +343,13 @@ public class PortalAPIDTO {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 }

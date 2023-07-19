@@ -1,8 +1,12 @@
 package org.hango.cloud.service.impl;
 
 import freemarker.template.Configuration;
+import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.HasMetadata;
+import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.*;
+import io.fabric8.kubernetes.api.model.ServicePort;
+import io.fabric8.kubernetes.api.model.ServiceSpec;
 import me.snowdrop.istio.api.networking.v1alpha3.Gateway;
 import me.snowdrop.istio.api.networking.v1alpha3.Port;
 import me.snowdrop.istio.api.networking.v1alpha3.Server;
@@ -18,9 +22,36 @@ import org.hango.cloud.core.istio.PilotHttpClient;
 import org.hango.cloud.core.k8s.K8sClient;
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.k8s.K8sTypes;
+import org.hango.cloud.meta.Endpoint;
+import org.hango.cloud.meta.EnvoyFilterOrder;
+import org.hango.cloud.meta.IstioGateway;
+import org.hango.cloud.meta.IstioGatewayServer;
+import org.hango.cloud.meta.PluginOrder;
+import org.hango.cloud.meta.PluginSupportDetail;
 import org.hango.cloud.meta.Secret;
-import org.hango.cloud.meta.*;
-import org.hango.cloud.meta.dto.*;
+import org.hango.cloud.meta.ServiceHealth;
+import org.hango.cloud.meta.dto.ConfigMapDTO;
+import org.hango.cloud.meta.dto.CustomPluginDTO;
+import org.hango.cloud.meta.dto.DubboMetaDto;
+import org.hango.cloud.meta.dto.EnvoyFilterDTO;
+import org.hango.cloud.meta.dto.EnvoyServiceDTO;
+import org.hango.cloud.meta.dto.EnvoyServicePortDTO;
+import org.hango.cloud.meta.dto.GatewayPluginDTO;
+import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
+import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
+import org.hango.cloud.meta.dto.KubernetesServiceDTO;
+import org.hango.cloud.meta.dto.PluginOrderDTO;
+import org.hango.cloud.meta.dto.PluginOrderItemDTO;
+import org.hango.cloud.meta.dto.PortalAPIDTO;
+import org.hango.cloud.meta.dto.PortalAPIDeleteDTO;
+import org.hango.cloud.meta.dto.PortalIstioGatewayDTO;
+import org.hango.cloud.meta.dto.PortalLoadBalancerDTO;
+import org.hango.cloud.meta.dto.PortalSecretDTO;
+import org.hango.cloud.meta.dto.PortalServiceConnectionPoolDTO;
+import org.hango.cloud.meta.dto.PortalServiceDTO;
+import org.hango.cloud.meta.dto.PortalTrafficPolicyDTO;
+import org.hango.cloud.meta.dto.ServiceAndPortDTO;
+import org.hango.cloud.meta.dto.ServiceSubsetDTO;
 import org.hango.cloud.service.GatewayService;
 import org.hango.cloud.service.PluginService;
 import org.hango.cloud.util.Const;
@@ -36,7 +67,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -722,7 +760,20 @@ public class GatewayServiceImpl implements GatewayService {
         return envoyServiceDTOS;
     }
 
-
+    @Override
+    public List<KubernetesServiceDTO> getKubernetesService(String namespace, Map<String, String> filters, String domain) {
+        List<HasMetadata> configList = configManager.getConfigList(K8sResourceEnum.Service.name());
+        return configList.stream().parallel().map(Trans::transService).filter(s -> {
+                    if (StringUtils.isNotBlank(namespace) && !s.getNamespace().contains(namespace)){
+                        return false;
+                    }
+                    if (StringUtils.isNotBlank(domain)  && !s.getDomain().contains(domain)) {
+                        return false;
+                    }
+                    return true;
+                }
+        ).collect(Collectors.toList());
+    }
 
     private List<String> getIps(String type, ServiceSpec spec, String gwClusterName){
         switch (type){

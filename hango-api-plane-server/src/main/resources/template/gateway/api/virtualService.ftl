@@ -14,7 +14,7 @@ spec:
 <#list t_virtual_service_hosts as host>
   - "${host}"
 </#list>
-  http:
+  ${t_virtual_service_protocol}:
 <@indent count=2><@supply></@supply></@indent>
 <#if t_api_priority??>
   priority: ${t_api_priority}

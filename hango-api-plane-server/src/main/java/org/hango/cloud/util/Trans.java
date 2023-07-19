@@ -1,6 +1,12 @@
 package org.hango.cloud.util;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import io.fabric8.kubernetes.api.model.HasMetadata;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.api.model.ServicePort;
+import io.fabric8.kubernetes.api.model.ServiceSpec;
+import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
 import com.google.protobuf.Value;
 import io.fabric8.kubernetes.api.model.ServicePort;
 import org.apache.logging.log4j.util.Strings;
@@ -62,6 +68,7 @@ public class Trans {
             api.setMirrorTraffic(mirrorTraffic);
         }
         api.setMetaMap(portalAPI.getMetaMap());
+        api.setProtocol(portalAPI.getProtocol());
         return api;
     }
 
@@ -396,6 +403,41 @@ public class Trans {
 
     public static String getCustomCodePath(String pluginName, String language){
         return pluginName + "." + language;
+    }
+
+    public static KubernetesServiceDTO transService(HasMetadata data) {
+        if (data == null) {
+            return null;
+        }
+        io.fabric8.kubernetes.api.model.Service service = (io.fabric8.kubernetes.api.model.Service) data;
+        KubernetesServiceDTO kubernetesServiceDTO = new KubernetesServiceDTO();
+        ObjectMeta metadata = service.getMetadata();
+        if (Objects.isNull(metadata)){
+            return null;
+        }
+        kubernetesServiceDTO.setNamespace(metadata.getNamespace());
+        kubernetesServiceDTO.setName(metadata.getName());
+        ServiceSpec spec = service.getSpec();
+        if (Objects.isNull(spec)){
+            return null;
+        }
+        kubernetesServiceDTO.setType(spec.getType());
+        kubernetesServiceDTO.setClusterIP(spec.getClusterIP());
+        kubernetesServiceDTO.setPorts(spec.getPorts().stream().map(Trans::transPort).collect(Collectors.toList()));
+        return kubernetesServiceDTO;
+    }
+
+    public static KubernetesServiceDTO.ServicePort transPort(ServicePort servicePort) {
+        if (servicePort == null) {
+            return null;
+        }
+        KubernetesServiceDTO.ServicePort port = new KubernetesServiceDTO.ServicePort();
+        port.setName(servicePort.getName());
+        port.setPort(servicePort.getPort());
+        port.setProtocol(servicePort.getProtocol());
+        port.setTargetPort(servicePort.getTargetPort().getIntVal());
+        port.setNodePort(servicePort.getNodePort());
+        return port;
     }
 
 }

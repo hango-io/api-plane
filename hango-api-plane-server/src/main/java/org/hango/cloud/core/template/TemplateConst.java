@@ -77,6 +77,8 @@ public interface TemplateConst {
 
     String DESTINATION_RULE_METADATA_HUB = "t_destination_rule_metadata_hub";
 
+    String VIRTUAL_SERVICE_PROTOCOL = "t_virtual_service_protocol";
+
 
 
     /**

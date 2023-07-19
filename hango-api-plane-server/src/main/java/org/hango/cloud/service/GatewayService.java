@@ -1,7 +1,22 @@
 package org.hango.cloud.service;
 
 import org.hango.cloud.meta.ServiceHealth;
-import org.hango.cloud.meta.dto.*;
+import org.hango.cloud.meta.dto.ConfigMapDTO;
+import org.hango.cloud.meta.dto.CustomPluginDTO;
+import org.hango.cloud.meta.dto.DubboMetaDto;
+import org.hango.cloud.meta.dto.EnvoyFilterDTO;
+import org.hango.cloud.meta.dto.EnvoyServiceDTO;
+import org.hango.cloud.meta.dto.GatewayPluginDTO;
+import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
+import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
+import org.hango.cloud.meta.dto.KubernetesServiceDTO;
+import org.hango.cloud.meta.dto.PluginOrderDTO;
+import org.hango.cloud.meta.dto.PortalAPIDTO;
+import org.hango.cloud.meta.dto.PortalAPIDeleteDTO;
+import org.hango.cloud.meta.dto.PortalIstioGatewayDTO;
+import org.hango.cloud.meta.dto.PortalSecretDTO;
+import org.hango.cloud.meta.dto.PortalServiceDTO;
+import org.hango.cloud.meta.dto.ServiceAndPortDTO;
 import org.hango.cloud.util.errorcode.ErrorCode;
 
 import java.util.List;
@@ -106,4 +121,13 @@ public interface GatewayService {
     boolean deleteCustomPlugin(String pluginName, String language);
 
 
+    /**
+     * 获取Kubernetes Service信息
+     *
+     * @param namespace
+     * @param filters
+     * @param domain
+     * @return
+     */
+    List<KubernetesServiceDTO> getKubernetesService(String namespace, Map<String, String> filters, String domain);
 }

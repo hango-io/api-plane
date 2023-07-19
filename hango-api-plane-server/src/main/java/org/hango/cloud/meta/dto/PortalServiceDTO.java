@@ -45,7 +45,7 @@ public class PortalServiceDTO {
     private String gateway;
 
     @JsonProperty(value = "Protocol")
-    @Pattern(regexp = "(http|https|grpc)", message = "protocol")
+    @Pattern(regexp = "(http|https|grpc|tcp|udp)", message = "protocol")
     private String protocol = "http";
 
     @JsonProperty(value = "TrafficPolicy")
