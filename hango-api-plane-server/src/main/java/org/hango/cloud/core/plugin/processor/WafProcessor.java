@@ -1,5 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -157,6 +158,9 @@ public class WafProcessor extends AbstractSchemaProcessor implements SchemaProce
 
     private boolean getWafPluginSwitch(PluginGenerator source, String wafPluginKey) {
         List<Boolean> pluginSwitch = source.getValue("$.wafRule.." + wafPluginKey);
+        if (CollectionUtils.isEmpty(pluginSwitch)){
+            return false;
+        }
         return pluginSwitch.get(0);
     }
 }
