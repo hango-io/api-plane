@@ -161,6 +161,7 @@ public class WafProcessor extends AbstractSchemaProcessor implements SchemaProce
         if (CollectionUtils.isEmpty(pluginSwitch)){
             return false;
         }
-        return pluginSwitch.get(0);
+        Boolean result = pluginSwitch.get(0);
+        return result != null && result;
     }
 }
