@@ -1,5 +1,6 @@
 package org.hango.cloud.core;
 
+import io.fabric8.kubernetes.api.model.HasMetadata;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.k8s.K8sResourceGenerator;
@@ -7,9 +8,7 @@ import org.hango.cloud.core.k8s.K8sResourcePack;
 import org.hango.cloud.core.k8s.operator.IntegratedResourceOperator;
 import org.hango.cloud.util.exception.ApiPlaneException;
 import org.hango.cloud.util.exception.ExceptionConst;
-import org.hango.cloud.util.function.Merger;
 import org.hango.cloud.util.function.Subtracter;
-import io.fabric8.kubernetes.api.model.HasMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,34 +68,24 @@ public abstract class IstioModelEngine {
     }
 
     protected List<K8sResourcePack> generateK8sPack(List<String> raws) {
-        return generateK8sPack(raws, null, null, r -> r, this::str2HasMetadata, hsm -> hsm);
+        return generateK8sPack(raws, null, r -> r, this::str2HasMetadata, hsm -> hsm);
     }
 
-    protected List<K8sResourcePack> generateK8sPack(List<String> raws, Function<String, HasMetadata> transFun) {
-        return generateK8sPack(raws, null, null, r -> r, transFun, hsm -> hsm);
-    }
 
     protected List<K8sResourcePack> generateK8sPack(List<String> raws, Subtracter subtracter) {
-        return generateK8sPack(raws, null, subtracter, r -> r, this::str2HasMetadata, hsm -> hsm);
+        return generateK8sPack(raws, subtracter, r -> r, this::str2HasMetadata, hsm -> hsm);
     }
 
-    protected List<K8sResourcePack> generateK8sPack(List<String> raws, Merger merger, Subtracter subtracter, Function<String, HasMetadata> transFun) {
-        return generateK8sPack(raws, merger, subtracter, r -> r, transFun, hsm -> hsm);
-    }
-
-    protected List<K8sResourcePack> generateK8sPack(List<String> raws, Merger merger, Subtracter subtracter, Function<String, String> preFun, Function<String, HasMetadata> transFun) {
-        return generateK8sPack(raws, merger, subtracter, preFun, transFun, hsm -> hsm);
+    protected List<K8sResourcePack> generateK8sPack(List<String> raws, Subtracter subtracter, Function<String, HasMetadata> transFun) {
+        return generateK8sPack(raws, subtracter, r -> r, transFun, hsm -> hsm);
     }
 
     protected List<K8sResourcePack> generateK8sPack(List<String> raws, Subtracter subtracter, Function<String, String> preFun, Function<HasMetadata, HasMetadata> postFun) {
-        return generateK8sPack(raws, null, subtracter, preFun, this::str2HasMetadata, postFun);
+        return generateK8sPack(raws, subtracter, preFun, this::str2HasMetadata, postFun);
     }
 
-    protected List<K8sResourcePack> generateK8sPack(List<String> raws, Function<String, String> preFun, Function<HasMetadata, HasMetadata> postFun) {
-        return generateK8sPack(raws, null, null, preFun, this::str2HasMetadata, postFun);
-    }
 
-    protected List<K8sResourcePack> generateK8sPack(List<String> raws, Merger merger, Subtracter subtracter,
+    protected List<K8sResourcePack> generateK8sPack(List<String> raws, Subtracter subtracter,
                                                   Function<String, String> preFun, Function<String, HasMetadata> transFun,
                                                   Function<HasMetadata, HasMetadata> postFun) {
         if (CollectionUtils.isEmpty(raws)) {
@@ -106,7 +95,7 @@ public abstract class IstioModelEngine {
         return raws.stream().map(r -> preFun.apply(r))
                 .map(r -> transFun.apply(r))
                 .map(hsm -> postFun.apply(hsm))
-                .map(hsm -> new K8sResourcePack(hsm, merger, subtracter))
+                .map(hsm -> new K8sResourcePack(hsm, subtracter))
                 .collect(Collectors.toList());
     }
 

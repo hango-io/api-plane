@@ -4,6 +4,7 @@ import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
+import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.core.plugin.processor.AbstractSchemaProcessor;
 import org.hango.cloud.core.plugin.processor.SchemaProcessor;
 import org.hango.cloud.meta.ServiceInfo;
@@ -23,8 +24,8 @@ public abstract class AuthProcessor extends AbstractSchemaProcessor implements S
 
     @Override
     public FragmentHolder process(String plugin, ServiceInfo serviceInfo) {
-        ResourceGenerator source = ResourceGenerator.newInstance(plugin);
-        ResourceGenerator builder = ResourceGenerator.newInstance("{\"need_authorization\":false, \"missing_auth_allow\":\"false\"}");
+        PluginGenerator source = PluginGenerator.newInstance(plugin);
+        PluginGenerator builder = PluginGenerator.newInstance("{\"need_authorization\":false, \"missing_auth_allow\":\"false\"}");
         String kind = source.getValue("$.kind", String.class);
 
         switch (kind) {

@@ -1,6 +1,5 @@
 package org.hango.cloud.core.gateway.handler;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.CRDMetaEnum;
@@ -9,8 +8,6 @@ import org.hango.cloud.meta.dto.LocalitySettingDTO;
 import org.hango.cloud.meta.dto.PortalServiceConnectionPoolDTO;
 import org.hango.cloud.util.CommonUtil;
 import org.hango.cloud.util.Const;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
@@ -18,52 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.hango.cloud.core.template.TemplateConst.API_GATEWAY;
-import static org.hango.cloud.core.template.TemplateConst.API_SERVICE;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_ALT_STAT_NAME;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_BASE_EJECTION_TIME;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_CONNECTION_POOL;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_CONSECUTIVE_ERRORS;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_EXPECTED_STATUSES;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_EXTRA_SUBSETS;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_HEALTHY_CHECKER_TYPE;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_HEALTHY_INTERVAL;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_HEALTHY_THRESHOLD;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_HOST;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_HTTP_CONNECTION_POOL;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_HTTP_CONNECTION_POOL_HTTP1MAXPENDINGREQUESTS;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_HTTP_CONNECTION_POOL_HTTP2MAXREQUESTS;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_HTTP_CONNECTION_POOL_IDLETIMEOUT;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_HTTP_CONNECTION_POOL_MAXREQUESTSPERCONNECTION;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER_CONSISTENT_HASH;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER_CONSISTENT_HASH_COOKIE;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER_CONSISTENT_HASH_COOKIE_NAME;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER_CONSISTENT_HASH_COOKIE_PATH;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER_CONSISTENT_HASH_COOKIE_TTL;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER_CONSISTENT_HASH_HEADER;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER_CONSISTENT_SOURCEIP;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER_SIMPLE;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOAD_BALANCER_SLOW_START_WINDOW;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_LOCALITY_ENABLE;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_MAX_EJECTION_PERCENT;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_MIN_HEALTH_PERCENT;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_NAME;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_PATH;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_TCP_CONNECTION_POOL;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_TCP_CONNECTION_POOL_CONNECT_TIMEOUT;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_TCP_CONNECTION_POOL_MAX_CONNECTIONS;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_TIMEOUT;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_UNHEALTHY_INTERVAL;
-import static org.hango.cloud.core.template.TemplateConst.DESTINATION_RULE_UNHEALTHY_THRESHOLD;
-import static org.hango.cloud.core.template.TemplateConst.NAMESPACE;
-import static org.hango.cloud.core.template.TemplateConst.VERSION;
+import static org.hango.cloud.core.template.TemplateConst.*;
 
 public class PortalDestinationRuleServiceDataHandler extends ServiceDataHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(PortalDestinationRuleServiceDataHandler.class);
-
-    private static YAMLMapper yamlMapper;
 
     @Override
     List<TemplateParams> doHandle(TemplateParams tp, Service service) {

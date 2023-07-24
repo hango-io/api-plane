@@ -4,6 +4,7 @@ import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
+import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.core.plugin.processor.AbstractSchemaProcessor;
 import org.hango.cloud.core.plugin.processor.SchemaProcessor;
 import org.hango.cloud.meta.ServiceInfo;
@@ -46,8 +47,8 @@ public class PreviousVersionAuthProcessor extends AbstractSchemaProcessor implem
 
     @Override
     public FragmentHolder process(String plugin, ServiceInfo serviceInfo) {
-        ResourceGenerator source = ResourceGenerator.newInstance(plugin);
-        ResourceGenerator builder = ResourceGenerator.newInstance("{\"need_authorization\":\"false\", \"failure_auth_allow\":\"false\"}");
+        PluginGenerator source = PluginGenerator.newInstance(plugin);
+        PluginGenerator builder = PluginGenerator.newInstance("{\"need_authorization\":\"false\", \"failure_auth_allow\":\"false\"}");
         String authType = source.getValue("$.authnType", String.class);
         if (AKSK_AUTHN_TYPE.equals(authType)) {
             builder.createOrUpdateJson("$", AKSK_AUTHN_TYPE, "{}");

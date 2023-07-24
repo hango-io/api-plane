@@ -30,8 +30,6 @@ public abstract class AbstractConfigManagerSupport implements ConfigManager{
                 if (latest instanceof EmptyResource && pack.hasSubtracter()) {
                     // 若latest标识为emptyResource, 则进行subtract操作
                     merged = pack.getSubtracter().subtract(old);
-                } else if (pack.hasMerger()) {
-                    merged = pack.getMerger().merge(old, latest);
                 } else {
                     merged = modelEngine.merge(old, latest);
                 }

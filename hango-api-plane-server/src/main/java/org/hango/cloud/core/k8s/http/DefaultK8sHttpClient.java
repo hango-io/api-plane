@@ -184,11 +184,6 @@ public class DefaultK8sHttpClient implements K8sHttpClient {
         return getUrlWithLabels(url, labels);
     }
 
-    public String getUrlWithLabels(String kind, String namespace, String name, Map<String, String> labels) {
-        String url = getUrl(kind, name, namespace);
-        return getUrlWithLabels(url, labels);
-    }
-
     @Override
     public String getWithNull(String url) {
         Request.Builder requestBuilder = new Request.Builder().get().url(url);

@@ -212,7 +212,6 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
                 new DynamicGatewayPluginSupplier(plugin.getGateway(), plugin.getRouteId(), "%s-%s");
 
         resourcePacks.addAll(generateK8sPack(rawGatewayPlugins,
-                null,
                 new GatewayPluginNormalSubtracter(),
                 new DynamicResourceGenerator(dynamicGatewayPluginSupplier)));
         logger.info("{}{} raw GatewayPlugin CRDs added ok",

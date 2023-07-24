@@ -8,7 +8,6 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Predicate;
 import org.hango.cloud.util.exception.ApiPlaneException;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -274,9 +273,6 @@ public class ResourceGenerator implements Editor {
         return yaml2json(yaml, defaultContext);
     }
 
-    public static String json2yaml(String json) {
-        return json2yaml(json, defaultContext);
-    }
 
     public static String obj2json(Object obj) {
         return obj2json(obj, defaultContext);
@@ -284,15 +280,6 @@ public class ResourceGenerator implements Editor {
 
     public static <T> T json2obj(String json, Class<T> type) {
         return json2obj(json, type, defaultContext);
-    }
-
-    public static <T> T yaml2obj(String yaml, Class<T> type) {
-        return yaml2obj(yaml, type, defaultContext);
-    }
-
-    public static String prettyJson(String json) {
-        if (StringUtils.isEmpty(json)) return json;
-        return prettyJson(json, defaultContext);
     }
 
     public static String yaml2json(String yaml, EditorContext editorContext) {
@@ -326,18 +313,6 @@ public class ResourceGenerator implements Editor {
         try {
             return editorContext.jsonMapper().readValue(json, type);
         } catch (IOException e) {
-            throw new ApiPlaneException(e.getMessage(), e);
-        }
-    }
-
-    public static <T> T yaml2obj(String yaml, Class<T> type, EditorContext editorContext) {
-        return json2obj(yaml2json(yaml, editorContext), type, editorContext);
-    }
-
-    public static String prettyJson(String json, EditorContext editorContext) {
-        try {
-            return editorContext.jsonMapper().writerWithDefaultPrettyPrinter().writeValueAsString(json2obj(json, Object.class, editorContext));
-        } catch (JsonProcessingException e) {
             throw new ApiPlaneException(e.getMessage(), e);
         }
     }

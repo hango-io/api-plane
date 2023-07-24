@@ -80,6 +80,7 @@ public class SmartLimiterProcessor extends AbstractSchemaProcessor implements Sc
         return fragmentHolder;
     }
 
+
     private PluginGenerator generateHeaderMatch(String limitPluginType, Map<String, Object> limitStrategy) {
         PluginGenerator headerMatch = null;
         List<Object> headerMatchList = (List) limitStrategy.get("headers");
