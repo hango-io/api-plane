@@ -597,7 +597,7 @@ public class GatewayServiceImpl implements GatewayService {
         if (CollectionUtils.isEmpty(config)){
             return new ArrayList<>();
         }
-        return config.stream().map(o -> Trans.trans((K8sTypes.PluginManager) o)).filter(o -> gwCluster.contains(o.getGwCluster())).collect(Collectors.toList());
+        return config.stream().map(o -> Trans.trans((K8sTypes.PluginManager) o)).filter(o -> gwCluster.equals(o.getGwCluster())).collect(Collectors.toList());
     }
 
 
