@@ -64,8 +64,6 @@ public interface TemplateConst {
     String VIRTUAL_SERVICE_RETRY_PER_TIMEOUT = "t_http_retry_perTryTimeout";
     String VIRTUAL_SERVICE_RETRY_RETRY_ON = "t_http_retry_retryOn";
     String VIRTUAL_SERVICE_REQUEST_HEADERS = "t_virtual_service_request_headers";
-    String VIRTUAL_SERVICE_VIRTUAL_CLUSTER_NAME = "t_virtual_service_virtual_cluster_name";
-    String VIRTUAL_SERVICE_VIRTUAL_CLUSTER_HEADERS = "t_virtual_service_virtual_cluster_headers";
     String VIRTUAL_SERVICE_MIRROR_SERVICE = "t_virtual_service_mirror_service";
     String VIRTUAL_SERVICE_MIRROR_PORT = "t_virtual_service_mirror_port";
     String VIRTUAL_SERVICE_MIRROR_SUBSET = "t_virtual_service_mirror_subset";
@@ -76,6 +74,9 @@ public interface TemplateConst {
     String VIRTUAL_SERVICE_DUBBO = "t_virtual_service_dubbo";
 
     String VIRTUAL_SERVICE_RESP_EXCEPTION_CODE ="t_virtual_service_resp_exception_code";
+
+    String DESTINATION_RULE_METADATA_HUB = "t_destination_rule_metadata_hub";
+
 
 
     /**
@@ -90,20 +91,6 @@ public interface TemplateConst {
     String SERVICE_INFO_VIRTUAL_SERVICE_HOST_HEADERS = "t_service_info_virtual_service_host_headers";
     String SERVICE_INFO_VIRTUAL_SERVICE_PLUGIN_MATCH_PRIORITY = "t_service_info_virtual_service_plugin_match_priority";
 
-    /**
-     * MATCH级別插件
-     */
-    String API_MATCH_PLUGINS = "t_api_match_plugins";
-
-    /**
-     * API级别插件
-     */
-    String API_API_PLUGINS = "t_api_api_plugins";
-
-    /**
-     * HOST级别插件
-     */
-    String API_HOST_PLUGINS = "t_api_host_plugins";
 
     /**
      * api请求uri
@@ -199,8 +186,6 @@ public interface TemplateConst {
      * Gateway
      **/
     String GATEWAY_NAME = "t_gateway_name";
-
-    String VIRTUAL_GATEWAY_CODE = "t_virtual_gateway_code";
     String GATEWAY_NS = "t_gateway_ns";
     String GATEWAY_HOSTS = "t_gateway_hosts";
     String GATEWAY_HTTP_10 = "t_gateway_http_10";
@@ -248,14 +233,11 @@ public interface TemplateConst {
      * GatewayPlugin
      */
     String GATEWAY_PLUGIN_NAME = "t_gateway_plugin_name";
-    String GATEWAY_CLUSTER_NAME = "t_gateway_cluster_name";
     String GATEWAY_PLUGIN_NAMESPACE = "t_gateway_plugin_namespace";
     String GATEWAY_PLUGIN_GATEWAYS = "t_gateway_plugin_gateways";
     String GATEWAY_PLUGIN_HOSTS = "t_gateway_plugin_hosts";
-    String GATEWAY_PLUGIN_SERVICES = "t_gateway_plugin_services";
     String GATEWAY_PLUGIN_PLUGINS = "t_gateway_plugin_plugins";
     String GATEWAY_PLUGIN_ROUTE = "t_gateway_plugin_route";
-    String GATEWAY_PLUGIN_USERS = "t_gateway_plugin_users";
 
 
     /**

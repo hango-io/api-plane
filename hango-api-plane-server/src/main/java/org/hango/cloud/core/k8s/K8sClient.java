@@ -1,8 +1,6 @@
 package org.hango.cloud.core.k8s;
 
-import io.fabric8.kubernetes.api.model.Doneable;
-import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.KubernetesResourceList;
+import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.api.model.apiextensions.v1beta1.CustomResourceDefinition;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
@@ -16,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,11 +45,17 @@ public class K8sClient {
 
     public <T extends HasMetadata, L extends KubernetesResourceList<T>> List<T> getCustomResources(CustomResource<T, L> customResource, String namespace, Map<String, String> labels){
         NonNamespaceOperation<T, L, Doneable<T>, Resource<T, Doneable<T>>> operataion = getOperataion(customResource, namespace);
+        if (operataion == null){
+            return new ArrayList<>();
+        }
         return operataion.withLabels(labels).list().getItems();
     }
 
     public <T extends HasMetadata, L extends KubernetesResourceList<T>> T getCustomResource(CustomResource<T, L> customResource, String namespace, String name){
         NonNamespaceOperation<T, L, Doneable<T>, Resource<T, Doneable<T>>> operataion = getOperataion(customResource, namespace);
+        if (operataion == null){
+            return null;
+        }
         return operataion.withName(name).get();
     }
 
@@ -64,7 +69,7 @@ public class K8sClient {
     }
 
 
-    private CustomResourceDefinition getCustomResourceDefinition(String name){
+    private CustomResourceDefinition getCustomResourceDefinition(String name) {
         try {
             return client.customResourceDefinitions().withName(name).get();
         } catch (Exception e) {
@@ -72,4 +77,22 @@ public class K8sClient {
             return null;
         }
     }
+
+    public List<Service> getServices(String namespaces, Map<String, String> labels){
+        return client.services().inNamespace(namespaces).withLabels(labels).list().getItems();
+    }
+
+    public List<Pod> getPods(String namespaces, Map<String, String> labels){
+        return client.pods().inNamespace(namespaces).withLabels(labels).list().getItems();
+    }
+
+
+    public ConfigMap getConfigMap(String namespaces, String name){
+        return client.configMaps().inNamespace(namespaces).withName(name).get();
+    }
+
+    public List<Node> getNode(){
+        return client.nodes().list().getItems();
+    }
+
 }

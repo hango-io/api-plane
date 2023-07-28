@@ -42,14 +42,14 @@ public enum PluginMapping {
     soap_json_transcoder("soap-json-transcoder","proxy.filters.http.soapjsontranscoder","SoapJsonTranscoderProcessor"),
     ianus_router("ianus-router","envoy.filters.http.fault","RouteProcessor"),
     waf("waf","proxy.filters.http.waf","WafProcessor"),
-    trace("trace","proxy.filters.http.rider","RestyProcessor"),
+    trace("trace","proxy.filters.http.rider","LuaProcessor"),
     request_body_rewrite("request-body-rewrite","proxy.filters.http.request_body_transformation","RequestBodyReWriteProcessor"),
     response_body_rewrite("response-body-rewrite","proxy.filters.http.response_body_transformation","ResponseBodyReWriteProcessor"),
-
+    parameter_validate("parameters-validate","proxy.filters.http.parameter_validate","ParameterValidateProcessor"),
 
     //默认处理
-    resty("resty","proxy.filters.http.rider","RestyProcessor"),
-    parameter_validate("parameters-validate","proxy.filters.http.parameter_validate","ParameterValidateProcessor")
+    lua("lua","proxy.filters.http.rider","LuaProcessor")
+
     ;
 
     /**
@@ -91,6 +91,18 @@ public enum PluginMapping {
                 return value;
             }
         }
-        return PluginMapping.resty;
+        return PluginMapping.lua;
+    }
+
+    public static PluginMapping getPluin(String kind, String type){
+        if ("lua".equals(type)) {
+            return PluginMapping.lua;
+        }
+        for (PluginMapping value : values()) {
+            if (value.getMappingName().equals(kind)) {
+                return value;
+            }
+        }
+        return null;
     }
 }

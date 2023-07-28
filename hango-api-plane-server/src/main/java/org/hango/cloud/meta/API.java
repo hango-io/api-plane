@@ -154,17 +154,6 @@ public class API extends CommonModel {
      */
     private RequestOperation requestOperation;
 
-
-    /**
-     * virtualCluster name
-     */
-    private String virtualClusterName;
-
-    /**
-     * virtualCluster headers
-     */
-    private List<PairMatch> virtualClusterHeaders;
-
     /**
      * 流量镜像配置
      */
@@ -511,21 +500,6 @@ public class API extends CommonModel {
         this.requestOperation = requestOperation;
     }
 
-    public String getVirtualClusterName() {
-        return virtualClusterName;
-    }
-
-    public void setVirtualClusterName(String virtualClusterName) {
-        this.virtualClusterName = virtualClusterName;
-    }
-
-    public List<PairMatch> getVirtualClusterHeaders() {
-        return virtualClusterHeaders;
-    }
-
-    public void setVirtualClusterHeaders(List<PairMatch> virtualClusterHeaders) {
-        this.virtualClusterHeaders = virtualClusterHeaders;
-    }
 
     public Map<String, String> getMetaMap() {
         return metaMap;

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.collect.ImmutableList;
 import com.hubspot.jackson.datatype.protobuf.ProtobufModule;
-import org.hango.cloud.configuration.ext.MeshConfig;
 import org.hango.cloud.util.freemarker.AutoRemoveDirective;
 import org.hango.cloud.util.freemarker.IgnoreDirective;
 import org.hango.cloud.util.freemarker.IndentationDirective;
@@ -21,7 +20,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.InterceptingClientHttpRequestFactory;
@@ -36,7 +34,6 @@ import java.util.List;
 
 
 @Configuration
-@PropertySource(value = {"classpath:mesh-config.properties"})
 public class ApiPlaneAutoBaseConfiguration {
 
     @Autowired
@@ -98,10 +95,5 @@ public class ApiPlaneAutoBaseConfiguration {
         freemarkerConfig.setSharedVariable("ignore", new IgnoreDirective());
         freemarkerConfig.setSharedVariable("supply", new SupplyDirective());
         freemarkerConfig.setSharedVariable("autoremove", new AutoRemoveDirective());
-    }
-
-    @Bean
-    MeshConfig meshConfig() {
-        return new MeshConfig();
     }
 }

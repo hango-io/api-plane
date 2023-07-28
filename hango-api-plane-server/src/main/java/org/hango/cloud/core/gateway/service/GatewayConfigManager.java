@@ -1,5 +1,6 @@
 package org.hango.cloud.core.gateway.service;
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import org.hango.cloud.core.ConfigManager;
 import org.hango.cloud.meta.*;
@@ -49,6 +50,21 @@ public interface GatewayConfigManager extends ConfigManager {
     HasMetadata getConfig(String kind, String name);
 
     /**
+     * 获取资源
+     */
+    HasMetadata getConfig(String kind, String namespace, String name);
+
+    /**
+     * 获取资源列表,基于rev进行过滤
+     */
+    List<HasMetadata> getConfigListWithRev(String kind);
+
+    /**
+     * 获取资源列表,基于rev进行过滤
+     */
+    List<HasMetadata> getConfigList(String kind);
+
+    /**
      * 更新插件优先级
      * @param pluginOrder
      */
@@ -95,4 +111,15 @@ public interface GatewayConfigManager extends ConfigManager {
 
     List<String> generateEnvoyConfigObjectPatch(IpSourceEnvoyFilterDTO ipSourceEnvoyFilterDTO);
 
+
+    /**
+     * 更新k8s服务
+     */
+    void updateK8sService(io.fabric8.kubernetes.api.model.Service service);
+
+
+    /**
+     * 更新Configmap资源
+     */
+    void updateConfig(ConfigMap configMap);
 }

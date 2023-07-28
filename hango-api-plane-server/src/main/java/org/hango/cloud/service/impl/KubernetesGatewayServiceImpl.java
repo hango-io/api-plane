@@ -5,11 +5,17 @@ import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.KubernetesResourceList;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.gatewayapi.v1beta1.*;
+import io.fabric8.kubernetes.api.model.networking.v1.*;
 import org.apache.logging.log4j.util.Strings;
 import org.hango.cloud.core.GlobalConfig;
+import org.hango.cloud.core.gateway.service.GatewayConfigManager;
 import org.hango.cloud.core.k8s.K8sClient;
+import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.k8s.K8sResourceApiEnum;
 import org.hango.cloud.meta.CustomResource;
+import org.hango.cloud.meta.dto.IngressDTO;
+import org.hango.cloud.meta.dto.HTTPIngressPathDTO;
+import org.hango.cloud.meta.dto.IngressRuleDTO;
 import org.hango.cloud.meta.dto.KubernetesGatewayDTO;
 import org.hango.cloud.service.KubernetesGatewayService;
 import org.slf4j.Logger;
@@ -36,13 +42,16 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
 
     public static final String GATEWAY = "Gateway";
 
-    public static final String PROJECT_KEY = "hango.io/gateway.project";
+    public static final String INGRESS_CONTROLLER = "kubernetes.io/ingress.class";
 
     @Autowired
     private K8sClient k8sClient;
 
     @Autowired
     private GlobalConfig globalConfig;
+
+    @Autowired
+    private GatewayConfigManager configManager;
 
     @Override
     public List<KubernetesGatewayDTO> getKubernetesGateway(String name) {
@@ -77,6 +86,24 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
         return httpRoutes.stream().filter(o -> gatewayFilter(o, gateway)).map(this::convertHTTPRoute).collect(Collectors.toList());
     }
 
+    @Override
+    public List<IngressDTO> getIngress(String namespace, String name) {
+        //name或ns为空，查询全量配置
+        if (!StringUtils.hasText(namespace) || !StringUtils.hasText(name)){
+            return configManager.getConfigList(K8sResourceEnum.Ingress.name()).stream()
+                    .filter(this::ingressFilter)
+                    .map(this::convertIngress)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+        List<IngressDTO> targetList = new ArrayList<>();
+        HasMetadata config = configManager.getConfig(K8sResourceEnum.Ingress.name(), namespace, name);
+        if (ingressFilter(config)){
+            targetList.add(convertIngress(config));
+        }
+        return targetList;
+    }
+
     private Map<String, String> getLabel(){
         Map<String, String> label = new HashMap<>();
         label.put(LABLE_ISTIO_REV, globalConfig.getIstioRev());
@@ -101,11 +128,7 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
         ObjectMeta metadata = gateway.getMetadata();
         KubernetesGatewayDTO gatewayDTO = new KubernetesGatewayDTO();
         gatewayDTO.setName(metadata.getName());
-        Map<String, String> annotations = metadata.getAnnotations();
-        if (annotations.containsKey(PROJECT_KEY)){
-            String projectValue = annotations.get(PROJECT_KEY);
-            gatewayDTO.setProjectId(projectValue);
-        }
+        gatewayDTO.setProjectId(getProject(metadata.getAnnotations()));
         List<Listener> listeners = gateway.getSpec().getListeners();
         if (!CollectionUtils.isEmpty(listeners)){
             //目前只支持一个listener
@@ -135,6 +158,18 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
         return obj2yaml(targetGateway);
     }
 
+    private String getIngressContent(Ingress ingress){
+        Ingress targetIngress = new Ingress();
+        targetIngress.setApiVersion(ingress.getApiVersion());
+        targetIngress.setKind(ingress.getKind());
+        ObjectMeta targetMetadata = new ObjectMeta();
+        targetMetadata.setName(ingress.getMetadata().getName());
+        targetMetadata.setNamespace(ingress.getMetadata().getNamespace());
+        targetIngress.setMetadata(targetMetadata);
+        targetIngress.setSpec(ingress.getSpec());
+        return obj2yaml(targetIngress);
+    }
+
     private HTTPRoute convertHTTPRoute(HasMetadata hasMetadata){
         if (hasMetadata instanceof HTTPRoute){
             HTTPRoute httpRoute = (HTTPRoute) hasMetadata;
@@ -151,6 +186,67 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
         return null;
     }
 
+    private IngressDTO convertIngress(HasMetadata hasMetadata){
+        if (!(hasMetadata instanceof Ingress)){
+            return null;
+        }
+        ObjectMeta metadata = hasMetadata.getMetadata();
+        IngressDTO ingressDTO = new IngressDTO();
+        ingressDTO.setName(metadata.getName());
+        ingressDTO.setNamespace(metadata.getNamespace());
+        ingressDTO.setProjectCode(getProject(metadata.getAnnotations()));
+        IngressSpec spec = ((Ingress) hasMetadata).getSpec();
+        List<IngressRule> rules = spec.getRules();
+        if (CollectionUtils.isEmpty(rules)){
+            return ingressDTO;
+        }
+        List<IngressRuleDTO> ingressRuleDTOS = rules.stream().map(this::convertIngressRule).collect(Collectors.toList());
+        ingressDTO.setIngressRuleDTOS(ingressRuleDTOS);
+        ingressDTO.setContent(getIngressContent((Ingress) hasMetadata));
+        return ingressDTO;
+    }
+
+    private IngressRuleDTO convertIngressRule(IngressRule ingressRule){
+        IngressRuleDTO ingressRuleDTO = new IngressRuleDTO();
+        String host = ingressRule.getHost();
+        if (StringUtils.isEmpty(host)){
+            host = "*";
+        }
+        ingressRuleDTO.setHost(host);
+        HTTPIngressRuleValue http = ingressRule.getHttp();
+        if (http == null){
+           return ingressRuleDTO;
+        }
+        List<HTTPIngressPath> paths = http.getPaths();
+        if (CollectionUtils.isEmpty(paths)){
+            return ingressRuleDTO;
+        }
+        List<HTTPIngressPathDTO> httpIngressPathDTOS = paths.stream().map(this::convertHTTPRule).collect(Collectors.toList());
+        ingressRuleDTO.setHttpRuleValueDTOS(httpIngressPathDTOS);
+        return ingressRuleDTO;
+    }
+
+    private HTTPIngressPathDTO convertHTTPRule(HTTPIngressPath httpIngressPath){
+        HTTPIngressPathDTO httpIngressPathDTO = new HTTPIngressPathDTO();
+        httpIngressPathDTO.setPath(httpIngressPath.getPath());
+        httpIngressPathDTO.setPathType(httpIngressPath.getPathType());
+        IngressBackend backend = httpIngressPath.getBackend();
+        if (backend == null){
+            return httpIngressPathDTO;
+        }
+        IngressServiceBackend service = backend.getService();
+        if (service == null){
+            return httpIngressPathDTO;
+        }
+        httpIngressPathDTO.setServiceName(service.getName());
+        ServiceBackendPort port = service.getPort();
+        if (port == null){
+            return httpIngressPathDTO;
+        }
+        httpIngressPathDTO.setServicePort(port.getNumber());
+        return httpIngressPathDTO;
+    }
+
 
     private String obj2yaml(HasMetadata hasMetadata){
         try {
@@ -159,6 +255,25 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
             log.error("obj2yaml error, name:{}", hasMetadata.getMetadata().getName());
         }
         return Strings.EMPTY;
+    }
+
+    private String getProject(Map<String, String> annotations){
+        if (annotations == null){
+            return null;
+        }
+        return annotations.getOrDefault(globalConfig.getProjectCode(), null);
+    }
+
+
+    private boolean ingressFilter(HasMetadata hasMetadata){
+        if (hasMetadata instanceof Ingress) {
+            Map<String, String> annotations = hasMetadata.getMetadata().getAnnotations();
+            if (annotations == null){
+                return false;
+            }
+            return globalConfig.getIngressClass().equals(annotations.get(INGRESS_CONTROLLER));
+        }
+        return false;
     }
 
 }

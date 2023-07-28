@@ -5,6 +5,7 @@ import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.meta.Plugin;
 import org.hango.cloud.meta.PluginSupportDetail;
+import org.hango.cloud.meta.dto.CustomPluginDTO;
 import org.hango.cloud.meta.dto.PluginOrderDTO;
 import org.hango.cloud.service.GatewayService;
 import org.hango.cloud.service.PluginService;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  * @auther wupenghuai@corp.netease.com
  * @date 2019/8/2
  **/
+@SuppressWarnings("java:S1192")
 @RestController
 @RequestMapping(value = "/api/plugin", params = "Version=2019-07-25")
 public class GatewayPluginController extends BaseController {
@@ -61,6 +63,10 @@ public class GatewayPluginController extends BaseController {
             return apiReturn(ImmutableMap.of("Plugins", Collections.emptyList()));
         }
         Map<String, Plugin> pluginMap = pluginService.getPlugins();
+        if ( CollectionUtils.isEmpty(pluginMap)) {
+            return apiReturn(ImmutableMap.of("Plugins", Collections.emptyList()));
+        }
+
         List<Plugin> plugins = pluginSupportDetails.stream()
                 .map(PluginSupportDetail::getSchema)
                 .filter(pluginMap::containsKey)
@@ -89,18 +95,45 @@ public class GatewayPluginController extends BaseController {
      */
     @RequestMapping(params = "Action=PublishPluginOrder", method = RequestMethod.POST)
     public String publishPluginOrder(@RequestBody @Valid PluginOrderDTO pluginOrderDTO) {
+        boolean result = gatewayService.pluginOrderPortCheck(pluginOrderDTO);
+        if (!result){
+            return apiReturn(ApiPlaneErrorCode.PluginOrderPortError);
+        }
         gatewayService.publishPluginOrder(pluginOrderDTO);
         return apiReturn(ApiPlaneErrorCode.Success);
     }
 
 
     /**
-     * 更新plm
+     * 更新plm item
      */
-    @RequestMapping(params = "Action=UpdatePluginOrder", method = RequestMethod.POST)
-    public String updatePluginOrder(@RequestBody @Valid PluginOrderDTO pluginOrderDTO) {
+    @RequestMapping(params = "Action=UpdatePluginOrderItem", method = RequestMethod.POST)
+    public String updatePluginOrder(@RequestBody PluginOrderDTO pluginOrderDTO) {
         gatewayService.updatePluginOrder(pluginOrderDTO);
         return apiReturn(ApiPlaneErrorCode.Success);
+    }
+
+
+    /**
+     * 发布自定义插件
+     */
+    @RequestMapping(params = "Action=PublishCustomPlugin", method = RequestMethod.POST)
+    public String publishCustomPlugin(@RequestBody @Valid CustomPluginDTO customPluginDTO) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(RESULT, gatewayService.publishCustomPlugin(customPluginDTO));
+        ErrorCode code = ApiPlaneErrorCode.Success;
+        return apiReturn(code.getStatusCode(), code.getCode(), null, result);
+    }
+
+    /**
+     * 删除自定义插件
+     */
+    @RequestMapping(params = "Action=DeleteCustomPlugin",method = RequestMethod.POST)
+    public String deleteCustomPlugin(@RequestBody CustomPluginDTO customPluginDTO) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(RESULT, gatewayService.deleteCustomPlugin(customPluginDTO.getPluginName(), customPluginDTO.getLanguage()));
+        ErrorCode code = ApiPlaneErrorCode.Success;
+        return apiReturn(code.getStatusCode(), code.getCode(), null, result);
     }
 
     /**
@@ -112,5 +145,4 @@ public class GatewayPluginController extends BaseController {
         gatewayService.deletePluginOrder(pluginOrderDTO);
         return apiReturn(ApiPlaneErrorCode.Success);
     }
-
 }

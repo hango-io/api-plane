@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -46,7 +47,7 @@ public class PilotHttpClientTest extends BaseTest {
 
         Service service = buildService("10.10.10.18", 8080);
 
-        when(k8sClient.getObjectList(any(),any(),any())).thenReturn(Arrays.asList(service));
+        when(k8sClient.getObjectList(any(),any(),anyMap())).thenReturn(Arrays.asList(service));
         when(restTemplate.getForEntity(anyString(), any())).thenReturn(entity);
 
         List<Endpoint> endpoints = istioHttpClient.getEndpointList();

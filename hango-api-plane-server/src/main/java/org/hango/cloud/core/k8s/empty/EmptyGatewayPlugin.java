@@ -8,13 +8,6 @@ public class EmptyGatewayPlugin extends K8sTypes.EnvoyPlugin implements HasMetad
 
     private ObjectMeta om;
 
-    public EmptyGatewayPlugin(String name, String namespace) {
-        ObjectMeta tom = new ObjectMeta();
-        tom.setName(name);
-        tom.setNamespace(namespace);
-        this.om = tom;
-    }
-
     public EmptyGatewayPlugin(String name) {
         ObjectMeta tom = new ObjectMeta();
         tom.setName(name);

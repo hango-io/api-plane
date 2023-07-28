@@ -1,11 +1,14 @@
 package org.hango.cloud.meta;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hango.cloud.meta.dto.PortalHealthCheckDTO;
 import org.hango.cloud.meta.dto.PortalOutlierDetectionDTO;
 import org.hango.cloud.meta.dto.PortalServiceConnectionPoolDTO;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,15 @@ public class ServiceSubset {
     private TrafficPolicy trafficPolicy;
 
     private List<String> staticAddrs;
+
+    /**
+     *
+     *
+     * 服务meta label 数据map
+     * mata_type: 服务meta数据类型
+     * meta_data: 服务meta数据值，转换为Map
+     */
+    private Map<String,String> metaLabelMap;
 
     public String getName() {
         return name;
@@ -50,6 +62,14 @@ public class ServiceSubset {
 
     public void setStaticAddrs(List<String> staticAddrs) {
         this.staticAddrs = staticAddrs;
+    }
+
+    public Map<String, String> getMetaLabelMap() {
+        return metaLabelMap;
+    }
+
+    public void setMetaLabelMap(Map<String, String> metaLabelMap) {
+        this.metaLabelMap = metaLabelMap;
     }
 
     public static class TrafficPolicy {

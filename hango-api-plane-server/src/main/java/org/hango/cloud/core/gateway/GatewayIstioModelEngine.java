@@ -17,7 +17,6 @@ import org.hango.cloud.core.k8s.operator.IntegratedResourceOperator;
 import org.hango.cloud.core.k8s.subtracter.GatewayPluginNormalSubtracter;
 import org.hango.cloud.core.k8s.subtracter.GatewayVirtualServiceSubtracter;
 import org.hango.cloud.core.plugin.FragmentHolder;
-import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.core.template.TemplateTranslator;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.k8s.K8sTypes.VirtualService;
@@ -112,21 +111,12 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
         logger.info("{}{} start translate k8s resource", LogConstant.TRANSLATE_LOG_NOTE, LogConstant.ROUTE_LOG_NOTE);
         List<K8sResourcePack> resourcePacks = new ArrayList<>();
         api.setNamespace(globalConfig.getResourceNamespace());
-        List<FragmentWrapper> vsFragments = new ArrayList<>();
-        // 渲染VS上的插件片段（当前仅有Match插件）
-        if (!StringUtils.isEmpty(api.getPlugins())) {
-            vsFragments = renderPlugins(api.getPlugins()).stream()
-                    .map(FragmentHolder::getVirtualServiceFragment)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-        }
         if (NumberUtils.INTEGER_ZERO.equals(api.getCustomDefaultRespCode())){
             api.setCustomDefaultRespCode(globalConfig.getCustomDefaultRespCode());
         }
         List<String> rawVirtualServices = renderTwiceModelProcessor
                 .process(API_VIRTUAL_SERVICE, api,
-                        new PortalVirtualServiceAPIDataHandler(
-                                defaultModelProcessor, vsFragments, simple));
+                        new PortalVirtualServiceAPIDataHandler(defaultModelProcessor, simple));
 
         logger.info("{}{} start to generate and add k8s resource",
                 LogConstant.TRANSLATE_LOG_NOTE, LogConstant.ROUTE_LOG_NOTE);
@@ -215,14 +205,13 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
         // 插件配置放在GatewayPlugin的CRD上
         List<String> rawGatewayPlugins = renderTwiceModelProcessor.process(GATEWAY_PLUGIN, plugin,
                 new GatewayPluginDataHandler(
-                        rawResourceContainer.getVirtualServices(), globalConfig.getResourceNamespace()));
+                        rawResourceContainer.getGatewayPlugins(), globalConfig.getResourceNamespace()));
 
         // 当插件传入为空时，生成空的GatewayPlugin，删除时使用
         DynamicGatewayPluginSupplier dynamicGatewayPluginSupplier =
                 new DynamicGatewayPluginSupplier(plugin.getGateway(), plugin.getRouteId(), "%s-%s");
 
         resourcePacks.addAll(generateK8sPack(rawGatewayPlugins,
-                null,
                 new GatewayPluginNormalSubtracter(),
                 new DynamicResourceGenerator(dynamicGatewayPluginSupplier)));
         logger.info("{}{} raw GatewayPlugin CRDs added ok",
@@ -276,7 +265,7 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
         }
 
         List<String> plugins = pluginList.stream()
-                .filter(p -> !StringUtils.isEmpty(p))
+                .filter(StringUtils::hasText)
                 .collect(Collectors.toList());
 
         return pluginService.processPlugin(plugins, new ServiceInfo());

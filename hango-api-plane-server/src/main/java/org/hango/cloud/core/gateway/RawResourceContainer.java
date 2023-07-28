@@ -9,8 +9,6 @@ import java.util.List;
 
 public class RawResourceContainer {
 
-    List<FragmentWrapper> virtualServices = new ArrayList<>();
-    List<FragmentWrapper> sharedConfigs = new ArrayList<>();
     List<FragmentWrapper> gatewayPlugins = new ArrayList<>();
     List<FragmentWrapper> smartLimiters = new ArrayList<>();
 
@@ -18,12 +16,6 @@ public class RawResourceContainer {
 
         if (holder == null) return;
 
-        if (holder.getVirtualServiceFragment() != null) {
-            virtualServices.add(holder.getVirtualServiceFragment());
-        }
-        if (holder.getSharedConfigFragment() != null) {
-            sharedConfigs.add(holder.getSharedConfigFragment());
-        }
         if (holder.getGatewayPluginsFragment() != null) {
             gatewayPlugins.add(holder.getGatewayPluginsFragment());
         }
@@ -35,16 +27,9 @@ public class RawResourceContainer {
 
     public void add(List<FragmentHolder> holders) {
         if (CollectionUtils.isEmpty(holders)) return;
-        holders.stream().forEach(h -> add(h));
+        holders.forEach(this::add);
     }
 
-    public List<FragmentWrapper> getVirtualServices() {
-        return virtualServices;
-    }
-
-    public List<FragmentWrapper> getSharedConfigs() {
-        return sharedConfigs;
-    }
 
     public List<FragmentWrapper> getGatewayPlugins() {
         return gatewayPlugins;

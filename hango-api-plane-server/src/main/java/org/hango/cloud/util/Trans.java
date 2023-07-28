@@ -1,6 +1,9 @@
 package org.hango.cloud.util;
 
 import com.google.common.collect.ImmutableList;
+import com.google.protobuf.Value;
+import io.fabric8.kubernetes.api.model.ServicePort;
+import org.apache.logging.log4j.util.Strings;
 import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.k8s.K8sTypes;
@@ -15,14 +18,11 @@ import slime.microservice.plugin.v1alpha1.PluginManagerOuterClass;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.hango.cloud.service.impl.GatewayServiceImpl.GW_CLUSTER;
+import static org.hango.cloud.util.Const.RIDER_PLUGIN;
+
 
 public class Trans {
-
-    public static final String HTTP = "HTTP";
-    public static final String HTTPS = "HTTPS";
-    public static final int DEFAULT_PORT = 80;
-
-
     public static API portalAPI2API(PortalAPIDTO portalAPI) {
 
         API api = new API();
@@ -52,10 +52,6 @@ public class Trans {
             api.setRetryOn(portalAPI.getHttpRetry().getRetryOn());
         }
         api.setRequestOperation(requestOperationDTO2requestOperation(portalAPI.getRequestOperation()));
-        if (portalAPI.getVirtualClusterDTO() != null){
-            api.setVirtualClusterName(portalAPI.getVirtualClusterDTO().getVirtualClusterName());
-            api.setVirtualClusterHeaders(pairsDTO2Pairs(portalAPI.getVirtualClusterDTO().getHeaders()));
-        }
         //流量镜像配置
         if(portalAPI.getMirrorTrafficDto() != null){
             PortalMirrorTrafficDto mirrorTrafficDto = portalAPI.getMirrorTrafficDto();
@@ -68,6 +64,16 @@ public class Trans {
         api.setMetaMap(portalAPI.getMetaMap());
         return api;
     }
+
+    public static EnvoyServicePortDTO getPorts(ServicePort port){
+        EnvoyServicePortDTO envoyServicePortDTO = new EnvoyServicePortDTO();
+        envoyServicePortDTO.setName(port.getName());
+        envoyServicePortDTO.setProtocol(port.getProtocol());
+        envoyServicePortDTO.setPort(port.getPort());
+        envoyServicePortDTO.setNodePort(port.getNodePort());
+        return envoyServicePortDTO;
+    }
+
 
     private static RequestOperation requestOperationDTO2requestOperation(
         RequestOperationDTO requestOperation) {
@@ -96,7 +102,7 @@ public class Trans {
             istioGatewayServer.setNumber(server.getNumber());
             istioGatewayServer.setHosts(server.getHosts());
             PortalIstioGatewayTLSDTO portalIstioGatewayTLSDTO = server.getPortalIstioGatewayTLSDTO();
-            if (HTTPS.equals(server.getProtocol()) && portalIstioGatewayTLSDTO != null){
+            if (Const.PROTOCOL_HTTPS.equals(server.getProtocol()) && portalIstioGatewayTLSDTO != null){
                 IstioGatewayTLS istioGatewayTLS = new IstioGatewayTLS();
                 istioGatewayTLS.setMode(portalIstioGatewayTLSDTO.getMode());
                 istioGatewayTLS.setCredentialName(portalIstioGatewayTLSDTO.getCredentialName());
@@ -176,6 +182,7 @@ public class Trans {
 
         s.setServiceTag(portalService.getServiceTag());
         s.setSubsets(subsetDTO2Subset(portalService.getSubsets()));
+        s.setMetaMap(portalService.getMetaMap());
         return s;
     }
 
@@ -219,6 +226,9 @@ public class Trans {
                         ss.setName(sd.getName());
                         ss.setTrafficPolicy(subsetTrafficPolicyDtoTosubsetTrafficPolicy(sd.getTrafficPolicy()));
                         ss.setStaticAddrs(sd.getStaticAddrs());
+                        if(!CollectionUtils.isEmpty(sd.getMetaMap())){
+                            ss.setMetaLabelMap(sd.getMetaMap().get(CRDMetaEnum.DESTINATION_RULE_STATS_META.getName()));
+                        }
                         return ss;
                     })
                     .collect(Collectors.toList());
@@ -247,7 +257,9 @@ public class Trans {
     public static PluginOrder pluginOrderDTO2PluginOrder(PluginOrderDTO pluginOrderDTO) {
 
         PluginOrder po = new PluginOrder();
-        po.setGatewayLabels(pluginOrderDTO.getGatewayLabels());
+        Map<String, String> gatewayLabels = new HashMap<>();
+        gatewayLabels.put(GW_CLUSTER, pluginOrderDTO.getGwCluster());
+        po.setGatewayLabels(gatewayLabels);
         po.setName(pluginOrderDTO.getName());
         List<String> orderItems = new ArrayList<>();
         List<PluginOrderItemDTO> plugins = pluginOrderDTO.getPlugins();
@@ -266,9 +278,32 @@ public class Trans {
         return po;
     }
 
+    public static String getPluginName(PluginOrderItemDTO itemDTO){
+        if (itemDTO == null){
+            return Strings.EMPTY;
+        }
+        String name = itemDTO.getName();
+        if (!RIDER_PLUGIN.equals(name)){
+            return name;
+        }
+        Object inlineObj = itemDTO.getInline();
+        if (!(inlineObj instanceof PluginManagerOuterClass.Inline)){
+            return Strings.EMPTY;
+        }
+        PluginManagerOuterClass.Inline inline = (PluginManagerOuterClass.Inline) inlineObj;
+        Map<String, Value> fieldsMap = inline.getSettings().getFieldsMap();
+        Value plugin = fieldsMap.get("plugin");
+        if (plugin == null){
+            return Strings.EMPTY;
+        }
+        Value pluginName = plugin.getStructValue().getFieldsMap().get("name");
+        return pluginName == null ? Strings.EMPTY : pluginName.getStringValue();
+    }
+
     public static PluginOrderDTO trans(K8sTypes.PluginManager pluginManager){
         PluginOrderDTO dto = new PluginOrderDTO();
-        dto.setGatewayLabels(pluginManager.getSpec().getWorkloadLabels());
+        Map<String, String> workloadLabels = pluginManager.getSpec().getWorkloadLabels();
+        dto.setGwCluster(workloadLabels.get(GW_CLUSTER));
         dto.setPlugins(new ArrayList<>());
         List<PluginManagerOuterClass.Plugin> plugins = pluginManager.getSpec().getPluginList();
         if (CollectionUtils.isEmpty(plugins)) {
@@ -333,14 +368,6 @@ public class Trans {
         return api;
     }
 
-    public static ValidateResultDTO validateResult2ValidateResultDTO(ValidateResult validateResult) {
-        ValidateResultDTO dto = new ValidateResultDTO();
-        dto.setPass(validateResult.isPass());
-        if (validateResult.getItems() != null) {
-            dto.setItems(validateResult.getItems());
-        }
-        return dto;
-    }
 
     /**
      * 插件DTO对象转业务流转对象
@@ -360,6 +387,15 @@ public class Trans {
         Long version = dto.getVersion();
         gatewayPlugin.setVersion(version == null ? 0 : version);
         return gatewayPlugin;
+    }
+
+
+    public static String getSchemaPath(String pluginName){
+        return pluginName + ".json";
+    }
+
+    public static String getCustomCodePath(String pluginName, String language){
+        return pluginName + "." + language;
     }
 
 }

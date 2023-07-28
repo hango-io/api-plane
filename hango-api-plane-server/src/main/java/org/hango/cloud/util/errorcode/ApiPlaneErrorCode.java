@@ -80,5 +80,7 @@ public class ApiPlaneErrorCode {
     public static ErrorCode InvalidMaxRequestsPerConnection = new ErrorCode(ErrorCodeEnum.InvalidMaxRequestsPerConnection);
     public static ErrorCode InvalidMaxConnections = new ErrorCode(ErrorCodeEnum.InvalidMaxConnections);
     public static ErrorCode InvalidConnectTimeout = new ErrorCode(ErrorCodeEnum.InvalidConnectTimeout);
+    public static ErrorCode PluginOrderPortError = new ErrorCode(ErrorCodeEnum.PluginOrderPortError);
+
 
 }

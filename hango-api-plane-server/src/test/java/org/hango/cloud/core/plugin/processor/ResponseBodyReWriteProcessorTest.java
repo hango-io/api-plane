@@ -118,6 +118,6 @@ public class ResponseBodyReWriteProcessorTest extends BasePluginTest {
                 "    - json_pointer: \"/code\"\n" +
                 "      json_value: \"200\"\n" +
                 "    - json_pointer: \"/messgae\"\n" +
-                "      json_value: \"success\"", f.getVirtualServiceFragment().getContent().trim());
+                "      json_value: \"success\"", f.getGatewayPluginsFragment().getContent().trim());
     }
 }

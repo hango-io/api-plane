@@ -13,7 +13,6 @@ public class K8sVersion implements Comparable<K8sVersion> {
     // 例如v1.1.0
     private static final Pattern FORMATTER = Pattern.compile("^v(\\d{0,3})\\.(\\d{0,3})\\.(\\d{0,3})$");
 
-    public static final K8sVersion V1_11_0 = new K8sVersion("v1.11.0");
     public static final K8sVersion V1_17_0 = new K8sVersion("v1.17.0");
 
     private final String version;

@@ -7,7 +7,6 @@ import istio.networking.v1alpha3.DestinationRuleOuterClass;
 import istio.networking.v1alpha3.VirtualServiceOuterClass;
 import me.snowdrop.istio.api.networking.v1alpha3.ServiceEntry;
 import me.snowdrop.istio.api.networking.v1alpha3.VirtualService;
-import org.assertj.core.util.Lists;
 import org.hango.cloud.core.BaseTest;
 import org.hango.cloud.core.editor.EditorContext;
 import org.hango.cloud.core.editor.ResourceType;
@@ -26,7 +25,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.util.CollectionUtils;
 import slime.microservice.plugin.v1alpha1.EnvoyPluginOuterClass;
 
 import java.util.*;
@@ -84,11 +82,6 @@ public class IstioModelEngineTest extends BaseTest {
         return api;
     }
 
-    private API setAPIVirtualCluster(API api,  String virtualClusterName, List<PairMatch> virtualClusterHeaders){
-        api.setVirtualClusterName(virtualClusterName);
-        api.setVirtualClusterHeaders(virtualClusterHeaders);
-        return api;
-    }
 
     private Service getService(String type, String backend, int weight, String code, String gateway, String protocol, String serviceTag) {
         Service s = new Service();
@@ -218,33 +211,13 @@ public class IstioModelEngineTest extends BaseTest {
                         Assert.assertTrue(httpList.get(0).getRouteCount() == 3);
                     }
                 });
-
-
-        //virtualCluster test
-        //base api test
-        API api2 = setAPIVirtualCluster(api, "test-vc", Lists.newArrayList());
-
-        List<K8sResourcePack> resources2 = gatewayIstioModelEngine.translate(api2);
-
-        Assert.assertTrue(resources2.size() == 2);
-
-        resources2.stream()
-                .map(r -> r.getResource())
-                .forEach(r -> {
-                    if (r.getKind().equals(VirtualService.class.getSimpleName())) {
-                        K8sTypes.VirtualService vs = (K8sTypes.VirtualService) r;
-                        VirtualServiceOuterClass.VirtualCluster virtualCluster = vs.getSpec().getVirtualCluster(0);
-
-                        Assert.assertTrue(virtualCluster.getName().equals("test-vc"));
-                    }
-                });
     }
 
     @Test
     public void testTranslatePluginManager() {
 
         PluginOrderDTO po = new PluginOrderDTO();
-        po.setGatewayLabels(ImmutableMap.of("k1","v1", "k2", "v2"));
+        po.setGwCluster("prod-gateway");
         po.setPlugins(ImmutableList.of(
                 getPlugin("p1", true, null),
                 getPlugin("p2", false, null),
@@ -256,10 +229,11 @@ public class IstioModelEngineTest extends BaseTest {
 
         K8sTypes.PluginManager pm = (K8sTypes.PluginManager) res.get(0).getResource();
 
-        Assert.assertTrue(pm.getSpec().getWorkloadLabels().size() == 2);
+        Assert.assertTrue(pm.getSpec().getWorkloadLabels().size() == 1);
         Assert.assertTrue(pm.getSpec().getPluginCount() == 3);
 
         PluginOrderDTO po1 = new PluginOrderDTO();
+        po1.setGwCluster("prod-gateway");
         po1.setPlugins(ImmutableList.of(
                 getPlugin("p1", false, null),
                 getPlugin("p2", true, ImmutableMap.of("key","good"))));
@@ -269,8 +243,7 @@ public class IstioModelEngineTest extends BaseTest {
         Assert.assertTrue(res1.size() == 1);
 
         K8sTypes.PluginManager pm1 = (K8sTypes.PluginManager) res1.get(0).getResource();
-        Assert.assertTrue(CollectionUtils.isEmpty(pm1.getSpec().getWorkloadLabels()));
-        Assert.assertTrue(pm1.getMetadata().getName().equals("qz-global"));
+        Assert.assertTrue(pm1.getMetadata().getName().equals("gw-cluster-prod-gateway"));
         assertEquals(2, pm1.getSpec().getPluginCount());
         assertEquals("p1", pm1.getSpec().getPlugin(0).getName());
 //        assertEquals(false, pm1.getSpec().getPlugin().get(0).getEnable());

@@ -110,6 +110,11 @@ public class K8sConfigStore implements ConfigStore {
     }
 
     @Override
+    public List<HasMetadata> get(String kind) {
+        return client.getObjectList(kind, null);
+    }
+
+    @Override
     public List<HasMetadata> get(String kind, String namespace, Map<String, String> labels) {
         if (StringUtils.isEmpty(namespace)) {
             namespace = globalConfig.getResourceNamespace();

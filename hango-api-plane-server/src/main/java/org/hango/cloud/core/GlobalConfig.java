@@ -4,16 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.hango.cloud.util.Const.VAILD_REGISTRY;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hango.cloud.util.Const.VAILD_REGISTRY;
 
@@ -29,7 +20,7 @@ public class GlobalConfig {
     @Value("${apiPlaneVersion}")
     private String apiPlaneVersion;
 
-    @Value("${istioRev:gw-1.12}")
+    @Value("${istioRev:gw-stable}")
     private String istioRev;
 
     @Value("${telnet.connect.timeout:3000}")
@@ -40,6 +31,23 @@ public class GlobalConfig {
 
     @Value("${registry:all}")
     private String registry;
+
+    //项目隔离标识
+    @Value("${projectCode:skiff.netease.com/project}")
+    private String projectCode;
+
+    //ingress controller标识，和istio保持一致
+    @Value("${ingressClass:hango}")
+    private String ingressClass;
+
+    //自定义插件代码挂载cm 名称
+    @Value("${pluginContentConfigName:hango-rider-plugin}")
+    private String pluginContentConfigName;
+
+    //自定义插件schema挂载cm 名称
+    @Value("${pluginSchemaConfigName:hango-plugin-schema}")
+    private String pluginSchemaConfigName;
+
 
     private final String ALL = "all";
 
@@ -85,4 +93,21 @@ public class GlobalConfig {
         }
         return Arrays.asList(registry.split(","));
     }
+
+    public String getProjectCode() {
+        return projectCode;
+    }
+
+    public String getIngressClass() {
+        return ingressClass;
+    }
+
+    public String getPluginContentConfigName() {
+        return pluginContentConfigName;
+    }
+
+    public String getPluginSchemaConfigName() {
+        return pluginSchemaConfigName;
+    }
+
 }

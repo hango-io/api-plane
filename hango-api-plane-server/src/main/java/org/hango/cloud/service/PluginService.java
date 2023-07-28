@@ -14,10 +14,20 @@ import java.util.Map;
  * @date 2019/8/2
  **/
 public interface PluginService {
+
+    /**
+     * 查询插件
+     */
     Plugin getPlugin(String name);
 
+    /**
+     * 查询全量插件
+     */
     Map<String, Plugin> getPlugins();
 
+    /**
+     * 查询schema
+     */
     String getSchema(String path);
 
     List<FragmentHolder> processPlugin(List<String> plugins, ServiceInfo serviceInfo);

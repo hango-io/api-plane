@@ -27,6 +27,9 @@ public enum CRDMetaEnum {
     }),
     VIRTUAL_SERVICE_DUBBO_META(K8sTypes.VirtualService.class, "DubboMeta", TemplateConst.VIRTUAL_SERVICE_DUBBO, new TypeReference<DubboInfoDto>() {
     }),
+
+    DESTINATION_RULE_STATS_META(K8sTypes.DestinationRule.class, "StatsMeta", TemplateConst.DESTINATION_RULE_METADATA_HUB, new TypeReference<Map<String,String>>() {
+    }),
     ;
 
 

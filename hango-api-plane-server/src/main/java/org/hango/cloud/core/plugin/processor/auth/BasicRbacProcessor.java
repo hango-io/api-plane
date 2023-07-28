@@ -1,6 +1,5 @@
 package org.hango.cloud.core.plugin.processor.auth;
 
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -8,7 +7,6 @@ import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.core.plugin.processor.AbstractSchemaProcessor;
 import org.hango.cloud.core.plugin.processor.SchemaProcessor;
 import org.hango.cloud.meta.ServiceInfo;
-
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -16,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hango.cloud.util.Const.*;
+
 
 /**
  * 基础鉴权插件处理器
@@ -58,12 +57,10 @@ public class BasicRbacProcessor extends AbstractSchemaProcessor implements Schem
 
         FragmentHolder fragmentHolder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
-                .withXUserId(getAndDeleteXUserId(source))
-                .withFragmentType(FragmentTypeEnum.VS_API)
-                .withResourceType(K8sResourceEnum.VirtualService)
+                .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .withContent(resultBuilder.yamlString())
                 .build();
-        fragmentHolder.setVirtualServiceFragment(wrapper);
+        fragmentHolder.setGatewayPluginsFragment(wrapper);
         return fragmentHolder;
     }
 
@@ -78,14 +75,9 @@ public class BasicRbacProcessor extends AbstractSchemaProcessor implements Schem
         if (StringUtils.isEmpty(authType)) {
             throw new RuntimeException("基础鉴权插件转换异常，authType为空！");
         }
-        String filter;
-        switch (authType) {
-            case AUTH_JWKS:
-                filter = JWT_FILTER;
-                break;
-            default:
-                throw new RuntimeException("没有对应的filter类型，authType:" + authType);
+        if (AUTH_JWKS.equals(authType)){
+            return JWT_FILTER;
         }
-        return filter;
+        throw new RuntimeException("没有对应的filter类型，authType:" + authType);
     }
 }

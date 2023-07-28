@@ -96,11 +96,26 @@
     ]
   },
   {
-    "gatewayKind": "KubernetesIngress",
+    "gatewayKind": "Ingress",
     "name": "Kubernetes Ingress",
     "plugins": [
-      {"schema": "resty","plugin": "proxy.filters.http.rider","display": true},
+      {"schema": "local-limiting","plugin": "envoy.filters.http.local_ratelimit","display": true},
+      {"schema": "rate-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "cluster-group-limiting","plugin": "envoy.filters.http.ratelimit","display": true},
+      {"schema": "ianus-router","plugin": "envoy.filters.http.fault","display": false},
+      {"schema": "static-downgrade","plugin": "proxy.filters.http.staticdowngrade","display": true},
+      {"schema": "dynamic-downgrade","plugin": "proxy.filters.http.dynamicdowngrade","display": true},
+      {"schema": "circuit-breaker","plugin": "proxy.filters.http.circuitbreaker","display": true},
+      {"schema": "ip-restriction","plugin": "proxy.filters.http.iprestriction","display": true},
       {"schema": "ua-restriction","plugin": "proxy.filters.http.ua_restriction","display": true},
+      {"schema": "cors","plugin": "envoy.filters.http.cors","display": true},
+      {"schema": "waf","plugin": "proxy.filters.http.waf","display": true},
+      {"schema": "rewrite","plugin": "proxy.filters.http.path_rewrite","display": true},
+      {"schema": "transformer","plugin": "proxy.filters.http.transformation","display": true},
+      {"schema": "jwt-auth","plugin": "envoy.filters.http.jwt_authn","display": true},
+      {"schema": "oauth2-auth","plugin": "proxy.filters.http.super_authz","display": true},
+      {"schema": "resty","plugin": "proxy.filters.http.rider","display": true},
+
       {"schema": "","plugin": "proxy.filters.http.metadatahub","display": false},
       {"schema": "","plugin": "proxy.filters.http.detailed_stats","display": false},
       {"schema": "","plugin": "proxy.filters.http.soapjsontranscoder","display": false},

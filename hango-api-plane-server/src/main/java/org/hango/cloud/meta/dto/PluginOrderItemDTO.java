@@ -1,10 +1,10 @@
 package org.hango.cloud.meta.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hango.cloud.util.Const;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class PluginOrderItemDTO {
 
@@ -16,16 +16,25 @@ public class PluginOrderItemDTO {
     @NotNull(message = "name")
     private String name;
 
+    @JsonProperty("subName")
+    private String subName;
+
     @JsonProperty("port")
     @NotNull(message = "port")
     private Integer port;
 
     @JsonProperty("inline")
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Object inline;
+
+    @JsonProperty("rider")
+    private Object rider;
 
     @JsonProperty("listenerType")
     private String listenerType = Const.GATEWAY;
+
+    @JsonProperty("operate")
+    @Pattern(regexp = "update|delete", message = "operate must be update or delete")
+    private String operate;
 
     public String getListenerType() {
         return listenerType;
@@ -67,4 +76,27 @@ public class PluginOrderItemDTO {
         this.inline = inline;
     }
 
+    public Object getRider() {
+        return rider;
+    }
+
+    public void setRider(Object rider) {
+        this.rider = rider;
+    }
+
+    public String getOperate() {
+        return operate;
+    }
+
+    public void setOperate(String operate) {
+        this.operate = operate;
+    }
+
+    public String getSubName() {
+        return subName;
+    }
+
+    public void setSubName(String subName) {
+        this.subName = subName;
+    }
 }

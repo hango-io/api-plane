@@ -3,6 +3,7 @@ package org.hango.cloud.meta.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hango.cloud.meta.CRDMetaEnum;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
@@ -25,6 +26,18 @@ public class ServiceSubsetDTO {
 
     @JsonProperty(value = "StaticAddrList")
     private List<String> staticAddrs;
+
+    /**
+     * meta数据传输集
+     * Map<mata_type,meta_data>
+     * mata_type meta类型
+     *
+     * @see CRDMetaEnum
+     * mata_type: 服务meta数据类型
+     * meta_data: 服务meta<label_key,label_value>
+     */
+    @JsonProperty(value = "MetaMap")
+    private Map<String, Map<String,String>> metaMap;
 
     public String getName() {
         return name;
@@ -56,6 +69,14 @@ public class ServiceSubsetDTO {
 
     public void setStaticAddrs(List<String> staticAddrs) {
         this.staticAddrs = staticAddrs;
+    }
+
+    public Map<String, Map<String, String>> getMetaMap() {
+        return metaMap;
+    }
+
+    public void setMetaMap(Map<String, Map<String, String>> metaMap) {
+        this.metaMap = metaMap;
     }
 
     @Override

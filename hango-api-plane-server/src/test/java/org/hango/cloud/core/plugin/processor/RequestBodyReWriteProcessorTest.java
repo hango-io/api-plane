@@ -65,6 +65,6 @@ public class RequestBodyReWriteProcessorTest extends BasePluginTest {
                 "  json_body_transformation:\n" +
                 "    json_transformations:\n" +
                 "    - json_pointer: \"/a\"\n" +
-                "      json_value: \"2\"", f.getVirtualServiceFragment().getContent().trim());
+                "      json_value: \"2\"", f.getGatewayPluginsFragment().getContent().trim());
     }
 }

@@ -58,6 +58,6 @@ public class RedisCacheProcessorTest extends BasePluginTest {
             + "        regex: \"200|\"\n"
             + "cache_ttls:\n"
             + "  RedisHttpCache:\n"
-            + "    default: 2000", f.getVirtualServiceFragment().getContent().trim());
+            + "    default: 2000", f.getGatewayPluginsFragment().getContent().trim());
     }
 }

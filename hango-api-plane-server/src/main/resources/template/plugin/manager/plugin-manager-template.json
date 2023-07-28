@@ -1,7 +1,4 @@
     {
-      "GatewayLabels": {
-        "gw_cluster": "{{ .Values.gateway_cluster }}"
-      },
       "Plugins": [
         {
           "enable": "true",

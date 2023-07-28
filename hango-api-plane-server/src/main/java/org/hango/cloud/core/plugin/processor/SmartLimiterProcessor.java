@@ -1,7 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
 import org.hango.cloud.core.editor.ResourceType;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -16,9 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.hango.cloud.util.constant.PluginConstant.CLUSTER_GROUP_LIMITER;
-import static org.hango.cloud.util.constant.PluginConstant.CLUSTER_LIMITER;
-import static org.hango.cloud.util.constant.PluginConstant.LOCAL_LIMITER;
+import static org.hango.cloud.util.constant.PluginConstant.*;
 
 /**
  * SmartLimiter处理器（转换本地限流和集群限流插件）
@@ -72,9 +69,7 @@ public class SmartLimiterProcessor extends AbstractSchemaProcessor implements Sc
                 }
 
                 FragmentWrapper smartLimiterWrapper = new FragmentWrapper.Builder()
-                        .withXUserId(getAndDeleteXUserId(source))
                         .withFragmentType(FragmentTypeEnum.SMART_LIMIT)
-                        .withResourceType(K8sResourceEnum.SmartLimiter)
                         .withContent(limitAction.yamlString())
                         .build();
                 smartLimiterActionList.add(smartLimiterWrapper);
@@ -84,6 +79,7 @@ public class SmartLimiterProcessor extends AbstractSchemaProcessor implements Sc
         fragmentHolder.setSmartLimiterFragment(smartLimiterActionList);
         return fragmentHolder;
     }
+
 
     private PluginGenerator generateHeaderMatch(String limitPluginType, Map<String, Object> limitStrategy) {
         PluginGenerator headerMatch = null;

@@ -50,7 +50,7 @@ public class WafProcessorTest extends BasePluginTest {
                 "    tx.dos_burst_time_slice: 2\n" +
                 "    tx.dos_counter_threshold: 200\n" +
                 "- waf_rule_path: \"/etc/envoy/waf/REQUEST-913-SCANNER-DETECTION.conf\"";
-        String actual = f.getVirtualServiceFragment().getContent().trim();
+        String actual = f.getGatewayPluginsFragment().getContent().trim();
         System.out.println("================================================================================================");
         System.out.println("expected value is :" + expected);
         System.out.println("================================================================================================");

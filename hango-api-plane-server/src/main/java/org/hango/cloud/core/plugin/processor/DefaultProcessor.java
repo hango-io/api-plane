@@ -1,10 +1,9 @@
 package org.hango.cloud.core.plugin.processor;
 
-import org.hango.cloud.core.editor.ResourceGenerator;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
+import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.meta.ServiceInfo;
 import org.springframework.stereotype.Component;
 
@@ -22,16 +21,14 @@ public class DefaultProcessor extends AbstractSchemaProcessor implements SchemaP
 
     @Override
     public FragmentHolder process(String plugin, ServiceInfo serviceInfo) {
-        ResourceGenerator source = ResourceGenerator.newInstance(plugin);
+        PluginGenerator source = PluginGenerator.newInstance(plugin);
         if(source.contain("$.kind"))source.removeElement("$.kind");
         FragmentHolder holder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
-                .withXUserId(getAndDeleteXUserId(source))
                 .withContent(source.yamlString())
-                .withResourceType(K8sResourceEnum.VirtualService)
-                .withFragmentType(FragmentTypeEnum.VS_API)
+                .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .build();
-        holder.setVirtualServiceFragment(wrapper);
+        holder.setGatewayPluginsFragment(wrapper);
         return holder;
     }
 }

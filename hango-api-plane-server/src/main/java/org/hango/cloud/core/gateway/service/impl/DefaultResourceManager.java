@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static org.hango.cloud.util.Const.*;
 
+
 @Component
 public class DefaultResourceManager implements ResourceManager {
 
@@ -131,6 +132,7 @@ public class DefaultResourceManager implements ResourceManager {
      * @return 是否满足所有过滤器条件
      */
     private boolean isMatchFilter(Endpoint endpoint, Map<String, Map<String, String>> kindFilters) {
+
         if (!isMatchFilter(endpoint, kindFilters, PREFIX_LABEL)) {
             return false;
         }

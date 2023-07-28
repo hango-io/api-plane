@@ -113,13 +113,6 @@ public class PortalAPIDTO {
     private RequestOperationDTO requestOperation;
 
     /**
-     * VirtualCluster配置
-     */
-    @JsonProperty(value = "VirtualCluster")
-    @Valid
-    private VirtualClusterDTO virtualClusterDTO;
-
-    /**
      * 流量镜像配置
      */
     @JsonProperty(value = "MirrorTraffic")
@@ -328,13 +321,6 @@ public class PortalAPIDTO {
         this.requestOperation = requestOperation;
     }
 
-    public VirtualClusterDTO getVirtualClusterDTO() {
-        return virtualClusterDTO;
-    }
-
-    public void setVirtualClusterDTO(VirtualClusterDTO virtualClusterDTO) {
-        this.virtualClusterDTO = virtualClusterDTO;
-    }
 
     public Map<String, String> getMetaMap() {
         return metaMap;

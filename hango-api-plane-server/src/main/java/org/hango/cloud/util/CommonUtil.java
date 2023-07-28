@@ -6,12 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import io.fabric8.kubernetes.api.model.HasMetadata;
 import org.apache.commons.lang3.StringUtils;
 import org.hango.cloud.core.editor.ResourceGenerator;
-import org.hango.cloud.core.editor.ResourceType;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
-import org.hango.cloud.core.k8s.K8sResourceGenerator;
 import org.hango.cloud.util.exception.ApiPlaneException;
 import org.hango.cloud.util.function.Equals;
 import org.slf4j.Logger;
@@ -19,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 
@@ -154,11 +152,6 @@ public class CommonUtil {
         return result;
     }
 
-    public static HasMetadata json2HasMetadata(String json) {
-        K8sResourceGenerator gen = K8sResourceGenerator.newInstance(json, ResourceType.JSON);
-        K8sResourceEnum resourceEnum = K8sResourceEnum.get(gen.getKind());
-        return gen.object(resourceEnum.mappingType());
-    }
 
     public static boolean isLuaPlugin(String plugin) {
         ResourceGenerator source = ResourceGenerator.newInstance(plugin);
@@ -167,32 +160,6 @@ public class CommonUtil {
         return "lua".equals(type) || "trace".equals(kind);
     }
 
-    public static <T> T safelyGet(Supplier<T> getter) {
-         try {
-             return getter.get();
-         } catch (NullPointerException npe) {
-             return null;
-         }
-    }
-
-    public static <T> Optional<T> safely(Supplier<T> getter) {
-     	return Optional.ofNullable(safelyGet(getter));
-    }
-
-    /**
-     * @param t
-     * @param <T>
-     * @return
-     */
-    public static <T> T copy(T t) {
-
-        try {
-            return (T) objectMapper.readValue(objectMapper.writeValueAsString(t), t.getClass());
-        } catch (Exception e) {
-            logger.warn("copy object failed", e);
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * 返回第n次出现的字符串的索引
@@ -219,33 +186,6 @@ public class CommonUtil {
         if (StringUtils.isEmpty(str) || StringUtils.isEmpty(occur) || order < 0) return -1;
         if (order == 0) return str.indexOf(occur);
         return str.indexOf(occur, xIndexOf(str, occur, order-1) + 1);
-    }
-
-    /**
-     * 去除字符串末尾指定字符
-     *
-     * @param remove
-     * @param origin
-     * @return
-     */
-    public static String removeEnd(String remove, String origin) {
-        if (StringUtils.isAnyBlank(remove, origin)) {
-            return origin;
-        }
-        if (!StringUtils.endsWith(origin, remove)) {
-            return origin;
-        }
-        return removeEnd(remove, origin.substring(0, origin.length() - remove.length()));
-    }
-
-    public static String toJSONString(Object object){
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            logger.error("parse json error");
-        }
-        return "";
     }
 
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class ConfigMapOperator implements k8sResourceOperator<ConfigMap> {
     @Override
     public ConfigMap merge(ConfigMap old, ConfigMap fresh) {
-        throw new UnsupportedOperationException();
+        return fresh;
     }
 
     @Override

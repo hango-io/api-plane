@@ -88,4 +88,12 @@ public class GatewayCommonController extends BaseController {
         result.put(RESULT, gatewayService.getRegistryList());
         return apiReturn(result);
     }
+
+    @RequestMapping(params = "Action=GetEnvoyService", method = RequestMethod.GET)
+    public String getEnvoyService(@RequestParam(name = "GwCluster") String gwCluster) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(RESULT, gatewayService.getEnvoyAddress(gwCluster));
+        return apiReturn(result);
+    }
+
 }

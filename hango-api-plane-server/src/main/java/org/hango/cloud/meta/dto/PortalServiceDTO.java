@@ -2,11 +2,13 @@ package org.hango.cloud.meta.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hango.cloud.meta.CRDMetaEnum;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PortalServiceDTO {
@@ -60,6 +62,18 @@ public class PortalServiceDTO {
 
     @JsonProperty(value = "Version")
     private Long version;
+
+    /**
+     * meta数据传输集
+     * Map<mata_type,meta_data>
+     * mata_type meta类型
+     *
+     * @see CRDMetaEnum
+     * mata_type: 服务meta数据类型
+     * meta_data: 服务meta<label_key,label_value>
+     */
+    @JsonProperty(value = "MetaMap")
+    private Map<String, Map<String,String>> metaMap;
 
     public String getCode() {
         return code;
@@ -139,5 +153,13 @@ public class PortalServiceDTO {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public Map<String, Map<String, String>> getMetaMap() {
+        return metaMap;
+    }
+
+    public void setMetaMap(Map<String, Map<String, String>> metaMap) {
+        this.metaMap = metaMap;
     }
 }

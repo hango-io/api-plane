@@ -1,25 +1,24 @@
 package org.hango.cloud.core.gateway.handler;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.hango.cloud.core.template.TemplateParams;
+import org.hango.cloud.k8s.K8sTypes;
+import org.hango.cloud.meta.CRDMetaEnum;
 import org.hango.cloud.meta.Service;
 import org.hango.cloud.meta.dto.LocalitySettingDTO;
 import org.hango.cloud.meta.dto.PortalServiceConnectionPoolDTO;
 import org.hango.cloud.util.CommonUtil;
 import org.hango.cloud.util.Const;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static org.hango.cloud.core.template.TemplateConst.*;
 
 public class PortalDestinationRuleServiceDataHandler extends ServiceDataHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(PortalDestinationRuleServiceDataHandler.class);
-
-    private static YAMLMapper yamlMapper;
 
     @Override
     List<TemplateParams> doHandle(TemplateParams tp, Service service) {
@@ -110,6 +109,32 @@ public class PortalDestinationRuleServiceDataHandler extends ServiceDataHandler 
             params.put(DESTINATION_RULE_TCP_CONNECTION_POOL_MAX_CONNECTIONS,
                     portalServiceTcpConnectionPoolDTO.getMaxConnections());
         }
-        return Arrays.asList(params);
+        return Arrays.asList(handleServiceMetaMap(service, params));
+    }
+
+    /**
+     * 处理DestinationRule metadata 数据
+     *
+     * @param service 上层输入的service数据
+     * @param tp  模板参数
+     * @return TemplateParams
+     */
+    private TemplateParams handleServiceMetaMap(Service service, TemplateParams tp) {
+        if (CollectionUtils.isEmpty(service.getMetaMap())) {
+            return tp;
+        }
+        Iterator<Map.Entry<String, Map<String, String>>> iterator = service.getMetaMap().entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Map<String, String>> entry = iterator.next();
+            CRDMetaEnum metaEnum = CRDMetaEnum.get(K8sTypes.DestinationRule.class, entry.getKey());
+            switch (metaEnum) {
+                case DESTINATION_RULE_STATS_META:
+                    tp.put(metaEnum.getTemplateName(), entry.getValue());
+                    break;
+                default:
+                    break;
+            }
+        }
+        return tp;
     }
 }

@@ -1,6 +1,7 @@
 package org.hango.cloud.web.controller;
 
 import io.fabric8.kubernetes.api.model.gatewayapi.v1beta1.HTTPRoute;
+import org.hango.cloud.meta.dto.IngressDTO;
 import org.hango.cloud.meta.dto.KubernetesGatewayDTO;
 import org.hango.cloud.service.KubernetesGatewayService;
 import org.hango.cloud.util.errorcode.ApiPlaneErrorCode;
@@ -20,7 +21,7 @@ import java.util.Map;
  * @Date 2022/12/2
  */
 @RestController
-@RequestMapping(value = "/api", params = "Version=2022-12-31")
+@RequestMapping(value = "/api")
 public class KubernetesGatewayController extends BaseController{
 
     @Autowired
@@ -41,6 +42,16 @@ public class KubernetesGatewayController extends BaseController{
     public String getKubernetesGateway(@RequestParam(name = "GatewayName", required = false) String gateway) {
         Map<String, Object> result = new HashMap<>();
         List<KubernetesGatewayDTO> kubernetesGateway = kubernetesGatewayService.getKubernetesGateway(gateway);
+        result.put(RESULT_LIST, kubernetesGateway);
+        ErrorCode code = ApiPlaneErrorCode.Success;
+        return apiReturn(code.getStatusCode(), code.getCode(), null, result);
+    }
+
+    @RequestMapping(value = "/ingress", params = "Action=GetIngress", method = RequestMethod.GET)
+    public String getIngress(@RequestParam(name = "GatewayName", required = false) String gateway,
+                             @RequestParam(name = "Namespace", required = false) String namespace) {
+        Map<String, Object> result = new HashMap<>();
+        List<IngressDTO> kubernetesGateway = kubernetesGatewayService.getIngress(namespace, gateway);
         result.put(RESULT_LIST, kubernetesGateway);
         ErrorCode code = ApiPlaneErrorCode.Success;
         return apiReturn(code.getStatusCode(), code.getCode(), null, result);

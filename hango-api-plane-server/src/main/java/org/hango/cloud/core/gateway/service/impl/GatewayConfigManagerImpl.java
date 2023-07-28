@@ -1,5 +1,6 @@
 package org.hango.cloud.core.gateway.service.impl;
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import me.snowdrop.istio.api.networking.v1alpha3.ServiceEntry;
 import org.hango.cloud.core.AbstractConfigManagerSupport;
@@ -14,6 +15,7 @@ import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.core.k8s.K8sResourcePack;
 import org.hango.cloud.core.k8s.event.K8sResourceDeleteNotificationEvent;
 import org.hango.cloud.core.k8s.subtracter.ServiceEntryEndpointsSubtracter;
+import org.hango.cloud.core.template.TemplateConst;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
@@ -25,10 +27,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport implements
@@ -136,6 +135,22 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
     }
 
     @Override
+    public HasMetadata getConfig(String kind, String namespace, String name) {
+        return configStore.get(kind, namespace, name);
+    }
+
+    @Override
+    public List<HasMetadata> getConfigListWithRev(String kind) {
+        List<HasMetadata> hasMetadata = configStore.get(kind);
+        return hasMetadata.stream().filter(this::revFilter).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<HasMetadata> getConfigList(String kind) {
+        return configStore.get(kind);
+    }
+
+    @Override
     public void updateConfig(PluginOrder pluginOrder) {
         List<K8sResourcePack> resources = modelEngine.translate(pluginOrder);
         update(resources);
@@ -159,6 +174,7 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
         List<K8sResourcePack> resources = modelEngine.translate(istioGateway);
         update(resources);
     }
+
 
     @Override
     public void updateConfig(EnvoyFilterOrder envoyFilterOrder) {
@@ -188,6 +204,18 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
         update(resources);
     }
 
+    @Override
+    public void updateK8sService(io.fabric8.kubernetes.api.model.Service service) {
+        K8sResourcePack resource = new K8sResourcePack(service);
+        update(Collections.singletonList(resource));
+    }
+
+    @Override
+    public void updateConfig(ConfigMap configMap) {
+        K8sResourcePack resource = new K8sResourcePack(configMap);
+        update(Collections.singletonList(resource));
+    }
+
     private void delete(List<K8sResourcePack> resources, Subtracter<HasMetadata> fun) {
         delete(resources, (i1, i2) -> 0, fun, configStore, modelEngine);
     }
@@ -201,5 +229,10 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
     @Override
     protected void deleteNotification(HasMetadata i) {
         eventPublisher.publishEvent(new K8sResourceDeleteNotificationEvent(i));
+    }
+
+    private boolean revFilter(HasMetadata hasMetadata){
+        Map<String, String> labels = hasMetadata.getMetadata().getLabels();
+        return !CollectionUtils.isEmpty(labels) && Objects.equals(globalConfig.getIstioRev(), labels.get(TemplateConst.LABLE_ISTIO_REV));
     }
 }

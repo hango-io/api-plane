@@ -9,8 +9,7 @@ import org.hango.cloud.core.editor.EditorContext;
 import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.core.plugin.FragmentHolder;
-import org.hango.cloud.core.plugin.PluginInstance;
-import org.hango.cloud.core.plugin.processor.SchemaProcessor;
+import org.hango.cloud.core.plugin.processor.AggregateGatewayPluginProcessor;
 import org.hango.cloud.core.template.TemplateUtils;
 import org.hango.cloud.meta.Plugin;
 import org.hango.cloud.meta.PluginSupportConfig;
@@ -26,8 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -43,6 +40,8 @@ public class PluginServiceImpl implements PluginService {
     private static final Logger logger = LoggerFactory.getLogger(PluginServiceImpl.class);
 
     private static final String PLUGIN_CONFIG = "plugin/%s/plugin-config.json";
+
+    public static final String CUSTOM_PLUGIN_CONFIG = "plugin/custom/%s.json";
 
     @Value("${pluginConfigEnv:route}")
     private String env;
@@ -60,11 +59,10 @@ public class PluginServiceImpl implements PluginService {
     ObjectMapper objectMapper;
 
     @Autowired
-    private List<SchemaProcessor> processors;
+    private AggregateGatewayPluginProcessor processor;
 
     private static final String PLUGIN_MANAGER_TEMPLATE = "plugin/manager/plugin-manager-template.json";
     private static final String PLUGIN_SUPPORT_CONFIG = "plugin/manager/plugin-support-config.json";
-
 
     @Override
     public Plugin getPlugin(String name) {
@@ -84,9 +82,10 @@ public class PluginServiceImpl implements PluginService {
         return TemplateUtils.getTemplate(path, configuration).toString();
     }
 
+
     @Override
     public List<FragmentHolder> processPlugin(List<String> plugins, ServiceInfo serviceInfo) {
-        return processPlugin(env, plugins, serviceInfo);
+        return processor.process(plugins, serviceInfo);
     }
 
     @Override
@@ -132,25 +131,6 @@ public class PluginServiceImpl implements PluginService {
         return pluginOrderDTO;
     }
 
-    private List<FragmentHolder> processPlugin(String env, List<String> plugins, ServiceInfo serviceInfo) {
-        List<FragmentHolder> ret = new ArrayList<>();
-
-        // 1. classify plugins
-        List<PluginInstance> totalPlugin = plugins.stream().map(PluginInstance::new).collect(Collectors.toList());
-        MultiValueMap<SchemaProcessor, PluginInstance> pluginMap = new LinkedMultiValueMap<>();
-        totalPlugin.forEach(plugin -> pluginMap.add(getProcessor(getPlugin(env, plugin.getKind()).getProcessor()), plugin));
-
-        // 2. process plugins
-        Set<SchemaProcessor> processors = pluginMap.keySet();
-        for (SchemaProcessor processor : processors) {
-            List<PluginInstance> classifiedPlugins = pluginMap.get(processor);
-            List<String> pluginStrs = classifiedPlugins.stream().map(PluginInstance::jsonString).collect(Collectors.toList());
-            logger.info("process multi processor :[{}], jsons :[{}], serviceInfo :[{}]", processor.getName(), pluginStrs, serviceInfo);
-            ret.addAll(processor.process(pluginStrs, serviceInfo));
-        }
-
-        return ret;
-    }
 
     private Plugin getPlugin(String env, String name) {
         Plugin p = getPlugins(env).get(name);
@@ -178,14 +158,4 @@ public class PluginServiceImpl implements PluginService {
         }
         return TemplateUtils.getTemplate(String.format(PLUGIN_CONFIG, env), configuration).toString();
     }
-
-    private SchemaProcessor getProcessor(String name) {
-        logger.info("get processor:{}", name);
-        Optional<SchemaProcessor> processor = processors.stream().filter(item -> item.getName().equalsIgnoreCase(name)).findAny();
-        if (!processor.isPresent()) {
-            throw new ApiPlaneException("can not resolve the schema processor of name:" + name);
-        }
-        return processor.get();
-    }
-
 }
