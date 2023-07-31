@@ -14,12 +14,6 @@ public class GlobalConfig {
     @Value("${resourceNamespace:gateway-system}")
     private String resourceNamespace;
 
-    @Value("${apiPlaneType}")
-    private String apiPlaneType;
-
-    @Value("${apiPlaneVersion}")
-    private String apiPlaneVersion;
-
     @Value("${istioRev:gw-stable}")
     private String istioRev;
 
@@ -44,9 +38,6 @@ public class GlobalConfig {
     @Value("${pluginContentConfigName:hango-rider-plugin}")
     private String pluginContentConfigName;
 
-    //自定义插件schema挂载cm 名称
-    @Value("${pluginSchemaConfigName:hango-plugin-schema}")
-    private String pluginSchemaConfigName;
 
 
     private final String ALL = "all";
@@ -54,9 +45,6 @@ public class GlobalConfig {
     @Value("${ignorePlugins:#{null}}")
     private String ignorePlugins;
 
-    public String getIgnorePlugins() {
-        return ignorePlugins;
-    }
 
     public Set<String> getIgnorePluginSet() {
         return StringUtils.isEmpty(ignorePlugins) ? Collections.emptySet() : new HashSet<>(Arrays.asList(ignorePlugins.split(",")));
@@ -67,17 +55,11 @@ public class GlobalConfig {
         return resourceNamespace;
     }
 
-    public String getApiPlaneType() {
-        return apiPlaneType;
-    }
 
     public String getIstioRev() {
         return istioRev;
     }
 
-    public String getApiPlaneVersion() {
-        return apiPlaneVersion;
-    }
 
     public Integer getTelnetConnectTimeout() {
         return telnetConnectTimeout;
@@ -106,8 +88,5 @@ public class GlobalConfig {
         return pluginContentConfigName;
     }
 
-    public String getPluginSchemaConfigName() {
-        return pluginSchemaConfigName;
-    }
 
 }

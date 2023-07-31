@@ -5,16 +5,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.editor.EditorContext;
 import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.editor.ResourceType;
+import org.hango.cloud.core.k8s.K8sClient;
 import org.hango.cloud.core.plugin.FragmentHolder;
-import org.hango.cloud.core.plugin.processor.AggregateGatewayPluginProcessor;
+import org.hango.cloud.core.plugin.processor.AggregateGatewayProcessor;
 import org.hango.cloud.core.template.TemplateUtils;
 import org.hango.cloud.meta.Plugin;
 import org.hango.cloud.meta.PluginSupportConfig;
 import org.hango.cloud.meta.PluginSupportDetail;
-import org.hango.cloud.meta.ServiceInfo;
 import org.hango.cloud.meta.dto.PluginOrderDTO;
 import org.hango.cloud.meta.dto.PluginOrderItemDTO;
 import org.hango.cloud.service.PluginService;
@@ -41,8 +42,6 @@ public class PluginServiceImpl implements PluginService {
 
     private static final String PLUGIN_CONFIG = "plugin/%s/plugin-config.json";
 
-    public static final String CUSTOM_PLUGIN_CONFIG = "plugin/custom/%s.json";
-
     @Value("${pluginConfigEnv:route}")
     private String env;
 
@@ -59,7 +58,13 @@ public class PluginServiceImpl implements PluginService {
     ObjectMapper objectMapper;
 
     @Autowired
-    private AggregateGatewayPluginProcessor processor;
+    K8sClient k8sClient;
+
+    @Autowired
+    private GlobalConfig globalConfig;
+
+    @Autowired
+    private AggregateGatewayProcessor gatewayProcessor;
 
     private static final String PLUGIN_MANAGER_TEMPLATE = "plugin/manager/plugin-manager-template.json";
     private static final String PLUGIN_SUPPORT_CONFIG = "plugin/manager/plugin-support-config.json";
@@ -84,9 +89,13 @@ public class PluginServiceImpl implements PluginService {
 
 
     @Override
-    public List<FragmentHolder> processPlugin(List<String> plugins, ServiceInfo serviceInfo) {
-        return processor.process(plugins, serviceInfo);
+    public List<FragmentHolder> processPlugin(List<String> plugins, String pluginScope) {
+        if (CollectionUtils.isEmpty(plugins)) {
+            return Collections.emptyList();
+        }
+        return plugins.stream().filter(StringUtils::hasText).map(o -> gatewayProcessor.process(o, pluginScope)).collect(Collectors.toList());
     }
+
 
     @Override
     public List<PluginSupportDetail> getPluginSupportConfig(String gatewayKind) {
@@ -153,9 +162,9 @@ public class PluginServiceImpl implements PluginService {
     }
 
     private String getPluginConfig(String env) {
-        if (StringUtils.isEmpty(env)) {
-            throw new ApiPlaneException(String.format("the env:[%s] of plugin config can not be null.", env));
+        if (StringUtils.hasText(env)) {
+            return TemplateUtils.getTemplate(String.format(PLUGIN_CONFIG, env), configuration).toString();
         }
-        return TemplateUtils.getTemplate(String.format(PLUGIN_CONFIG, env), configuration).toString();
+        throw new ApiPlaneException(String.format("the env:[%s] of plugin config can not be null.", env));
     }
 }

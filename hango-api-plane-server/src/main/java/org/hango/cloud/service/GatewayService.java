@@ -1,22 +1,7 @@
 package org.hango.cloud.service;
 
 import org.hango.cloud.meta.ServiceHealth;
-import org.hango.cloud.meta.dto.ConfigMapDTO;
-import org.hango.cloud.meta.dto.CustomPluginDTO;
-import org.hango.cloud.meta.dto.DubboMetaDto;
-import org.hango.cloud.meta.dto.EnvoyFilterDTO;
-import org.hango.cloud.meta.dto.EnvoyServiceDTO;
-import org.hango.cloud.meta.dto.GatewayPluginDTO;
-import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
-import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
-import org.hango.cloud.meta.dto.KubernetesServiceDTO;
-import org.hango.cloud.meta.dto.PluginOrderDTO;
-import org.hango.cloud.meta.dto.PortalAPIDTO;
-import org.hango.cloud.meta.dto.PortalAPIDeleteDTO;
-import org.hango.cloud.meta.dto.PortalIstioGatewayDTO;
-import org.hango.cloud.meta.dto.PortalSecretDTO;
-import org.hango.cloud.meta.dto.PortalServiceDTO;
-import org.hango.cloud.meta.dto.ServiceAndPortDTO;
+import org.hango.cloud.meta.dto.*;
 import org.hango.cloud.util.errorcode.ErrorCode;
 
 import java.util.List;
@@ -31,7 +16,9 @@ public interface GatewayService {
 
     void updateGatewayPlugin(GatewayPluginDTO plugin);
 
-    void deleteGatewayPlugin(GatewayPluginDTO plugin);
+    default void updateBasePlugin(BasePluginDTO plugin) {
+
+    }
 
     void updateService(PortalServiceDTO service);
 
@@ -73,9 +60,12 @@ public interface GatewayService {
 
     void deleteSecret(PortalSecretDTO portalSecretDTO);
 
-    PluginOrderDTO getPluginOrder(PluginOrderDTO pluginOrderDto);
+    PluginOrderDTO getPluginManager(String name);
 
-    void updatePluginOrder(PluginOrderDTO pluginOrderDto);
+    void updatePluginOrderItem(PluginOrderDTO pluginOrderDto);
+
+    void deletePluginOrderItem(PluginOrderDTO pluginOrderDto);
+
 
     void publishPluginOrder(PluginOrderDTO pluginOrderDto);
 
@@ -118,7 +108,7 @@ public interface GatewayService {
     /**
      * 删除自定义插件
      */
-    boolean deleteCustomPlugin(String pluginName, String language);
+    boolean deleteCustomPlugin(CustomPluginDTO customPluginDTO);
 
 
     /**

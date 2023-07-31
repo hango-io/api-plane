@@ -8,8 +8,6 @@ import istio.networking.v1alpha3.VirtualServiceOuterClass;
  */
 public class K8sTypes {
 
-	public static class RichVirtualService extends K8sResource<slime.microservice.v1alpha1.Richvirtualservice.RichVirtualService> {}
-	public static class RichVirtualServiceList extends K8sResourceList<RichVirtualService> {}
 	public static class PluginManager extends K8sResource<slime.microservice.plugin.v1alpha1.PluginManagerOuterClass.PluginManager> {}
 	public static class PluginManagerList extends K8sResourceList<PluginManager> {}
 
@@ -26,7 +24,6 @@ public class K8sTypes {
 	public static class SmartLimiterList extends K8sResourceList<SmartLimiter> {}
 
 	static {
-		K8sResource.addKind("microservice.slime.io/v1alpha1", RichVirtualService.class);
 		K8sResource.addKind("microservice.slime.io/v1alpha1", PluginManager.class);
 		K8sResource.addKind("microservice.slime.io/v1alpha1", EnvoyPlugin.class);
 		K8sResource.addKind("microservice.slime.io/v1alpha2", SmartLimiter.class);

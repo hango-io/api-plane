@@ -1,10 +1,11 @@
 package org.hango.cloud.meta;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 
-public class PluginOrder extends CommonModel {
+public class PluginOrder {
 
     private Map<String, String> gatewayLabels;
 
@@ -34,5 +35,12 @@ public class PluginOrder extends CommonModel {
 
     public void setPlugins(List<String> plugins) {
         this.plugins = plugins;
+    }
+
+    public static PluginOrder of(String name, String plugin){
+        PluginOrder pluginOrder = new PluginOrder();
+        pluginOrder.setName(name);
+        pluginOrder.setPlugins(Collections.singletonList(plugin));
+        return pluginOrder;
     }
 }

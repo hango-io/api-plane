@@ -4,6 +4,7 @@ import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.core.template.TemplateConst;
 import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.meta.GatewayPlugin;
+import org.hango.cloud.meta.PluginScopeTypeEnum;
 import org.hango.cloud.util.HandlerUtil;
 import org.hango.cloud.util.constant.PluginConstant;
 
@@ -40,14 +41,15 @@ public class GatewayPluginDataHandler implements DataHandler<GatewayPlugin> {
                 .put(TemplateConst.GATEWAY_PLUGIN_PLUGINS, gatewayPlugins);
 
 
+
         // 路由和全局插件模板渲染数据区分填充
-        if (plugin.isRoutePlugin()) {
+        if (PluginScopeTypeEnum.isRoutePlugin(plugin.getPluginScope())) {
             gatewayPluginParams
                     .put(TemplateConst.GATEWAY_PLUGIN_ROUTE, HandlerUtil.getRoute(plugin))
                     .put(TemplateConst.SERVICE_INFO_API_SERVICE, PluginConstant.DEFAULT_SERVICE_NAME)
                     .put(TemplateConst.SERVICE_INFO_API_GATEWAY, plugin.getGateway())
-                    .put(TemplateConst.SERVICE_INFO_API_NAME, plugin.getRouteId());
-        } else if (plugin.isGlobalPlugin()) {
+                    .put(TemplateConst.SERVICE_INFO_API_NAME, plugin.getCode());
+        } else if (PluginScopeTypeEnum.isHostPlugin(plugin.getPluginScope())) {
             gatewayPluginParams.put(TemplateConst.GATEWAY_PLUGIN_HOSTS, HandlerUtil.completeHosts(plugin));
         }
 

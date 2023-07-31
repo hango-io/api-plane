@@ -70,10 +70,7 @@ public class GatewayPluginController extends BaseController {
         List<Plugin> plugins = pluginSupportDetails.stream()
                 .map(PluginSupportDetail::getSchema)
                 .filter(pluginMap::containsKey)
-                .filter(o -> !Optional.ofNullable(globalConfig)
-                        .map(GlobalConfig::getIgnorePlugins)
-                        .orElse(Collections.emptyList().toString())
-                        .contains(o))
+                .filter(o -> !globalConfig.getIgnorePluginSet().contains(o))
                 .map(pluginMap::get)
                 .collect(Collectors.toList());
         return apiReturn(ImmutableMap.of("Plugins", plugins));
@@ -82,10 +79,10 @@ public class GatewayPluginController extends BaseController {
     /**
      * 获取plm资源
      */
-    @RequestMapping(params = "Action=GetPluginOrder", method = RequestMethod.POST)
-    public String getPluginOrder(@RequestBody PluginOrderDTO pluginOrderDTO) {
+    @RequestMapping(params = "Action=GetPluginOrder", method = RequestMethod.GET)
+    public String getPluginOrder(@RequestParam(name = "Name") String name) {
         Map<String, Object> result = new HashMap<>();
-        result.put(RESULT, gatewayService.getPluginOrder(pluginOrderDTO));
+        result.put(RESULT, gatewayService.getPluginManager(name));
         ErrorCode code = ApiPlaneErrorCode.Success;
         return apiReturn(code.getStatusCode(), code.getCode(), null, result);
     }
@@ -108,8 +105,17 @@ public class GatewayPluginController extends BaseController {
      * 更新plm item
      */
     @RequestMapping(params = "Action=UpdatePluginOrderItem", method = RequestMethod.POST)
-    public String updatePluginOrder(@RequestBody PluginOrderDTO pluginOrderDTO) {
-        gatewayService.updatePluginOrder(pluginOrderDTO);
+    public String updatePluginOrderItem(@RequestBody PluginOrderDTO pluginOrderDTO) {
+        gatewayService.updatePluginOrderItem(pluginOrderDTO);
+        return apiReturn(ApiPlaneErrorCode.Success);
+    }
+
+    /**
+     * 更新plm item
+     */
+    @RequestMapping(params = "Action=DeletePluginOrderItem", method = RequestMethod.POST)
+    public String deletePluginOrderItem(@RequestBody PluginOrderDTO pluginOrderDTO) {
+        gatewayService.deletePluginOrderItem(pluginOrderDTO);
         return apiReturn(ApiPlaneErrorCode.Success);
     }
 
@@ -131,14 +137,13 @@ public class GatewayPluginController extends BaseController {
     @RequestMapping(params = "Action=DeleteCustomPlugin",method = RequestMethod.POST)
     public String deleteCustomPlugin(@RequestBody CustomPluginDTO customPluginDTO) {
         Map<String, Object> result = new HashMap<>();
-        result.put(RESULT, gatewayService.deleteCustomPlugin(customPluginDTO.getPluginName(), customPluginDTO.getLanguage()));
+        result.put(RESULT, gatewayService.deleteCustomPlugin(customPluginDTO));
         ErrorCode code = ApiPlaneErrorCode.Success;
         return apiReturn(code.getStatusCode(), code.getCode(), null, result);
     }
 
     /**
      * 删除plm
-     * @param pluginOrderDTO
      */
     @RequestMapping(params = "Action=DeletePluginOrder", method = RequestMethod.POST)
     public String deletePluginOrder(@RequestBody PluginOrderDTO pluginOrderDTO) {

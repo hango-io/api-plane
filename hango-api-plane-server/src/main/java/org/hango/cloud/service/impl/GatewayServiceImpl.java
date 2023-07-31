@@ -1,12 +1,8 @@
 package org.hango.cloud.service.impl;
 
 import freemarker.template.Configuration;
-import io.fabric8.kubernetes.api.model.ConfigMap;
-import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.ServicePort;
-import io.fabric8.kubernetes.api.model.ServiceSpec;
+import io.fabric8.kubernetes.api.model.*;
 import me.snowdrop.istio.api.networking.v1alpha3.Gateway;
 import me.snowdrop.istio.api.networking.v1alpha3.Port;
 import me.snowdrop.istio.api.networking.v1alpha3.Server;
@@ -22,36 +18,9 @@ import org.hango.cloud.core.istio.PilotHttpClient;
 import org.hango.cloud.core.k8s.K8sClient;
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.k8s.K8sTypes;
-import org.hango.cloud.meta.Endpoint;
-import org.hango.cloud.meta.EnvoyFilterOrder;
-import org.hango.cloud.meta.IstioGateway;
-import org.hango.cloud.meta.IstioGatewayServer;
-import org.hango.cloud.meta.PluginOrder;
-import org.hango.cloud.meta.PluginSupportDetail;
 import org.hango.cloud.meta.Secret;
-import org.hango.cloud.meta.ServiceHealth;
-import org.hango.cloud.meta.dto.ConfigMapDTO;
-import org.hango.cloud.meta.dto.CustomPluginDTO;
-import org.hango.cloud.meta.dto.DubboMetaDto;
-import org.hango.cloud.meta.dto.EnvoyFilterDTO;
-import org.hango.cloud.meta.dto.EnvoyServiceDTO;
-import org.hango.cloud.meta.dto.EnvoyServicePortDTO;
-import org.hango.cloud.meta.dto.GatewayPluginDTO;
-import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
-import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
-import org.hango.cloud.meta.dto.KubernetesServiceDTO;
-import org.hango.cloud.meta.dto.PluginOrderDTO;
-import org.hango.cloud.meta.dto.PluginOrderItemDTO;
-import org.hango.cloud.meta.dto.PortalAPIDTO;
-import org.hango.cloud.meta.dto.PortalAPIDeleteDTO;
-import org.hango.cloud.meta.dto.PortalIstioGatewayDTO;
-import org.hango.cloud.meta.dto.PortalLoadBalancerDTO;
-import org.hango.cloud.meta.dto.PortalSecretDTO;
-import org.hango.cloud.meta.dto.PortalServiceConnectionPoolDTO;
-import org.hango.cloud.meta.dto.PortalServiceDTO;
-import org.hango.cloud.meta.dto.PortalTrafficPolicyDTO;
-import org.hango.cloud.meta.dto.ServiceAndPortDTO;
-import org.hango.cloud.meta.dto.ServiceSubsetDTO;
+import org.hango.cloud.meta.*;
+import org.hango.cloud.meta.dto.*;
 import org.hango.cloud.service.GatewayService;
 import org.hango.cloud.service.PluginService;
 import org.hango.cloud.util.Const;
@@ -67,14 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -92,11 +54,6 @@ public class GatewayServiceImpl implements GatewayService {
     private static final Pattern DUBBO_INFO_PATTRERN = Pattern.compile("^(\\S*) (\\S*)\\((\\S*)\\)$");
     private static final Pattern DUBBO_TELNET_RETURN_PATTERN = Pattern.compile("[\\s\\S]*?\\(as (provider|consumer)\\):");
     public static final String GW_CLUSTER = "gw_cluster";
-    //插件路径
-    public static final String PLUGIN_CONTENT_PATH = "var/lib/istio/data";
-
-    public static final String CUSTOM_PLUGIN_CONFIG = "custom-plugin-config.json";
-
 
     public static final String HOST_NETWORK = "HostNetwork";
 
@@ -143,24 +100,20 @@ public class GatewayServiceImpl implements GatewayService {
     }
 
     /**
-     * 调用发布插件接口，做DTO->POJO转换
-     *
-     * @param plugin 路由插件DTO对象
+     * 更新路由级插件，下发envoyplugin资源
+     * @param plugin
      */
     @Override
     public void updateGatewayPlugin(GatewayPluginDTO plugin) {
         configManager.updateConfig(Trans.pluginDTOToPlugin(plugin));
     }
 
-    /**
-     * 调用更新插件接口，做DTO->POJO转换（对于插件CRD而言，删除的本质还是在更新CRD配置）
-     *
-     * @param plugin 插件DTO对象
-     */
+
     @Override
-    public void deleteGatewayPlugin(GatewayPluginDTO plugin) {
-        configManager.updateConfig(Trans.pluginDTOToPlugin(plugin));
+    public void updateBasePlugin(BasePluginDTO plugin) {
+        configManager.updateConfig(Trans.trans(plugin));
     }
+
 
     @Override
     public void deleteAPI(PortalAPIDeleteDTO api) {
@@ -384,26 +337,9 @@ public class GatewayServiceImpl implements GatewayService {
         return handlerInfo(endpoint);
     }
 
-    @Override
-    public PluginOrderDTO getPluginOrder(PluginOrderDTO pluginOrderDto) {
-        //查询pluginmanager资源
-        PluginOrderDTO pluginManager = getPluginManager(pluginOrderDto.getName());
-        //查询pluginSupport配置
-        List<PluginSupportDetail> pluginSupportDetails = pluginService.getPluginSupportConfig(pluginOrderDto.getGatewayKind());
-        if (CollectionUtils.isEmpty(pluginSupportDetails)){
-            return null;
-        }
-        //获取需要展示的插件列表
-        List<String> displayPlugins = pluginSupportDetails.stream()
-                .filter(o -> Boolean.TRUE.equals(o.getDisplay())).map(PluginSupportDetail::getPlugin).collect(Collectors.toList());
-        //过滤插件
-        List<PluginOrderItemDTO> items = pluginManager.getPlugins().stream().filter(p -> displayPlugins.contains(p.getName())).collect(Collectors.toList());
-        pluginManager.setPlugins(items);
-        return pluginManager;
-    }
 
     @Override
-    public void updatePluginOrder(PluginOrderDTO pluginOrderDto) {
+    public void updatePluginOrderItem(PluginOrderDTO pluginOrderDto) {
         if (CollectionUtils.isEmpty(pluginOrderDto.getPlugins())){
             return;
         }
@@ -414,6 +350,24 @@ public class GatewayServiceImpl implements GatewayService {
         }
         //修改插件
         processPluginOrder(pluginManager, pluginOrderDto.getPlugins());
+        //更新资源
+        PluginOrder pluginOrder = Trans.pluginOrderDTO2PluginOrder(pluginManager);
+        configManager.updateConfig(pluginOrder);
+    }
+
+    @Override
+    public void deletePluginOrderItem(PluginOrderDTO pluginOrderDto) {
+        if (CollectionUtils.isEmpty(pluginOrderDto.getPlugins())){
+            return;
+        }
+        //查询plm资源
+        PluginOrderDTO pluginManager = getPluginManager(pluginOrderDto.getName());
+        if (CollectionUtils.isEmpty(pluginManager.getPlugins())){
+            return;
+        }
+        List<String> deletePluginName = pluginOrderDto.getPlugins().stream().map(PluginOrderItemDTO::getName).collect(Collectors.toList());
+        pluginManager.getPlugins().removeIf(plugin -> deletePluginName.contains(plugin.getName()));
+
         //更新资源
         PluginOrder pluginOrder = Trans.pluginOrderDTO2PluginOrder(pluginManager);
         configManager.updateConfig(pluginOrder);
@@ -618,8 +572,9 @@ public class GatewayServiceImpl implements GatewayService {
         return result;
     }
 
+    @Override
     public PluginOrderDTO getPluginManager(String name){
-        HasMetadata config = configManager.getConfig(K8sResourceEnum.PluginManager.name(), name.replace("_", "-"));
+        HasMetadata config = configManager.getConfig(K8sResourceEnum.PluginManager.name(), name);
         if (Objects.isNull(config)) {
             throw new ApiPlaneException("plugin manager config can not found.");
         }
@@ -643,11 +598,6 @@ public class GatewayServiceImpl implements GatewayService {
         }
         List<PluginOrderItemDTO> plugins = pluginOrderDto.getPlugins();
         for (PluginOrderItemDTO pluginOrderItemDTO : updatePluginList) {
-            if ("delete".equals(pluginOrderItemDTO.getOperate())){
-                //删除item
-                plugins.removeIf(plugin -> plugin.getName().equals(pluginOrderItemDTO.getName()));
-                continue;
-            }
             PluginOrderItemDTO source = plugins.stream().filter(plugin -> plugin.getName().equals(pluginOrderItemDTO.getName())).findFirst().orElse(null);
             if (source == null){
                 //不存在item，新增
@@ -666,10 +616,17 @@ public class GatewayServiceImpl implements GatewayService {
         }
         if (target.getRider() != null){
             source.setRider(target.getRider());
-            return;
+            source.setWasm(null);
+            source.setInline(null);
+        }else if (target.getWasm() != null){
+            source.setWasm(target.getWasm());
+            source.setRider(null);
+            source.setInline(null);
+        }else if (target.getInline() != null){
+            source.setInline(target.getInline());
+            source.setWasm(null);
+            source.setRider(null);
         }
-        source.setInline(target.getInline());
-        source.setRider(null);
     }
 
 
@@ -786,9 +743,9 @@ public class GatewayServiceImpl implements GatewayService {
 
     @Override
     public boolean publishConfigMap(ConfigMapDTO configMapDTO) {
-        ConfigMap configMap = k8sClient.getConfigMap(globalConfig.getResourceNamespace(), configMapDTO.getName());
+        ConfigMap configMap = k8sClient.getConfigMap(globalConfig.getResourceNamespace(), configMapDTO.getLabel());
         if (configMap == null){
-            logger.error("config map not existed, name");
+            logger.error("config map not existed, label:{}", configMapDTO.getLabel());
             return false;
         }
         Map<String, String> data = configMap.getData();
@@ -812,34 +769,20 @@ public class GatewayServiceImpl implements GatewayService {
     @Override
     public boolean publishCustomPlugin(CustomPluginDTO customPluginDTO) {
         //发布自定义代码
-        boolean result = publishCustomCode(customPluginDTO.getPluginName(), customPluginDTO.getLanguage(), customPluginDTO.getPluginContent());
+        boolean result = publishCustomCode(customPluginDTO);
         if (!result){
             logger.error("publish custom code failed, pluginName:{}", customPluginDTO.getPluginName());
-            return false;
-        }
-        //发布schema
-        result = publishSchema(customPluginDTO);
-        if (!result){
-            logger.error("publish schema failed, pluginName:{}", customPluginDTO.getPluginName());
             return false;
         }
         return true;
     }
 
     @Override
-    public boolean deleteCustomPlugin(String pluginName, String language) {
+    public boolean deleteCustomPlugin(CustomPluginDTO customPluginDTO) {
         //删除自定义代码
-        boolean result = publishCustomCode(pluginName, language, null);
+        boolean result = publishCustomCode(customPluginDTO);
         if (!result){
-            logger.error("delete custom code failed, pluginName:{}", pluginName);
-            return false;
-        }
-        //删除schema
-        CustomPluginDTO customPluginDTO = new CustomPluginDTO();
-        customPluginDTO.setPluginName(pluginName);
-        result = publishSchema(customPluginDTO);
-        if (!result){
-            logger.error("delete schema failed, pluginName:{}", pluginName);
+            logger.error("delete custom code failed, pluginName:{}", customPluginDTO.getPluginName());
             return false;
         }
         return true;
@@ -848,38 +791,17 @@ public class GatewayServiceImpl implements GatewayService {
 
     /**
      * 发布自定义代码
-     * @param pluginName 插件名称
-     * @param language 语言
-     * @param code 代码
      * @return 是否发布成功
      */
-    private boolean publishCustomCode(String pluginName, String language, String code){
+    private boolean publishCustomCode(CustomPluginDTO customPluginDTO){
         ConfigMapDTO configMapDTO = new ConfigMapDTO();
-        configMapDTO.setName(globalConfig.getPluginContentConfigName());
-        //contentKey格式为：pluginName.language,例如：uri-restriction.lua
-        configMapDTO.setContentKey(Trans.getCustomCodePath(pluginName, language));
-        configMapDTO.setContentValue(code);
+        Map<String, String> label = new HashMap<>();
+        label.put(Const.APP, Const.RIDER);
+        label.put(Const.GW_CLUSTER, customPluginDTO.getGwCluster());
+        configMapDTO.setContentKey(customPluginDTO.getPluginName());
+        configMapDTO.setContentValue(customPluginDTO.getPluginContent());
+        configMapDTO.setLabel(label);
         return publishConfigMap(configMapDTO);
     }
 
-    /**
-     * 发布schema详情
-     * @param customPluginDTO 自定义插件
-     * @return 是否发布成功
-     */
-    private boolean publishSchema(CustomPluginDTO customPluginDTO){
-        /**
-         * 发布schema
-         */
-        ConfigMapDTO configMapDTO = new ConfigMapDTO();
-        configMapDTO.setName(globalConfig.getPluginSchemaConfigName());
-        configMapDTO.setContentKey(Trans.getSchemaPath(customPluginDTO.getPluginName()));
-        configMapDTO.setContentValue(customPluginDTO.getSchema());
-        boolean result = publishConfigMap(configMapDTO);
-        if (!result){
-            logger.error("publish schema failed, pluginName:{}", customPluginDTO.getPluginName());
-            return false;
-        }
-        return true;
-    }
 }

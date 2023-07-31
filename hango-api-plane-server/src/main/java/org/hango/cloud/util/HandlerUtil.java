@@ -5,6 +5,7 @@ import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.meta.GatewayPlugin;
 import org.hango.cloud.util.constant.PluginConstant;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +56,7 @@ public class HandlerUtil {
      * @return 路由集合
      */
     public static String getRoute(GatewayPlugin plugin) {
-        return "/" + plugin.getRouteId();
+        return "/" + plugin.getCode();
     }
 
     /**
@@ -65,14 +66,10 @@ public class HandlerUtil {
      * @return 网关插件CR名称
      */
     public static String getGatewayPluginName(GatewayPlugin plugin) {
-        String pluginName = PluginConstant.DEFAULT_PLUGIN_NAME;
-
-        if (plugin.isRoutePlugin()) {
-            pluginName = plugin.getRouteId();
-        } else if (plugin.isGlobalPlugin()) {
-            pluginName = plugin.getCode().toLowerCase();
+        if (StringUtils.hasText(plugin.getCode())){
+            return plugin.getCode().toLowerCase();
         }
-        return pluginName;
+        return PluginConstant.DEFAULT_PLUGIN_NAME;
     }
 
     /**

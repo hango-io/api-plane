@@ -135,11 +135,10 @@ public class IstioModelEngineTest extends BaseTest {
 
         GatewayPlugin gatewayPlugin = new GatewayPlugin();
         gatewayPlugin.setPlugins(plugins);
-        gatewayPlugin.setRouteId("88");
+        gatewayPlugin.setPluginScope("routeRule");
         gatewayPlugin.setGateway("test-gateway");
         gatewayPlugin.setHosts(hosts);
-        gatewayPlugin.setCode(null);
-        gatewayPlugin.setPluginType("");
+        gatewayPlugin.setCode("88");
         gatewayPlugin.setPort(80);
 
         List<K8sResourcePack> translate = gatewayIstioModelEngine.translate(gatewayPlugin);
@@ -466,6 +465,7 @@ public class IstioModelEngineTest extends BaseTest {
         GatewayPlugin gp1 = getGatewayPlugin("code1", Collections.EMPTY_LIST,
                 "gw1", Arrays.asList("host1", "host2"));
         gp1.setPort(80);
+        gp1.setPluginScope(PluginScopeTypeEnum.GLOBAL.getValue());
         List<K8sResourcePack> resources = gatewayIstioModelEngine.translate(gp1);
 
         // SmartLimiter和EnvoyPlugin

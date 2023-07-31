@@ -5,8 +5,6 @@ import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressList;
-import io.fabric8.kubernetes.api.model.apps.Deployment;
-import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.client.utils.URLUtils;
 import me.snowdrop.istio.api.networking.v1alpha3.*;
 import org.apache.commons.lang3.StringUtils;
@@ -46,11 +44,6 @@ public enum K8sResourceEnum {
             ImmutableMap.of(K8sVersion.V1_17_0, "/api/v1/namespaces/%s/pods")),
 
     /** DestinationRule resource */
-    SharedConfig(
-            SharedConfig.class,
-            SharedConfigList.class,
-            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/sharedconfigs")),
-    /** DestinationRule resource */
     ServiceEntry(
             ServiceEntry.class,
             ServiceEntryList.class,
@@ -82,17 +75,6 @@ public enum K8sResourceEnum {
             ServiceList.class,
             ImmutableMap.of(K8sVersion.V1_17_0, "/api/v1/namespaces/%s/services/")),
 
-    /** DestinationRule resource */
-    VersionManager(
-            VersionManager.class,
-            VersionManagerList.class,
-            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/namespaces/%s/versionmanagers")),
-    /** DestinationRule resource */
-    GlobalConfig(
-            GlobalConfig.class,
-            GlobalConfigList.class,
-            ImmutableMap.of(K8sVersion.V1_17_0, "/apis/networking.istio.io/v1alpha3/globalconfigs")
-    ),
     /** DestinationRule resource */
     NameSpace(
             Namespace.class,

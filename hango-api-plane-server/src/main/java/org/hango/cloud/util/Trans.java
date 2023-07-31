@@ -9,8 +9,8 @@ import io.fabric8.kubernetes.api.model.ServiceSpec;
 import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
 import com.google.protobuf.Value;
 import io.fabric8.kubernetes.api.model.ServicePort;
-import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.core.editor.ResourceType;
+import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.*;
@@ -260,7 +260,9 @@ public class Trans {
     }
 
     public static PluginOrder pluginOrderDTO2PluginOrder(PluginOrderDTO pluginOrderDTO) {
-
+        if (pluginOrderDTO == null) {
+            return null;
+        }
         PluginOrder po = new PluginOrder();
         Map<String, String> gatewayLabels = new HashMap<>();
         gatewayLabels.put(GW_CLUSTER, pluginOrderDTO.getGwCluster());
@@ -276,7 +278,7 @@ public class Trans {
                 if (dto.getPort() == null){
                     dto.setPort(80);
                 }
-                orderItems.add(ResourceGenerator.newInstance(dto, ResourceType.OBJECT).yamlString());
+                orderItems.add(PluginGenerator.newInstance(dto, ResourceType.OBJECT).yamlString());
             }
         }
         po.setPlugins(orderItems);
@@ -306,11 +308,13 @@ public class Trans {
     public static void buildPluginSetting(PluginOrderItemDTO itemDTO, PluginManagerOuterClass.Plugin plugin){
         if (StringUtils.hasText(plugin.getRider().getPluginName())){
             itemDTO.setRider(plugin.getRider());
-            return;
+        }else if (StringUtils.hasText(plugin.getWasm().getPluginName())){
+            itemDTO.setWasm(plugin.getWasm());
+        }else {
+            itemDTO.setInline(plugin.getInline());
         }
-        itemDTO.setInline(plugin.getInline());
-    }
 
+    }
 
     public static Secret secretDTO2Secret(PortalSecretDTO portalSecretDTO) {
         Secret secret = new Secret();
@@ -370,24 +374,23 @@ public class Trans {
     public static GatewayPlugin pluginDTOToPlugin(GatewayPluginDTO dto) {
         GatewayPlugin gatewayPlugin = new GatewayPlugin();
         gatewayPlugin.setPlugins(dto.getPlugins());
-        gatewayPlugin.setRouteId(dto.getRouteId());
         gatewayPlugin.setGateway(dto.getGateway());
         gatewayPlugin.setHosts(dto.getHosts());
         gatewayPlugin.setCode(dto.getCode());
-        gatewayPlugin.setPluginType(dto.getPluginType());
+        gatewayPlugin.setPluginScope(dto.getPluginScope());
         gatewayPlugin.setPort(dto.getPort() == null ? 80 : dto.getPort());
         Long version = dto.getVersion();
         gatewayPlugin.setVersion(version == null ? 0 : version);
         return gatewayPlugin;
     }
 
-
-    public static String getSchemaPath(String pluginName){
-        return pluginName + ".json";
-    }
-
-    public static String getCustomCodePath(String pluginName, String language){
-        return pluginName + "." + language;
+    public static BasePlugin trans(BasePluginDTO dto) {
+        BasePlugin basePlugin = new BasePlugin();
+        basePlugin.setPluginType(dto.getPluginType());
+        basePlugin.setLanguage(dto.getLanguage());
+        basePlugin.setName(dto.getName());
+        basePlugin.setPluginConfig(dto.getPluginConfig());
+        return basePlugin;
     }
 
     public static KubernetesServiceDTO transService(HasMetadata data) {

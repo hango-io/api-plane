@@ -9,8 +9,8 @@ import java.util.List;
 
 public class RawResourceContainer {
 
-    List<FragmentWrapper> gatewayPlugins = new ArrayList<>();
-    List<FragmentWrapper> smartLimiters = new ArrayList<>();
+    private List<FragmentWrapper> gatewayPlugins = new ArrayList<>();
+    private List<FragmentWrapper> smartLimiters = new ArrayList<>();
 
     public void add(FragmentHolder holder) {
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hango.cloud.util.Const;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 public class PluginOrderItemDTO {
 
@@ -26,12 +25,12 @@ public class PluginOrderItemDTO {
     @JsonProperty("rider")
     private Object rider;
 
+    @JsonProperty("wasm")
+    private Object wasm;
+
     @JsonProperty("listenerType")
     private String listenerType = Const.GATEWAY;
 
-    @JsonProperty("operate")
-    @Pattern(regexp = "update|delete", message = "operate must be update or delete")
-    private String operate;
 
     public String getListenerType() {
         return listenerType;
@@ -81,11 +80,11 @@ public class PluginOrderItemDTO {
         this.rider = rider;
     }
 
-    public String getOperate() {
-        return operate;
+    public Object getWasm() {
+        return wasm;
     }
 
-    public void setOperate(String operate) {
-        this.operate = operate;
+    public void setWasm(Object wasm) {
+        this.wasm = wasm;
     }
 }

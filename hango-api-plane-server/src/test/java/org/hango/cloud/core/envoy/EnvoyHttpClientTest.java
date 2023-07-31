@@ -43,6 +43,8 @@ public class EnvoyHttpClientTest extends BaseTest {
     @Autowired
     ObjectMapper objectMapper;
 
+
+
     @Test
     public void getServiceHealth() {
 

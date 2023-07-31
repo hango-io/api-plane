@@ -3,23 +3,20 @@ package org.hango.cloud.util;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.hango.cloud.core.editor.ResourceGenerator;
+import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.util.exception.ApiPlaneException;
-import org.hango.cloud.util.function.Equals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.regex.Pattern;
+
+import static org.hango.cloud.util.Const.LUA;
+import static org.hango.cloud.util.Const.WASM;
 
 
 public class CommonUtil {
@@ -27,32 +24,12 @@ public class CommonUtil {
     private static final Logger logger = LoggerFactory.getLogger(CommonUtil.class);
 
     private static YAMLMapper yamlMapper;
-    private static ObjectMapper objectMapper = new ObjectMapper();
     /**
      * match ip:port
      * 127.0.0.1:8080
      */
     private static final Pattern IP_PORT_PATTERN =
             Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9]{3}|[1-5][0-9]{4}|[0-9]{1,4})$");
-
-    public static Map<String, String> str2Label(String str) {
-
-        Map<String, String> labelMap = new HashMap<>();
-        if (StringUtils.isEmpty(str) || !str.contains(":")) return labelMap;
-        String[] label = str.split(":");
-        labelMap.put(label[0], label[1]);
-        return labelMap;
-    }
-
-    public static Map<String, String> strs2Label(List<String> strs) {
-
-        Map<String, String> labelMap = new HashMap<>();
-        if (CollectionUtils.isEmpty(strs)) return labelMap;
-        strs.forEach(s -> {
-            labelMap.putAll(str2Label(s));
-        });
-        return labelMap;
-    }
 
     /**
      *
@@ -112,53 +89,6 @@ public class CommonUtil {
         return yamlMapper;
     }
 
-    /**
-     * 合并两个list, 当遇到相等的两个element时，
-     * 用新list中的element取代老list中的element，
-     * 不相等的element全部保留。
-     * @param oldL
-     * @param newL
-     * @param eq
-     * @return
-     */
-     public static List mergeList(List oldL, List newL, Equals eq) {
-        List result = null;
-        if (!CollectionUtils.isEmpty(newL)) {
-            if (CollectionUtils.isEmpty(oldL)) {
-                return newL;
-            } else {
-                result = new ArrayList(oldL);
-                for (Object no : newL) {
-                    for (Object oo : oldL) {
-                        if (eq.apply(no, oo)) {
-                            result.remove(oo);
-                        }
-                    }
-                }
-                result.addAll(newL);
-            }
-        }
-        return result;
-    }
-
-    public static List dropList(List oldL, Object identical, Equals eq) {
-        if (CollectionUtils.isEmpty(oldL)) return oldL;
-        List result = new ArrayList(oldL);
-        for (Object oldO : oldL) {
-            if (eq.apply(oldO, identical)) {
-                result.remove(oldO);
-            }
-        }
-        return result;
-    }
-
-
-    public static boolean isLuaPlugin(String plugin) {
-        ResourceGenerator source = ResourceGenerator.newInstance(plugin);
-        String type = source.getValue("$.type");
-        String kind = source.getValue("$.kind");
-        return "lua".equals(type) || "trace".equals(kind);
-    }
 
 
     /**
@@ -188,4 +118,12 @@ public class CommonUtil {
         return str.indexOf(occur, xIndexOf(str, occur, order-1) + 1);
     }
 
+
+    public static String getKind(PluginGenerator rg){
+        String type = rg.getValue("$.type", String.class);
+        if (Arrays.asList(LUA, WASM).contains(type)){
+            return type;
+        }
+        return rg.getValue("$.kind", String.class);
+    }
 }

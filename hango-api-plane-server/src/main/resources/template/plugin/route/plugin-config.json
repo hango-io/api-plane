@@ -227,7 +227,7 @@
       "displayName": "WAF",
       "schema": "plugin/route/waf.json",
       "description": "",
-      "pluginScope": "routeRule,global",
+      "pluginScope": "routeRule,global,gateway",
       "instructionForUse": "提供应用级安全防护",
       "categoryKey": "security",
       "categoryName": "安全",
