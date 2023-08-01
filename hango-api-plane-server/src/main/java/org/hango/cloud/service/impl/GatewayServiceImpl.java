@@ -619,25 +619,23 @@ public class GatewayServiceImpl implements GatewayService {
                 plugins.add(pluginOrderItemDTO);
             }else {
                 //存在item，更新
-                plugins = plugins.stream().filter(plugin -> !Trans.getPluginName(plugin).equals(pluginName)).collect(Collectors.toList());
-                plugins.add(processorPluginItem(source, pluginOrderItemDTO));
+                processorPluginItem(source, pluginOrderItemDTO);
             }
         }
         pluginOrderDto.setPlugins(plugins);
     }
 
-    private PluginOrderItemDTO processorPluginItem(PluginOrderItemDTO source, PluginOrderItemDTO target){
-        if (source == null){
-            return target;
-        }
-        source.setEnable(target.getEnable());
-        if (target.getInline() != null){
-            source.setInline(target.getInline());
+    private void processorPluginItem(PluginOrderItemDTO source, PluginOrderItemDTO target){
+        if (target.getEnable() != null){
+            source.setEnable(target.getEnable());
         }
         if (target.getRider() != null){
+            source.setInline(null);
             source.setRider(target.getRider());
+            return;
         }
-        return source;
+        source.setInline(target.getInline());
+        source.setRider(null);
     }
 
 
