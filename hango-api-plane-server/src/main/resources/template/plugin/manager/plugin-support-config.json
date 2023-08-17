@@ -96,7 +96,8 @@
 
       {"schema": "","plugin": "proxy.filters.http.metadatahub"},
       {"schema": "","plugin": "proxy.filters.http.detailed_stats"},
-      {"schema": "","plugin": "proxy.filters.http.soapjsontranscoder"}
+      {"schema": "","plugin": "proxy.filters.http.soapjsontranscoder"},
+      {"schema": "","plugin": "envoy.filters.http.stateful_session"}
     ]
   },
   {

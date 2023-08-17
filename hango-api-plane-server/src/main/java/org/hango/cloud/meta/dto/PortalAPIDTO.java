@@ -54,11 +54,6 @@ public class PortalAPIDTO {
     @NotNull(message = "proxyServices")
     private List<PortalRouteServiceDTO> proxyServices;
 
-    /**
-     * 插件
-     */
-    @JsonProperty(value = "Plugins")
-    private List<String> plugins;
 
     /**
      * 请求头
@@ -246,14 +241,6 @@ public class PortalAPIDTO {
 
     public void setProxyServices(List<PortalRouteServiceDTO> proxyServices) {
         this.proxyServices = proxyServices;
-    }
-
-    public List<String> getPlugins() {
-        return plugins;
-    }
-
-    public void setPlugins(List<String> plugins) {
-        this.plugins = plugins;
     }
 
     public List<PairMatchDTO> getHeaders() {

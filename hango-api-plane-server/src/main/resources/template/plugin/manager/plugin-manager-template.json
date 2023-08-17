@@ -364,6 +364,10 @@
         {
           "enable": "true",
           "name": "envoy.filters.http.rbac"
+        },
+        {
+          "enable": "true",
+          "name": "envoy.filters.http.stateful_session"
         }
       ]
     }
