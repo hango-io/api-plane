@@ -257,11 +257,22 @@
     },
     {
       "name": "transformer",
-      "displayName": "请求重写",
+      "displayName": "请求重写(即将下架)",
       "schema": "plugin/route/request-transformer-new.json",
       "description": "",
       "pluginScope": "routeRule",
       "instructionForUse": "修改请求Header、Query String以及Path",
+      "categoryKey": "dataFormat",
+      "categoryName": "数据转换",
+      "pluginGuidance": ""
+    },
+    {
+      "name": "request-rewrite",
+      "displayName": "请求重写",
+      "schema": "plugin/route/request-rewrite.json",
+      "description": "",
+      "pluginScope": "routeRule",
+      "instructionForUse": "修改请求Header、Query String",
       "categoryKey": "dataFormat",
       "categoryName": "数据转换",
       "pluginGuidance": ""
