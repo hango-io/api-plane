@@ -1,6 +1,5 @@
 package org.hango.cloud.core.plugin.processor;
 
-import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -20,12 +19,12 @@ public class LuaProcessor extends AbstractSchemaProcessor implements SchemaProce
     @Override
     public FragmentHolder process(String plugin, ServiceInfo serviceInfo) {
         PluginGenerator source = PluginGenerator.newInstance(plugin);
-        Object config = source.getValue("$.config");
-        PluginGenerator builder = PluginGenerator.newInstance(config, ResourceType.OBJECT);
+        source.removeElement("$.kind");
+        source.removeElement("$.type");
 
         FragmentHolder holder = new FragmentHolder();
         FragmentWrapper wrapper = new FragmentWrapper.Builder()
-                .withContent(builder.yamlString())
+                .withContent(source.yamlString())
                 .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .build();
         holder.setGatewayPluginsFragment(wrapper);

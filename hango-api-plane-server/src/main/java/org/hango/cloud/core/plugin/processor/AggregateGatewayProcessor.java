@@ -62,8 +62,12 @@ public class AggregateGatewayProcessor {
             return;
         }
         //lua插件
-        if (PluginMapping.lua.equals(mapping) || PluginMapping.wasm.equals(mapping)){
+        if (PluginMapping.lua.equals(mapping)){
             addLuaConfig(holder, PluginMapping.getName(kind));
+        }
+        //wasm插件
+        if (PluginMapping.wasm.equals(mapping)){
+            addWasmConfig(holder);
         }
         covert2ExtensionPlugin(holder, getPluginName(mapping, kind), mapping.getTypeUrl(), false, null);
     }
@@ -88,6 +92,14 @@ public class AggregateGatewayProcessor {
         PluginGenerator target = PluginGenerator.newInstance("{\"plugins\":[]}");
         target.addElement("$.plugins", builder.getValue("$"));
         holder.getGatewayPluginsFragment().setContent(target.yamlString());
+    }
+
+    private void addWasmConfig(FragmentHolder holder){
+        PluginGenerator source = PluginGenerator.newInstance(holder.getGatewayPluginsFragment().getContent(), ResourceType.YAML);
+
+        PluginGenerator builder = PluginGenerator.newInstance("{}", ResourceType.JSON);
+        builder.createOrUpdateJson("$", "configuration", source.jsonString());
+        holder.getGatewayPluginsFragment().setContent(builder.yamlString());
     }
 
     private void covert2ExtensionPlugin(FragmentHolder holder, String name, String typeUrl, boolean directPatch, String field) {

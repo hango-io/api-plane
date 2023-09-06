@@ -48,12 +48,12 @@ public enum PluginMapping {
 
 
     lua("lua","proxy.filters.http.rider","type.googleapis.com/proxy.filters.http.rider.v3alpha1.RouteFilterConfig","LuaProcessor"),
-    wasm("wasm","proxy.filters.http.wasm","type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm","WasmProcessor"),
+    wasm("wasm","proxy.filters.http.wasm","type.googleapis.com/envoy.extensions.filters.http.wasm.v3.RoutePluginConfig","WasmProcessor"),
     session_state("session-state","envoy.filters.http.stateful_session","type.googleapis.com/envoy.extensions.filters.http.stateful_session.v3.StatefulSessionPerRoute","SessionStatePerRouteProcessor"),
 
 
 
-    ;
+            ;
 
     /**
      * 插件映射名称

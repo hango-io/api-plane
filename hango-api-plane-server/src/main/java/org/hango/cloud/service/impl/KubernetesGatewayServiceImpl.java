@@ -90,7 +90,7 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
     public List<IngressDTO> getIngress(String namespace, String name) {
         //name或ns为空，查询全量配置
         if (!StringUtils.hasText(namespace) || !StringUtils.hasText(name)){
-            return configManager.getConfigListWithRev(K8sResourceEnum.Ingress.name()).stream()
+            return configManager.getConfigList(K8sResourceEnum.Ingress.name()).stream()
                     .filter(this::ingressFilter)
                     .map(this::convertIngress)
                     .filter(Objects::nonNull)
