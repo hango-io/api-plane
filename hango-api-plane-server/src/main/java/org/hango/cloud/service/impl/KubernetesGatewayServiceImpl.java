@@ -193,6 +193,7 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
         ObjectMeta metadata = hasMetadata.getMetadata();
         IngressDTO ingressDTO = new IngressDTO();
         ingressDTO.setName(metadata.getName());
+        ingressDTO.setPort(globalConfig.getIngressPort());
         ingressDTO.setNamespace(metadata.getNamespace());
         ingressDTO.setProjectCode(getProject(metadata.getAnnotations()));
         IngressSpec spec = ((Ingress) hasMetadata).getSpec();

@@ -16,6 +16,12 @@ public class IngressDTO {
     private String name;
 
     /**
+     * 端口
+     */
+    @JsonProperty("Port")
+    private Integer port;
+
+    /**
      * 命名空间
      */
     @JsonProperty("Namespace")
@@ -79,5 +85,13 @@ public class IngressDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 }

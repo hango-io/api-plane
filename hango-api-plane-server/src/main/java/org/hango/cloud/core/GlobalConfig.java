@@ -34,13 +34,9 @@ public class GlobalConfig {
     @Value("${ingressClass:hango}")
     private String ingressClass;
 
-    //自定义插件代码挂载cm 名称
-    @Value("${pluginContentConfigName:hango-rider-plugin}")
-    private String pluginContentConfigName;
-
-
-
-    private final String ALL = "all";
+    //ingress http port
+    @Value("${ingressPort:80}")
+    private Integer ingressPort;
 
     @Value("${ignorePlugins:#{null}}")
     private String ignorePlugins;
@@ -48,7 +44,7 @@ public class GlobalConfig {
     @Value("${kubernetesSvcSuffix:.svc.cluster.local}")
     private String kubernetesSvcSuffix;
 
-
+    private final String ALL = "all";
 
     public Set<String> getIgnorePluginSet() {
         return StringUtils.isEmpty(ignorePlugins) ? Collections.emptySet() : new HashSet<>(Arrays.asList(ignorePlugins.split(",")));
@@ -88,8 +84,9 @@ public class GlobalConfig {
         return ingressClass;
     }
 
-    public String getPluginContentConfigName() {
-        return pluginContentConfigName;
+
+    public Integer getIngressPort() {
+        return ingressPort;
     }
 
     public String getKubernetesSvcSuffix() {
