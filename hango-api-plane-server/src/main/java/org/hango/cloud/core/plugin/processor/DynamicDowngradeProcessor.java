@@ -195,7 +195,13 @@ public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implement
             String serviceName = source.getValue("$.httpx.remote.cluster.Name");
             String gwClusterName = source.getValue("$.httpx.remote.cluster.GwClusterName");
             String virtualGwCode = source.getValue("$.httpx.remote.cluster.VirtualGwCode");
-            Integer port = source.getValue("$.httpx.remote.cluster.Port");
+            // 存在不传端口的场景（Eureka\Nacos），默认端口80
+            Integer port = 80;
+            try {
+                port = source.getValue("$.httpx.remote.cluster.Port");
+            } catch (ClassCastException | NumberFormatException e) {
+                // 忽略错误，处理为空的情况
+            }
             String backendService = source.getValue("$.httpx.remote.cluster.BackendService");
 
             String destinationRuleName = genDestinationRuleName(publishType, String.valueOf(projectId), serviceName, gwClusterName, virtualGwCode);
