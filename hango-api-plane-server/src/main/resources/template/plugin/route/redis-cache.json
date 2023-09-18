@@ -72,7 +72,8 @@
                 {
                   "key": "value",
                   "type": "input",
-                  "alias": "取值"
+                  "alias": "取值",
+                  "rules": ["MaxLength(200)"]
                 }
               ]
             },
@@ -103,7 +104,8 @@
                 {
                   "key": "value",
                   "type": "input",
-                  "alias": "取值"
+                  "alias": "取值",
+                  "rules": ["MaxLength(200)"]
                 }
               ]
             },
@@ -118,7 +120,14 @@
                 {
                   "key": "headerKey",
                   "alias": "请求头名称",
-                  "type": "input"
+                  "type": "input",
+                  "rules": [
+                    "Required",
+                    {
+                      "pattern": "^[a-zA-Z0-9-]{1,64}$",
+                      "message": "支持英文字母、数字、中划线,长度小于64"
+                    }
+                  ]
                 },
                 {
                   "key": "match_type",
@@ -148,6 +157,7 @@
                   "key": "value",
                   "type": "input",
                   "alias": "取值",
+                  "rules": ["MaxLength(200)","Required"],
                   "invisible": {
                     "present_match": ["this", "match_type"],
                     "present_match_invert": ["this", "match_type"]
@@ -215,7 +225,11 @@
                   "alias": "响应头名称",
                   "type": "input",
                   "rules": [
-                    "MaxLength(200)"
+                    "Required",
+                    {
+                      "pattern": "^[a-zA-Z0-9-]{1,64}$",
+                      "message": "支持英文字母、数字、中划线,长度小于64"
+                    }
                   ]
                 },
                 {
@@ -246,6 +260,7 @@
                   "key": "value",
                   "type": "input",
                   "alias": "取值",
+                  "rules": ["MaxLength(200)","Required"],
                   "invisible": {
                     "present_match": ["this", "match_type"],
                     "present_match_invert": ["this", "match_type"]
@@ -288,11 +303,11 @@
                 {
                   "key": "code",
                   "alias": "状态码",
-                  "help": "支持输入具体的状态码及正则表达式,不支持双引号单引号",
+                  "help": "支持输入具体的状态码及正则表达式",
                   "type": "input",
                   "rules": [
                     "Required",
-                    "^(((?![\"|']).)*)$"
+                    "RegExp"
                   ]
                 },
                 {
@@ -337,18 +352,16 @@
           "alias": "查询参数名称",
           "type": "multi_input",
           "help": "自定义查询参数参与key计算",
-          "rules": [
-            "MaxLength(200)"
-          ]
+          "placeholder": "支持英文字母、数字、中划线,长度小于64",
+          "rules": ["^[a-zA-Z0-9-]{1,64}$"]
         },
         {
           "key": "headers",
           "alias": "请求头名称",
           "type": "multi_input",
           "help": "自定义请求头参与key计算",
-          "rules": [
-            "MaxLength(200)"
-          ]
+          "placeholder": "支持英文字母、数字、中划线,长度小于64",
+          "rules": ["^[a-zA-Z0-9-]{1,64}$"]
         }
       ]
     }

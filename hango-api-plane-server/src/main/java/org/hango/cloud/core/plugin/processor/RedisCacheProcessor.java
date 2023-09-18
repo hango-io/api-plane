@@ -1,5 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
+import io.micrometer.core.instrument.util.StringEscapeUtils;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@SuppressWarnings("java:S1192")
 public class RedisCacheProcessor extends AbstractSchemaProcessor implements
     SchemaProcessor<ServiceInfo> {
 
@@ -40,9 +42,10 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
         if (haveNull(matchType, headerKey)) {
           return;
         }
+        String jsonHeaderValue = StringEscapeUtils.escapeJson(headerValue);
         if ("safe_regex_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(safe_regex_string_match, headerKey, headerValue));
+              String.format(safe_regex_string_match, headerKey, jsonHeaderValue));
         } else if ("present_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rqx.headers",
               String.format(present_match, headerKey));
@@ -51,7 +54,7 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
               String.format(present_invert_match, headerKey));
         } else {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(exact_string_match, headerKey, headerValue));
+              String.format(exact_string_match, headerKey, jsonHeaderValue));
         }
       });
     }
@@ -59,12 +62,13 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
       String matchType = source.getValue("$.condition.request.host.match_type", String.class);
       String host = source.getValue("$.condition.request.host.value", String.class);
       if (nonNull(matchType, host)) {
+        String jsonHost = StringEscapeUtils.escapeJson(host);
         if ("safe_regex_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(safe_regex_string_match, ":authority", host));
+              String.format(safe_regex_string_match, ":authority", jsonHost));
         } else {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(exact_string_match, ":authority", host));
+              String.format(exact_string_match, ":authority", jsonHost));
         }
       }
     }
@@ -84,12 +88,13 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
       String matchType = source.getValue("$.condition.request.path.match_type", String.class);
       String path = source.getValue("$.condition.request.path.value", String.class);
       if (nonNull(matchType, path)) {
+        String jsonPath = StringEscapeUtils.escapeJson(path);
         if ("safe_regex_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rqx.headers",
-              String.format(safe_regex_string_match, ":path", path));
+              String.format(safe_regex_string_match, ":path", jsonPath));
         } else {
           builder
-              .addJsonElement("$.enable_rqx.headers", String.format(exact_string_match, ":path", path));
+              .addJsonElement("$.enable_rqx.headers", String.format(exact_string_match, ":path", jsonPath));
         }
       }
     }
@@ -107,9 +112,10 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
         if (haveNull(matchType, headerKey)) {
           return;
         }
+        String jsonHeaderValue = StringEscapeUtils.escapeJson(headerValue);
         if ("safe_regex_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rpx.headers",
-              String.format(safe_regex_string_match, headerKey, headerValue));
+              String.format(safe_regex_string_match, headerKey, jsonHeaderValue));
         } else if ("present_match".equals(matchType)) {
           builder.addJsonElement("$.enable_rpx.headers",
               String.format(present_match, headerKey));
@@ -118,7 +124,7 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
               String.format(present_invert_match, headerKey));
         } else {
           builder.addJsonElement("$.enable_rpx.headers",
-              String.format(exact_string_match, headerKey, headerValue));
+              String.format(exact_string_match, headerKey, jsonHeaderValue));
         }
       });
     }
@@ -126,7 +132,7 @@ public class RedisCacheProcessor extends AbstractSchemaProcessor implements
       String code = source.getValue("$.condition.response.code.value", String.class);
       if (nonNull(code)) {
         builder.addJsonElement("$.enable_rpx.headers",
-            String.format(safe_regex_string_match, ":status", code + "|"));
+            String.format(safe_regex_string_match, ":status", StringEscapeUtils.escapeJson(code) + "|"));
       }
     }
 

@@ -1,5 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
+import io.micrometer.core.instrument.util.StringEscapeUtils;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
@@ -57,10 +58,11 @@ public class LocalLimitProcessor extends AbstractSchemaProcessor implements Sche
                 String headerKey = item.get("headerKey");
                 String headerValue = item.get("value");
                 if (haveNull(matchType, headerKey, headerValue)) return;
+                String jsonValue = StringEscapeUtils.escapeJson(headerValue);
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.matcher.headers", String.format(safe_regex_string_match, headerKey, headerValue));
+                    builder.addJsonElement("$.matcher.headers", String.format(safe_regex_string_match, headerKey, jsonValue));
                 } else {
-                    builder.addJsonElement("$.matcher.headers", String.format(exact_string_match, headerKey, headerValue));
+                    builder.addJsonElement("$.matcher.headers", String.format(exact_string_match, headerKey, jsonValue));
                 }
             });
         }

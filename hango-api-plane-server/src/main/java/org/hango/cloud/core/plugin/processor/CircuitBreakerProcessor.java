@@ -1,6 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import io.micrometer.core.instrument.util.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
  {"rt":{"consecutiveSlowRequests":"2","rtThreshold":"1"},"breakType":["RTCircuitbreaker","ErrorPercentCircuitbreaker"],"response":{"headers":[{"_formTableKey":1685340549421,"value":"ccc","key":"aaa"},{"_formTableKey":1685340549421,"value":"eee","key":"ddd"}],"code":"456","body":"aasdadasdagsDBSDFDSAD"},"kind":"circuit-breaker","errorPercent":{"minRequestAmount":"2","errorPercentThreshold":"1"},"breakDuration":"10","lookbackDuration":"6"}
  */
 @Component
+@SuppressWarnings("java:S1192")
 public class CircuitBreakerProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override
     public String getName() {
@@ -46,7 +47,7 @@ public class CircuitBreakerProcessor extends AbstractSchemaProcessor implements 
         if (source.contain("$.response.body")) {
             String body = source.getValue("$.response.body");
             if (StringUtils.isNotBlank(body)) {
-                builder.createOrUpdateJson("$.response", "body", String.format("{\"inline_string\":\"%s\"}", StringEscapeUtils.escapeJava(body)));
+                builder.createOrUpdateJson("$.response", "body", String.format("{\"inline_string\":\"%s\"}", StringEscapeUtils.escapeJson(body)));
             }
         }
         if (source.contain("$.response.headers")) {
@@ -55,7 +56,7 @@ public class CircuitBreakerProcessor extends AbstractSchemaProcessor implements 
             for (int i = 0; i < length; i++) {
                 String key = source.getValue(String.format("$.response.headers[%s].key", i));
                 String value = source.getValue(String.format("$.response.headers[%s].value", i));
-                builder.addJsonElement("$.response.headers", String.format("{\"key\":\"%s\",\"value\":\"%s\"}", key, value));
+                builder.addJsonElement("$.response.headers", String.format("{\"key\":\"%s\",\"value\":\"%s\"}", key, StringEscapeUtils.escapeJson(value)));
             }
         }
     }

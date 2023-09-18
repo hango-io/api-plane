@@ -19,9 +19,10 @@
               "key": "headerKey",
               "alias": "请求头名称",
               "type": "input",
+              "help": "支持大小写英文字母、数字、中划线，长度小于64",
               "rules": [
                 "Required",
-                "MaxLength(200)"
+                "^[a-zA-Z0-9-]{1,64}$"
               ]
             },
             {
@@ -75,9 +76,7 @@
               "invisible": {
                 "this.match_type": "present"
               },
-              "rules": [
-                "Required"
-              ]
+              "rules": ["MaxLength(200)","Required"]
             }
           ]
         },

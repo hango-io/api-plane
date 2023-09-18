@@ -105,7 +105,8 @@
         },
         {
           "type": "input",
-          "key": "value"
+          "key": "value",
+          "rules": ["MaxLength(200)"]
         }
       ]
     },
@@ -141,7 +142,8 @@
         },
         {
           "type": "input",
-          "key": "value"
+          "key": "value",
+          "rules": ["MaxLength(200)"]
         }
       ]
     },
@@ -171,7 +173,11 @@
           "placeholder": "请输入",
           "type": "input",
           "ruleNames": [
-            "MaxLength(99)"
+            "Required",
+            {
+              "pattern": "^[a-zA-Z0-9-]{1,64}$",
+              "message": "支持英文字母、数字、中划线,长度小于64"
+            }
           ]
         },
         {
@@ -196,7 +202,8 @@
           "label": "取值",
           "type": "input",
           "placeholder": "请输入",
-          "key": "requestHeaderValue"
+          "key": "requestHeaderValue",
+          "ruleNames": ["MaxLength(200)","Required"]
         }
       ]
     },
@@ -280,7 +287,11 @@
           "placeholder": "请输入",
           "type": "input",
           "ruleNames": [
-            "MaxLength(200)"
+            "Required",
+            {
+              "pattern": "^[a-zA-Z0-9-]{1,64}$",
+              "message": "支持英文字母、数字、中划线,长度小于64"
+            }
           ]
         },
         {
@@ -305,7 +316,8 @@
           "label": "取值",
           "type": "input",
           "placeholder": "请输入",
-          "key": "responseHeaderValue"
+          "key": "responseHeaderValue",
+          "ruleNames": ["MaxLength(200)","Required"]
         }
       ]
     },
@@ -352,7 +364,10 @@
           "type": "input",
           "ruleNames": [
             "Required",
-            "MaxLength(200)"
+            {
+              "pattern": "^[a-zA-Z0-9-]{1,64}$",
+              "message": "支持英文字母、数字、中划线,长度小于64"
+            }
           ]
         },
         {
@@ -360,10 +375,7 @@
           "key": "downgradeResponseHeaderValue",
           "placeholder": "请输入",
           "type": "input",
-          "ruleNames": [
-            "Required",
-            "MaxLength(200)"
-          ]
+          "ruleNames": ["MaxLength(200)","Required"]
         }
       ]
     },
@@ -374,9 +386,7 @@
       "key": "downgradeResponseBody",
       "type": "input",
       "alias": "响应体",
-      "rules": [
-        "Required"
-      ]
+      "rules": ["MaxLength(200)","Required"]
     }
   ]
 }

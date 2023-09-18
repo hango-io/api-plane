@@ -1,6 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import io.micrometer.core.instrument.util.StringEscapeUtils;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -58,11 +58,12 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
         if (source.contain("$.requestPath")) {
             String matchType = source.getValue("$.requestPath.match_type", String.class);
             String path = source.getValue("$.requestPath.value", String.class);
+            String jsonPath = StringEscapeUtils.escapeJson(path);
             if (nonNull(matchType, path)) {
                 if (SAFE_REGEX_MATCH.equals(matchType)) {
-                    builder.addJsonElement(RQX_HEADERS, String.format(safe_regex_string_match, ":path", path));
+                    builder.addJsonElement(RQX_HEADERS, String.format(safe_regex_string_match, ":path", jsonPath));
                 } else {
-                    builder.addJsonElement(RQX_HEADERS, String.format(exact_string_match, ":path", path));
+                    builder.addJsonElement(RQX_HEADERS, String.format(exact_string_match, ":path", jsonPath));
                 }
             }
         }
@@ -76,11 +77,13 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
                 String matchType = item.get("match_type");
                 String headerKey = item.get("requestHeaderKey");
                 String headerValue = item.get("requestHeaderValue");
+                String jsonHeaderValue = StringEscapeUtils.escapeJson(headerValue);
+
                 if (haveNull(matchType, headerKey, headerValue)) return;
                 if (SAFE_REGEX_MATCH.equals(matchType)) {
-                    builder.addJsonElement(RQX_HEADERS, String.format(safe_regex_string_match, headerKey, headerValue));
+                    builder.addJsonElement(RQX_HEADERS, String.format(safe_regex_string_match, headerKey, jsonHeaderValue));
                 } else {
-                    builder.addJsonElement(RQX_HEADERS, String.format(exact_string_match, headerKey, headerValue));
+                    builder.addJsonElement(RQX_HEADERS, String.format(exact_string_match, headerKey, jsonHeaderValue));
                 }
             });
         }
@@ -90,11 +93,12 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
         if (source.contain("$.requestHost")) {
             String matchType = source.getValue("$.requestHost.match_type", String.class);
             String host = source.getValue("$.requestHost.value", String.class);
+            String jsonHost = StringEscapeUtils.escapeJson(host);
             if (nonNull(matchType, host)) {
                 if (SAFE_REGEX_MATCH.equals(matchType)) {
-                    builder.addJsonElement(RQX_HEADERS, String.format(safe_regex_string_match, ":authority", host));
+                    builder.addJsonElement(RQX_HEADERS, String.format(safe_regex_string_match, ":authority", jsonHost));
                 } else {
-                    builder.addJsonElement(RQX_HEADERS, String.format(exact_string_match, ":authority", host));
+                    builder.addJsonElement(RQX_HEADERS, String.format(exact_string_match, ":authority", jsonHost));
                 }
             }
         }
@@ -108,10 +112,11 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
                 String headerKey = item.get("responseHeaderKey");
                 String headerValue = item.get("responseHeaderValue");
                 if (haveNull(matchType, headerKey, headerValue)) return;
+                String jsonHeaderValue = StringEscapeUtils.escapeJson(headerValue);
                 if (SAFE_REGEX_MATCH.equals(matchType)) {
-                    builder.addJsonElement(DOWNGRADE_RPX_HEADERS, String.format(safe_regex_string_match, headerKey, headerValue));
+                    builder.addJsonElement(DOWNGRADE_RPX_HEADERS, String.format(safe_regex_string_match, headerKey, jsonHeaderValue));
                 } else {
-                    builder.addJsonElement(DOWNGRADE_RPX_HEADERS, String.format(exact_string_match, headerKey, headerValue));
+                    builder.addJsonElement(DOWNGRADE_RPX_HEADERS, String.format(exact_string_match, headerKey, jsonHeaderValue));
                 }
             });
         }
@@ -127,11 +132,11 @@ public class StaticDowngradeProcessor extends AbstractSchemaProcessor implements
             builder.createOrUpdateJson("$.static_response", "headers", "[]");
             List<Map<String,String>> headers = source.getValue("$.downgradeResponseHeaders", List.class);
             for (Map<String, String> entry : headers) {
-                builder.addJsonElement("$.static_response.headers", String.format("{\"key\":\"%s\",\"value\":\"%s\"}", entry.get("downgradeResponseHeaderKey"), entry.get("downgradeResponseHeaderValue")));
+                builder.addJsonElement("$.static_response.headers", String.format("{\"key\":\"%s\",\"value\":\"%s\"}", entry.get("downgradeResponseHeaderKey"),StringEscapeUtils.escapeJson(entry.get("downgradeResponseHeaderValue"))));
             }
         }
         if (source.contain("$.downgradeResponseBody")) {
-            String body = StringEscapeUtils.escapeJava(source.getValue("$.downgradeResponseBody", String.class));
+            String body = StringEscapeUtils.escapeJson(source.getValue("$.downgradeResponseBody", String.class));
             builder.createOrUpdateJson("$.static_response", "body", String.format("{\"inline_string\": \"%s\"}", body));
         }
         return builder;

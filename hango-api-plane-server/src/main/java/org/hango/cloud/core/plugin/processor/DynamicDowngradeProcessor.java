@@ -1,5 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
+import io.micrometer.core.instrument.util.StringEscapeUtils;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
+@SuppressWarnings("java:S1192")
 public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
     @Override
     public String getName() {
@@ -57,10 +59,11 @@ public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implement
                 String headerKey = item.get("headerKey");
                 String headerValue = item.get("value");
                 if (haveNull(matchType, headerKey, headerValue)) return;
+                String jsonHeaderValue = StringEscapeUtils.escapeJson(headerValue);
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex_string_match, headerKey, headerValue));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex_string_match, headerKey, jsonHeaderValue));
                 } else {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact_string_match, headerKey, headerValue));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact_string_match, headerKey, jsonHeaderValue));
                 }
             });
         }
@@ -68,10 +71,11 @@ public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implement
             String matchType = source.getValue("$.condition.request.host.match_type", String.class);
             String host = source.getValue("$.condition.request.host.value", String.class);
             if (nonNull(matchType, host)) {
+                String jsonHost = StringEscapeUtils.escapeJson(host);
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex_string_match, ":authority", host));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex_string_match, ":authority", jsonHost));
                 } else {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact_string_match, ":authority", host));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact_string_match, ":authority", jsonHost));
                 }
             }
         }
@@ -87,10 +91,11 @@ public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implement
             String matchType = source.getValue("$.condition.request.path.match_type", String.class);
             String path = source.getValue("$.condition.request.path.value", String.class);
             if (nonNull(matchType, path)) {
+                String jsonPath = StringEscapeUtils.escapeJson(path);
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex_string_match, ":path", path));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(safe_regex_string_match, ":path", jsonPath));
                 } else {
-                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact_string_match, ":path", path));
+                    builder.addJsonElement("$.downgrade_rqx.headers", String.format(exact_string_match, ":path", jsonPath));
                 }
             }
         }
@@ -101,15 +106,15 @@ public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implement
                 String headerKey = item.get("headerKey");
                 String headerValue = item.get("value");
                 if (haveNull(matchType, headerKey, headerValue)) return;
+                String jsonHeaderValue = StringEscapeUtils.escapeJson(headerValue);
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.downgrade_rpx.headers", String.format(safe_regex_string_match, headerKey, headerValue));
+                    builder.addJsonElement("$.downgrade_rpx.headers", String.format(safe_regex_string_match, headerKey, jsonHeaderValue));
                 } else {
-                    builder.addJsonElement("$.downgrade_rpx.headers", String.format(exact_string_match, headerKey, headerValue));
+                    builder.addJsonElement("$.downgrade_rpx.headers", String.format(exact_string_match, headerKey, jsonHeaderValue));
                 }
             });
         }
         if (source.contain("$.condition.response.code")) {
-            String matchType = source.getValue("$.condition.response.code.match_type", String.class);
             String code = source.getValue("$.condition.response.code.value", String.class);
             if (nonNull(code)) {
                 builder.addJsonElement("$.downgrade_rpx.headers", String.format(safe_regex_string_match, ":status", code + "|"));
@@ -120,10 +125,9 @@ public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implement
     private void createCacheRpx(PluginGenerator source, PluginGenerator builder) {
         builder.createOrUpdateJson("$", "cache_rpx_rpx", "{\"headers\":[]}");
         if (source.contain("$.cache.condition.response.code")) {
-            String mathchType = source.getValue("$.cache.condition.response.code.match_type");
             String code = source.getValue("$.cache.condition.response.code.value");
             if (nonNull(code)) {
-                builder.addJsonElement("$.cache_rpx_rpx.headers", String.format(safe_regex_string_match, ":status", code + "|"));
+                builder.addJsonElement("$.cache_rpx_rpx.headers", String.format(safe_regex_string_match, ":status", StringEscapeUtils.escapeJson(code) + "|"));
             }
         }
         if (source.contain("$.cache.condition.response.headers")) {
@@ -133,10 +137,11 @@ public class DynamicDowngradeProcessor extends AbstractSchemaProcessor implement
                 String headerKey = item.get("headerKey");
                 String headerValue = item.get("value");
                 if (haveNull(matchType, headerKey, headerValue)) return;
+                String jsonHeaderValue = StringEscapeUtils.escapeJson(headerValue);
                 if ("safe_regex_match".equals(matchType)) {
-                    builder.addJsonElement("$.cache_rpx_rpx.headers", String.format(safe_regex_string_match, headerKey, headerValue));
+                    builder.addJsonElement("$.cache_rpx_rpx.headers", String.format(safe_regex_string_match, headerKey, jsonHeaderValue));
                 } else {
-                    builder.addJsonElement("$.cache_rpx_rpx.headers", String.format(exact_string_match, headerKey, headerValue));
+                    builder.addJsonElement("$.cache_rpx_rpx.headers", String.format(exact_string_match, headerKey, jsonHeaderValue));
                 }
             });
         }
