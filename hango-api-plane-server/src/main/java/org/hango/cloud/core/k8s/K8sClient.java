@@ -92,6 +92,10 @@ public class K8sClient {
         return items.isEmpty() ? null : items.get(0);
     }
 
+    public ConfigMap getConfigMap(String namespaces, String name){
+        return client.configMaps().inNamespace(namespaces).withName(name).get();
+    }
+
     public List<Node> getNode(){
         return client.nodes().list().getItems();
     }

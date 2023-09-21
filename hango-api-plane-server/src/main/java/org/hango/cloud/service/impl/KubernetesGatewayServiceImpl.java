@@ -9,6 +9,7 @@ import io.fabric8.kubernetes.api.model.networking.v1.*;
 import org.apache.logging.log4j.util.Strings;
 import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.gateway.service.GatewayConfigManager;
+import org.hango.cloud.core.istio.IngressConfig;
 import org.hango.cloud.core.k8s.K8sClient;
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.k8s.K8sResourceApiEnum;
@@ -51,6 +52,9 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
     private GlobalConfig globalConfig;
 
     @Autowired
+    private IngressConfig ingressConfig;
+
+    @Autowired
     private GatewayConfigManager configManager;
 
     @Override
@@ -88,6 +92,10 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
 
     @Override
     public List<IngressDTO> getIngress(String namespace, String name) {
+        //未开启ingress，返回空
+        if (!ingressConfig.openIngress()){
+            return new ArrayList<>();
+        }
         //name或ns为空，查询全量配置
         if (!StringUtils.hasText(namespace) || !StringUtils.hasText(name)){
             return configManager.getConfigList(K8sResourceEnum.Ingress.name()).stream()
@@ -193,7 +201,8 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
         ObjectMeta metadata = hasMetadata.getMetadata();
         IngressDTO ingressDTO = new IngressDTO();
         ingressDTO.setName(metadata.getName());
-        ingressDTO.setPort(globalConfig.getIngressPort());
+        ingressDTO.setPort(ingressConfig.getIngressPort());
+        ingressDTO.setTlsPort(ingressConfig.getIngressTlsPort());
         ingressDTO.setNamespace(metadata.getNamespace());
         ingressDTO.setProjectCode(getProject(metadata.getAnnotations()));
         IngressSpec spec = ((Ingress) hasMetadata).getSpec();
@@ -272,7 +281,7 @@ public class KubernetesGatewayServiceImpl implements KubernetesGatewayService {
             if (annotations == null){
                 return false;
             }
-            return globalConfig.getIngressClass().equals(annotations.get(INGRESS_CONTROLLER));
+            return ingressConfig.getIngressClass().equals(annotations.get(INGRESS_CONTROLLER));
         }
         return false;
     }

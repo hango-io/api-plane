@@ -30,13 +30,6 @@ public class GlobalConfig {
     @Value("${projectCode:skiff.netease.com/project}")
     private String projectCode;
 
-    //ingress controller标识，和istio保持一致
-    @Value("${ingressClass:hango}")
-    private String ingressClass;
-
-    //ingress http port
-    @Value("${ingressPort:80}")
-    private Integer ingressPort;
 
     @Value("${ignorePlugins:#{null}}")
     private String ignorePlugins;
@@ -80,14 +73,6 @@ public class GlobalConfig {
         return projectCode;
     }
 
-    public String getIngressClass() {
-        return ingressClass;
-    }
-
-
-    public Integer getIngressPort() {
-        return ingressPort;
-    }
 
     public String getKubernetesSvcSuffix() {
         return kubernetesSvcSuffix;

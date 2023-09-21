@@ -16,10 +16,16 @@ public class IngressDTO {
     private String name;
 
     /**
-     * 端口
+     * http协议端口
      */
     @JsonProperty("Port")
     private Integer port;
+
+    /**
+     * http协议端口
+     */
+    @JsonProperty("TlsPort")
+    private Integer tlsPort;
 
     /**
      * 命名空间
@@ -93,5 +99,13 @@ public class IngressDTO {
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public Integer getTlsPort() {
+        return tlsPort;
+    }
+
+    public void setTlsPort(Integer tlsPort) {
+        this.tlsPort = tlsPort;
     }
 }
