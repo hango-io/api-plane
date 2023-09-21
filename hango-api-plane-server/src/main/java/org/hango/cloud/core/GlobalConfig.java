@@ -45,6 +45,10 @@ public class GlobalConfig {
     @Value("${ignorePlugins:#{null}}")
     private String ignorePlugins;
 
+    @Value("${kubernetesSvcSuffix:.svc.cluster.local}")
+    private String kubernetesSvcSuffix;
+
+
 
     public Set<String> getIgnorePluginSet() {
         return StringUtils.isEmpty(ignorePlugins) ? Collections.emptySet() : new HashSet<>(Arrays.asList(ignorePlugins.split(",")));
@@ -88,5 +92,7 @@ public class GlobalConfig {
         return pluginContentConfigName;
     }
 
-
+    public String getKubernetesSvcSuffix() {
+        return kubernetesSvcSuffix;
+    }
 }
