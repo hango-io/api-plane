@@ -34,6 +34,7 @@ public class WasmProcessor extends AbstractSchemaProcessor implements SchemaProc
                 .withFragmentType(FragmentTypeEnum.ENVOY_PLUGIN)
                 .build();
         holder.setGatewayPluginsFragment(wrapper);
+
         return holder;
     }
 }

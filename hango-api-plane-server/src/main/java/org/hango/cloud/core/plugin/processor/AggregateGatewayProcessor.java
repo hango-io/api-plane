@@ -51,25 +51,18 @@ public class AggregateGatewayProcessor {
 
 
     private void postHandle(PluginMapping mapping, String kind, FragmentHolder holder, String pluginScope){
+        String pluginType = getPluginType(mapping);
         //网关级插件
         if (PluginScopeTypeEnum.isGatewayPlugin(pluginScope)){
-            covert2BasePlugin(holder, PluginMapping.getName(kind), getPluginType(mapping));
+            covert2BasePlugin(holder, PluginMapping.getName(kind), pluginType);
             return;
         }
         //ianus_router插件
         if (PluginMapping.ianus_router.equals(mapping)){
-            covert2ExtensionPlugin(holder, PluginMapping.getName(kind), mapping.getTypeUrl(), true, "ROOT");
+            convertIanusRouter(holder, PluginMapping.getName(kind), mapping.getTypeUrl());
             return;
         }
-        //lua插件
-        if (PluginMapping.lua.equals(mapping)){
-            addLuaConfig(holder, PluginMapping.getName(kind));
-        }
-        //wasm插件
-        if (PluginMapping.wasm.equals(mapping)){
-            addWasmConfig(holder);
-        }
-        covert2ExtensionPlugin(holder, getPluginName(mapping, kind), mapping.getTypeUrl(), false, null);
+        covert2ExtensionPlugin(holder, getPluginName(mapping, kind), mapping.getTypeUrl(), pluginType);
     }
 
     private String getPluginName(PluginMapping mapping, String kind){
@@ -83,43 +76,39 @@ public class AggregateGatewayProcessor {
         }
     }
 
-    private void addLuaConfig(FragmentHolder holder, String pluginName){
-        PluginGenerator source = PluginGenerator.newInstance(holder.getGatewayPluginsFragment().getContent(), ResourceType.YAML);
-
-        PluginGenerator builder = PluginGenerator.newInstance("{}", ResourceType.JSON);
-        builder.createOrUpdateJson("$", "config", source.jsonString());
-        builder.createOrUpdateJson("$", "name", pluginName);
-        PluginGenerator target = PluginGenerator.newInstance("{\"plugins\":[]}");
-        target.addElement("$.plugins", builder.getValue("$"));
-        holder.getGatewayPluginsFragment().setContent(target.yamlString());
-    }
-
-    private void addWasmConfig(FragmentHolder holder){
-        PluginGenerator source = PluginGenerator.newInstance(holder.getGatewayPluginsFragment().getContent(), ResourceType.YAML);
-
-        PluginGenerator builder = PluginGenerator.newInstance("{}", ResourceType.JSON);
-        builder.createOrUpdateJson("$", "configuration", source.jsonString());
-        holder.getGatewayPluginsFragment().setContent(builder.yamlString());
-    }
-
-    private void covert2ExtensionPlugin(FragmentHolder holder, String name, String typeUrl, boolean directPatch, String field) {
+    private void covert2ExtensionPlugin(FragmentHolder holder, String name, String typeUrl, String pluginType) {
         if (Objects.nonNull(holder.getGatewayPluginsFragment())) {
             PluginGenerator source = PluginGenerator.newInstance(holder.getGatewayPluginsFragment().getContent(), ResourceType.YAML);
             PluginGenerator builder = PluginGenerator.newInstance(String.format("{\"name\":\"%s\"}", name));
-            builder.createOrUpdateJson("$", "inline", "{}");
+            builder.createOrUpdateJson("$", pluginType, "{}");
             if (StringUtils.hasText(typeUrl)){
                 builder.createOrUpdateJson("$", "typeUrl", typeUrl);
             }
-            builder.createOrUpdateJson(INLINE, "settings", source.jsonString());
+            builder.createOrUpdateJson("$." + pluginType, "settings", source.jsonString());
             builder.createOrUpdateValue("$", "enable", true);
             builder.createOrUpdateJson("$", "listenerType", "Gateway");
-            if (directPatch){
-                builder.createOrUpdateJson(INLINE, "directPatch", "true");
-                builder.createOrUpdateJson(INLINE, "fieldPatchTo", StringUtils.isEmpty(field) ? "route" : field);
-            }
             holder.getGatewayPluginsFragment().setContent(builder.yamlString());
             logger.info("Extension plugin: [{}]", builder.yamlString());
         }
+    }
+
+    private void convertIanusRouter(FragmentHolder holder, String name, String typeUrl) {
+        if (Objects.isNull(holder.getGatewayPluginsFragment())) {
+            return;
+        }
+        PluginGenerator source = PluginGenerator.newInstance(holder.getGatewayPluginsFragment().getContent(), ResourceType.YAML);
+        PluginGenerator builder = PluginGenerator.newInstance(String.format("{\"name\":\"%s\"}", name));
+        builder.createOrUpdateValue("$", "enable", true);
+        builder.createOrUpdateJson("$", "listenerType", "Gateway");
+        builder.createOrUpdateJson("$", "inline", "{}");
+        if (StringUtils.hasText(typeUrl)){
+            builder.createOrUpdateJson("$", "typeUrl", typeUrl);
+        }
+        builder.createOrUpdateJson(INLINE, "settings", source.jsonString());
+        builder.createOrUpdateJson(INLINE, "directPatch", "true");
+        builder.createOrUpdateJson(INLINE, "fieldPatchTo", "ROOT");
+        holder.getGatewayPluginsFragment().setContent(builder.yamlString());
+        logger.info("ians rouyer plugin: [{}]", builder.yamlString());
     }
 
     private void covert2BasePlugin(FragmentHolder holder, String name, String type) {
