@@ -51,6 +51,7 @@
           "key": "value",
           "type": "multi_input",
           "alias": "取值",
+          "help": "HTTP referer头值为URL，精确匹配或前缀匹配时，匹配值需要以http:// 或https://为前缀",
           "invisible": {
             "present_match": ["this", "match_type"],
             "present_match_invert": ["this", "match_type"]
