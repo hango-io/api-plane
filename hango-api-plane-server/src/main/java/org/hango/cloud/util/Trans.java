@@ -1,14 +1,10 @@
 package org.hango.cloud.util;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
-import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
-import com.google.protobuf.Value;
-import io.fabric8.kubernetes.api.model.ServicePort;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.k8s.K8sTypes;
@@ -275,9 +271,6 @@ public class Trans {
         }
         for (PluginOrderItemDTO dto : plugins) {
             if (Objects.nonNull(dto)) {
-                if (dto.getPort() == null){
-                    dto.setPort(80);
-                }
                 orderItems.add(PluginGenerator.newInstance(dto, ResourceType.OBJECT).yamlString());
             }
         }
@@ -307,13 +300,31 @@ public class Trans {
 
     public static void buildPluginSetting(PluginOrderItemDTO itemDTO, PluginManagerOuterClass.Plugin plugin){
         if (StringUtils.hasText(plugin.getRider().getPluginName())){
-            itemDTO.setRider(plugin.getRider());
+            itemDTO.setRider(trans(plugin.getRider()));
         }else if (StringUtils.hasText(plugin.getWasm().getPluginName())){
-            itemDTO.setWasm(plugin.getWasm());
+            itemDTO.setWasm(trans(plugin.getWasm()));
         }else {
             itemDTO.setInline(plugin.getInline());
         }
 
+    }
+
+    private static RiderDTO trans(slime.microservice.plugin.v1alpha1.PluginManagerOuterClass.Rider rider){
+        RiderDTO dto = new RiderDTO();
+        dto.setPluginName(rider.getPluginName());
+        dto.setUrl(rider.getUrl());
+        dto.setImagePullSecretName(rider.getImagePullSecretName());
+        dto.setSetting(rider.getSettings());
+        return dto;
+    }
+
+    private static RiderDTO trans(PluginManagerOuterClass.Wasm wasm){
+        RiderDTO dto = new RiderDTO();
+        dto.setPluginName(wasm.getPluginName());
+        dto.setUrl(wasm.getUrl());
+        dto.setImagePullSecretName(wasm.getImagePullSecretName());
+        dto.setSetting(wasm.getSettings());
+        return dto;
     }
 
     public static Secret secretDTO2Secret(PortalSecretDTO portalSecretDTO) {

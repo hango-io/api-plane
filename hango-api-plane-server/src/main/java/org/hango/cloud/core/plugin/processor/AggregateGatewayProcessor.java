@@ -59,21 +59,10 @@ public class AggregateGatewayProcessor {
         }
         //ianus_router插件
         if (PluginMapping.ianus_router.equals(mapping)){
-            convertIanusRouter(holder, PluginMapping.getName(kind), mapping.getTypeUrl());
+            convertIanusRouter(holder, mapping.getTypeUrl());
             return;
         }
-        covert2ExtensionPlugin(holder, getPluginName(mapping, kind), mapping.getTypeUrl(), pluginType);
-    }
-
-    private String getPluginName(PluginMapping mapping, String kind){
-        switch (mapping){
-            case lua:
-                return globalConfig.getResourceNamespace() + "." + kind + ".rider";
-            case wasm:
-                return globalConfig.getResourceNamespace() + "." + kind;
-            default:
-                return mapping.getName();
-        }
+        covert2ExtensionPlugin(holder, kind, mapping.getTypeUrl(), pluginType);
     }
 
     private void covert2ExtensionPlugin(FragmentHolder holder, String name, String typeUrl, String pluginType) {
@@ -92,12 +81,12 @@ public class AggregateGatewayProcessor {
         }
     }
 
-    private void convertIanusRouter(FragmentHolder holder, String name, String typeUrl) {
+    private void convertIanusRouter(FragmentHolder holder, String typeUrl) {
         if (Objects.isNull(holder.getGatewayPluginsFragment())) {
             return;
         }
         PluginGenerator source = PluginGenerator.newInstance(holder.getGatewayPluginsFragment().getContent(), ResourceType.YAML);
-        PluginGenerator builder = PluginGenerator.newInstance(String.format("{\"name\":\"%s\"}", name));
+        PluginGenerator builder = PluginGenerator.newInstance(String.format("{\"name\":\"%s\"}", PluginMapping.ianus_router.getName()));
         builder.createOrUpdateValue("$", "enable", true);
         builder.createOrUpdateJson("$", "listenerType", "Gateway");
         builder.createOrUpdateJson("$", "inline", "{}");

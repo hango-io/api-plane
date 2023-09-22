@@ -23,10 +23,10 @@ public class PluginOrderItemDTO {
     private Object inline;
 
     @JsonProperty("rider")
-    private Object rider;
+    private RiderDTO rider;
 
     @JsonProperty("wasm")
-    private Object wasm;
+    private RiderDTO wasm;
 
     @JsonProperty("listenerType")
     private String listenerType = Const.GATEWAY;
@@ -72,19 +72,19 @@ public class PluginOrderItemDTO {
         this.inline = inline;
     }
 
-    public Object getRider() {
+    public RiderDTO getRider() {
         return rider;
     }
 
-    public void setRider(Object rider) {
+    public void setRider(RiderDTO rider) {
         this.rider = rider;
     }
 
-    public Object getWasm() {
+    public RiderDTO getWasm() {
         return wasm;
     }
 
-    public void setWasm(Object wasm) {
+    public void setWasm(RiderDTO wasm) {
         this.wasm = wasm;
     }
 }

@@ -30,6 +30,9 @@ public class GlobalConfig {
     @Value("${projectCode:skiff.netease.com/project}")
     private String projectCode;
 
+    @Value("${defaultSecretName:harbor-qingzhou}")
+    private String defaultSecretName;
+
 
     @Value("${ignorePlugins:#{null}}")
     private String ignorePlugins;
@@ -73,6 +76,9 @@ public class GlobalConfig {
         return projectCode;
     }
 
+    public String getDefaultSecretName() {
+        return defaultSecretName;
+    }
 
     public String getKubernetesSvcSuffix() {
         return kubernetesSvcSuffix;

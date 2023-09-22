@@ -355,6 +355,27 @@ public class GatewayServiceImpl implements GatewayService {
         configManager.updateConfig(pluginOrder);
     }
 
+    private void addDefaultInfo(PluginOrderItemDTO itemDTO){
+        if (itemDTO.getPort() == null) {
+            itemDTO.setPort(80);
+        }
+        if (itemDTO.getWasm() != null){
+            addDefaultSecret(itemDTO.getWasm());
+        }
+        if (itemDTO.getRider() != null){
+            addDefaultSecret(itemDTO.getRider());
+        }
+    }
+
+    private void addDefaultSecret(RiderDTO riderDTO){
+        if (riderDTO == null || StringUtils.isBlank(riderDTO.getUrl())){
+            return;
+        }
+        if ( riderDTO.getUrl().startsWith("oci") && StringUtils.isBlank(riderDTO.getImagePullSecretName())){
+            riderDTO.setImagePullSecretName(globalConfig.getDefaultSecretName());
+        }
+    }
+
     @Override
     public void deletePluginOrderItem(PluginOrderDTO pluginOrderDto) {
         if (CollectionUtils.isEmpty(pluginOrderDto.getPlugins())){
@@ -598,6 +619,8 @@ public class GatewayServiceImpl implements GatewayService {
         }
         List<PluginOrderItemDTO> plugins = pluginOrderDto.getPlugins();
         for (PluginOrderItemDTO pluginOrderItemDTO : updatePluginList) {
+            //设置默认值
+            addDefaultInfo(pluginOrderItemDTO);
             PluginOrderItemDTO source = plugins.stream().filter(plugin -> plugin.getName().equals(pluginOrderItemDTO.getName())).findFirst().orElse(null);
             if (source == null){
                 //不存在item，新增
