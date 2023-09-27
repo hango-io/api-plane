@@ -10,6 +10,8 @@ import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.*;
+import org.hango.cloud.meta.enums.CRDMetaEnum;
+import org.hango.cloud.meta.enums.UriMatch;
 import org.hango.cloud.util.exception.ApiPlaneException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
@@ -283,6 +285,7 @@ public class Trans {
         Map<String, String> workloadLabels = pluginManager.getSpec().getWorkloadLabels();
         dto.setGwCluster(workloadLabels.get(GW_CLUSTER));
         dto.setPlugins(new ArrayList<>());
+        dto.setName(pluginManager.getMetadata().getName());
         List<PluginManagerOuterClass.Plugin> plugins = pluginManager.getSpec().getPluginList();
         if (CollectionUtils.isEmpty(plugins)) {
             return dto;
@@ -438,6 +441,16 @@ public class Trans {
         port.setTargetPort(servicePort.getTargetPort().getIntVal());
         port.setNodePort(servicePort.getNodePort());
         return port;
+    }
+
+    public static PluginOrderItemDTO trans(CustomPluginPublishDTO customPluginPublishDTO){
+        PluginOrderItemDTO pluginOrderItemDTO = new PluginOrderItemDTO();
+        pluginOrderItemDTO.setEnable(false);
+        pluginOrderItemDTO.setName(customPluginPublishDTO.getPluginName());
+        pluginOrderItemDTO.setWasm(customPluginPublishDTO.getWasm());
+        pluginOrderItemDTO.setRider(customPluginPublishDTO.getLua());
+        pluginOrderItemDTO.setPort(customPluginPublishDTO.getPort());
+        return pluginOrderItemDTO;
     }
 
 }

@@ -20,6 +20,7 @@ import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
 import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
+import org.hango.cloud.meta.enums.PluginMappingEnum;
 import org.hango.cloud.util.exception.ApiPlaneException;
 import org.hango.cloud.util.function.Subtracter;
 import org.slf4j.Logger;
@@ -93,7 +94,7 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
         K8sTypes.PluginManager source = getPluginManager(plugin.getName());
         //替换插件配置
         List<PluginManagerOuterClass.Plugin> targetPluginList = source.getSpec().getPluginList().stream().map(sourcePlugin -> {
-            if (sourcePlugin.getName().equals(PluginMapping.getName(plugin.getPluginType()))){
+            if (sourcePlugin.getName().equals(PluginMappingEnum.getFilterName(plugin.getPluginType()))){
                 return mergeSetting(sourcePlugin, targetPlugin, plugin.getLanguage());
             }
             return sourcePlugin;

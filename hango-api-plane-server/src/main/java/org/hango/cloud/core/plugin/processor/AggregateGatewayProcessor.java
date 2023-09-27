@@ -4,9 +4,10 @@ import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.PluginGenerator;
-import org.hango.cloud.meta.PluginMapping;
-import org.hango.cloud.meta.PluginScopeTypeEnum;
 import org.hango.cloud.meta.ServiceInfo;
+import org.hango.cloud.meta.enums.PluginMappingEnum;
+import org.hango.cloud.meta.enums.PluginProcessorEnum;
+import org.hango.cloud.meta.enums.PluginScopeTypeEnum;
 import org.hango.cloud.util.CommonUtil;
 import org.hango.cloud.util.exception.ApiPlaneException;
 import org.slf4j.Logger;
@@ -20,9 +21,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-@SuppressWarnings("java:S3740")
+@SuppressWarnings({"java:S3740","java:S1192"})
 public class AggregateGatewayProcessor {
-
     private static final Logger logger = LoggerFactory.getLogger(AggregateGatewayProcessor.class);
 
     @Autowired
@@ -33,36 +33,53 @@ public class AggregateGatewayProcessor {
 
     public static final String INLINE = "$.inline";
 
+    //虚构的插件名称
+    public static final String FAKE_NAME = "proxy.filters.http.fake";
+
     public FragmentHolder process(String plugin, String pluginScope) {
         PluginGenerator rg = PluginGenerator.newInstance(plugin);
         //插件process匹配
-        PluginMapping mapping = PluginMapping.getBymappingName(CommonUtil.getKind(rg));
-        if (mapping == null){
+        PluginProcessorEnum processor = PluginProcessorEnum.get(CommonUtil.getPluginName(rg));
+        if (processor == null){
             logger.error("Unsupported plugin : [{}]", plugin);
             throw new ApiPlaneException(String.format("Unsupported plugin kind: [%s]", plugin));
         }
         //插件处理
-        FragmentHolder holder = getProcessor(mapping.getProcessorName()).process(plugin, new ServiceInfo());
-        //插件配置后置处理
-        postHandle(mapping, rg.getValue("$.kind", String.class), holder, pluginScope);
+        FragmentHolder holder = getProcessor(processor.getProcessorName()).process(plugin, new ServiceInfo());
+        //后置处理
+        postHandle(rg, holder, pluginScope);
         return holder;
     }
 
-
-
-    private void postHandle(PluginMapping mapping, String kind, FragmentHolder holder, String pluginScope){
-        String pluginType = getPluginType(mapping);
+    private void postHandle(PluginGenerator rg, FragmentHolder holder, String pluginScope){
+        String pluginName = CommonUtil.getPluginName(rg);
+        String kind = CommonUtil.getKind(rg);
+        //ianus_router插件
+        if (PluginProcessorEnum.ianus_router.getPluginName().equals(pluginName)){
+            convertIanusRouter(holder);
+            return;
+        }
+        PluginMappingEnum pluginMapping = PluginMappingEnum.getByPluginName(pluginName);
+        if (pluginMapping == null){
+            logger.error("Unsupported plugin : [{}]", pluginName);
+            throw new ApiPlaneException(String.format("Unsupported plugin kind: [%s]", pluginName));
+        }
         //网关级插件
         if (PluginScopeTypeEnum.isGatewayPlugin(pluginScope)){
-            covert2BasePlugin(holder, PluginMapping.getName(kind), pluginType);
+            covert2BasePlugin(holder, getFilterName(pluginMapping, kind), kind);
             return;
         }
-        //ianus_router插件
-        if (PluginMapping.ianus_router.equals(mapping)){
-            convertIanusRouter(holder, mapping.getTypeUrl());
-            return;
+        covert2ExtensionPlugin(holder, getFilterName(pluginMapping, kind), pluginMapping.getTypeUrl(), CommonUtil.getPluginType(rg));
+    }
+
+    private String getFilterName(PluginMappingEnum pluginMapping, String kind){
+        switch (pluginMapping){
+            case RIDER:
+            case WASM:
+                return kind;
+            default:
+                return pluginMapping.getFilterName();
         }
-        covert2ExtensionPlugin(holder, kind, mapping.getTypeUrl(), pluginType);
     }
 
     private void covert2ExtensionPlugin(FragmentHolder holder, String name, String typeUrl, String pluginType) {
@@ -81,23 +98,20 @@ public class AggregateGatewayProcessor {
         }
     }
 
-    private void convertIanusRouter(FragmentHolder holder, String typeUrl) {
+    private void convertIanusRouter(FragmentHolder holder) {
         if (Objects.isNull(holder.getGatewayPluginsFragment())) {
             return;
         }
         PluginGenerator source = PluginGenerator.newInstance(holder.getGatewayPluginsFragment().getContent(), ResourceType.YAML);
-        PluginGenerator builder = PluginGenerator.newInstance(String.format("{\"name\":\"%s\"}", PluginMapping.ianus_router.getName()));
+        //请求中断插件envoy不是通过插件实现，插件名称无效
+        PluginGenerator builder = PluginGenerator.newInstance(String.format("{\"name\":\"%s\"}", FAKE_NAME));
         builder.createOrUpdateValue("$", "enable", true);
         builder.createOrUpdateJson("$", "listenerType", "Gateway");
         builder.createOrUpdateJson("$", "inline", "{}");
-        if (StringUtils.hasText(typeUrl)){
-            builder.createOrUpdateJson("$", "typeUrl", typeUrl);
-        }
         builder.createOrUpdateJson(INLINE, "settings", source.jsonString());
         builder.createOrUpdateJson(INLINE, "directPatch", "true");
         builder.createOrUpdateJson(INLINE, "fieldPatchTo", "ROOT");
         holder.getGatewayPluginsFragment().setContent(builder.yamlString());
-        logger.info("ians rouyer plugin: [{}]", builder.yamlString());
     }
 
     private void covert2BasePlugin(FragmentHolder holder, String name, String type) {
@@ -107,16 +121,6 @@ public class AggregateGatewayProcessor {
             builder.createOrUpdateJson("$", type, "{}");
             builder.createOrUpdateJson(String.format("$.%s", type), "settings", source.jsonString());
             holder.getGatewayPluginsFragment().setContent(builder.yamlString());
-        }
-    }
-
-    private String getPluginType(PluginMapping mapping) {
-        if (PluginMapping.lua.equals(mapping)) {
-            return "rider";
-        } else if (PluginMapping.wasm.equals(mapping)) {
-            return "wasm";
-        } else {
-            return "inline";
         }
     }
 

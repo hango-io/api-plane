@@ -19,6 +19,8 @@ import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.PluginOrderDTO;
 import org.hango.cloud.meta.dto.PluginOrderItemDTO;
+import org.hango.cloud.meta.enums.PluginScopeTypeEnum;
+import org.hango.cloud.meta.enums.UriMatch;
 import org.hango.cloud.util.Const;
 import org.hango.cloud.util.Trans;
 import org.junit.Assert;

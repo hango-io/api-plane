@@ -12,11 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import static org.hango.cloud.util.Const.LUA;
-import static org.hango.cloud.util.Const.WASM;
+import static org.hango.cloud.util.Const.*;
 
 
 public class CommonUtil {
@@ -119,11 +117,46 @@ public class CommonUtil {
     }
 
 
+    /**
+     * 获取插件名称，对于自定义插件，返回rider||wasm
+     * @param rg
+     * @return
+     */
+    public static String getPluginName(PluginGenerator rg){
+        String kind = rg.getValue("$.kind", String.class);
+        String pluginType = getPluginType(rg);
+        return INLINE.equals(pluginType) ? kind : pluginType;
+    }
+
+
+
+    /**
+     * 获取插件名称，对于自定义插件，返回插件名称，例如 fault-injection
+     */
     public static String getKind(PluginGenerator rg){
-        String type = rg.getValue("$.type", String.class);
-        if (Arrays.asList(LUA, WASM).contains(type)){
-            return type;
-        }
         return rg.getValue("$.kind", String.class);
     }
+
+    /**
+     * 获取插件类型 rider||wasm||inline
+     * @param rg
+     * @return
+     */
+    public static String getPluginType(PluginGenerator rg){
+        String type = rg.getValue("$.type", String.class);
+        if (StringUtils.isBlank(type)) {
+            return INLINE;
+        }
+        switch (type){
+            case LUA :
+            case RIDER:
+                return RIDER;
+            case WASM:
+                return WASM;
+            default:
+                return INLINE;
+        }
+    }
+
+
 }

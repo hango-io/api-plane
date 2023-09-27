@@ -79,6 +79,8 @@ public class Const {
 
     public static final String RIDER = "rider";
 
+    public static final String INLINE = "inline";
+
     public static final String APP = "app";
 
     public static final String GW_CLUSTER = "gw_cluster";

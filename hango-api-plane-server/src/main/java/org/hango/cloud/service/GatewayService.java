@@ -16,9 +16,7 @@ public interface GatewayService {
 
     void updateGatewayPlugin(GatewayPluginDTO plugin);
 
-    default void updateBasePlugin(BasePluginDTO plugin) {
-
-    }
+    void updateBasePlugin(BasePluginDTO plugin);
 
     void updateService(PortalServiceDTO service);
 
@@ -60,11 +58,12 @@ public interface GatewayService {
 
     void deleteSecret(PortalSecretDTO portalSecretDTO);
 
+    void resortPluginOrder(List<String> name);
+
     PluginOrderDTO getPluginManager(String name);
 
-    void updatePluginOrderItem(PluginOrderDTO pluginOrderDto);
+    void updatePluginStatus(PluginStatusDTO pluginStatusDTO);
 
-    void deletePluginOrderItem(PluginOrderDTO pluginOrderDto);
 
 
     void publishPluginOrder(PluginOrderDTO pluginOrderDto);
@@ -91,24 +90,11 @@ public interface GatewayService {
      */
     boolean pluginOrderPortCheck(PluginOrderDTO pluginOrderDto);
 
-
     /**
      * 发布configmap资源
      * @return
      */
     boolean publishConfigMap(ConfigMapDTO configMapDTO);
-
-
-
-    /**
-     * 发布自定义插件
-     */
-    boolean publishCustomPlugin(CustomPluginDTO customPluginDTO);
-
-    /**
-     * 删除自定义插件
-     */
-    boolean deleteCustomPlugin(CustomPluginDTO customPluginDTO);
 
 
     /**

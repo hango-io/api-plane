@@ -1,8 +1,8 @@
 package org.hango.cloud.meta;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hango.cloud.meta.dto.LocalitySettingDTO;
 import org.hango.cloud.meta.dto.PortalServiceConnectionPoolDTO;
+import org.hango.cloud.meta.enums.CRDMetaEnum;
 
 import java.util.List;
 import java.util.Map;

@@ -4,7 +4,7 @@ import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.core.template.TemplateConst;
 import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.meta.GatewayPlugin;
-import org.hango.cloud.meta.PluginScopeTypeEnum;
+import org.hango.cloud.meta.enums.PluginScopeTypeEnum;
 import org.hango.cloud.util.HandlerUtil;
 
 import java.util.ArrayList;

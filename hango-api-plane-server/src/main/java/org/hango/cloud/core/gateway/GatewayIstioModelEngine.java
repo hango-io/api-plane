@@ -22,6 +22,7 @@ import org.hango.cloud.k8s.K8sTypes.VirtualService;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
 import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
+import org.hango.cloud.meta.enums.PluginScopeTypeEnum;
 import org.hango.cloud.service.PluginService;
 import org.hango.cloud.util.Const;
 import org.hango.cloud.util.HandlerUtil;

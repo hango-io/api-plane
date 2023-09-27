@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @Author zhufengwei
  * @Date 2023/7/3
  */
-public class CustomPluginDTO {
+public class CustomPluginCodeDTO {
 
     /** 插件的名称: uri-restriction.lua */
     @NotEmpty(message = "PluginName can not be null")

@@ -21,6 +21,7 @@ import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.Secret;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.*;
+import org.hango.cloud.meta.enums.PluginMappingEnum;
 import org.hango.cloud.service.GatewayService;
 import org.hango.cloud.service.PluginService;
 import org.hango.cloud.util.Const;
@@ -339,56 +340,25 @@ public class GatewayServiceImpl implements GatewayService {
 
 
     @Override
-    public void updatePluginOrderItem(PluginOrderDTO pluginOrderDto) {
-        if (CollectionUtils.isEmpty(pluginOrderDto.getPlugins())){
+    public void updatePluginStatus(PluginStatusDTO pluginStatusDTO) {
+        if (!org.springframework.util.StringUtils.hasText(pluginStatusDTO.getPluginManagerName())
+                || !org.springframework.util.StringUtils.hasText(pluginStatusDTO.getPluginName())) {
+            logger.error("pluginManagerName or pluginName is empty");
             return;
         }
-        //查询plm资源
-        PluginOrderDTO pluginManager = getPluginManager(pluginOrderDto.getName());
-        if (CollectionUtils.isEmpty(pluginManager.getPlugins())){
+        // 查询plm资源
+        PluginOrderDTO pluginManager = getPluginManager(pluginStatusDTO.getPluginManagerName());
+        if (CollectionUtils.isEmpty(pluginManager.getPlugins())) {
+            logger.error("pluginManagerName is not exist");
             return;
         }
-        //修改插件
-        processPluginOrder(pluginManager, pluginOrderDto.getPlugins());
-        //更新资源
-        PluginOrder pluginOrder = Trans.pluginOrderDTO2PluginOrder(pluginManager);
-        configManager.updateConfig(pluginOrder);
-    }
-
-    private void addDefaultInfo(PluginOrderItemDTO itemDTO){
-        if (itemDTO.getPort() == null) {
-            itemDTO.setPort(80);
-        }
-        if (itemDTO.getWasm() != null){
-            addDefaultSecret(itemDTO.getWasm());
-        }
-        if (itemDTO.getRider() != null){
-            addDefaultSecret(itemDTO.getRider());
-        }
-    }
-
-    private void addDefaultSecret(RiderDTO riderDTO){
-        if (riderDTO == null || StringUtils.isBlank(riderDTO.getUrl())){
+        PluginOrderItemDTO source = pluginManager.getPlugins().stream().filter(plugin -> plugin.getName().equals(pluginStatusDTO.getPluginName())).findFirst().orElse(null);
+        if (source == null){
+            logger.error("pluginName is not exist");
             return;
         }
-        if ( riderDTO.getUrl().startsWith("oci") && StringUtils.isBlank(riderDTO.getImagePullSecretName())){
-            riderDTO.setImagePullSecretName(globalConfig.getDefaultSecretName());
-        }
-    }
-
-    @Override
-    public void deletePluginOrderItem(PluginOrderDTO pluginOrderDto) {
-        if (CollectionUtils.isEmpty(pluginOrderDto.getPlugins())){
-            return;
-        }
-        //查询plm资源
-        PluginOrderDTO pluginManager = getPluginManager(pluginOrderDto.getName());
-        if (CollectionUtils.isEmpty(pluginManager.getPlugins())){
-            return;
-        }
-        List<String> deletePluginName = pluginOrderDto.getPlugins().stream().map(PluginOrderItemDTO::getName).collect(Collectors.toList());
-        pluginManager.getPlugins().removeIf(plugin -> deletePluginName.contains(plugin.getName()));
-
+        //设置状态
+        source.setEnable(pluginStatusDTO.getEnable());
         //更新资源
         PluginOrder pluginOrder = Trans.pluginOrderDTO2PluginOrder(pluginManager);
         configManager.updateConfig(pluginOrder);
@@ -415,6 +385,9 @@ public class GatewayServiceImpl implements GatewayService {
         for (PluginOrderDTO pluginOrderDTO : pluginManagerList) {
             List<PluginOrderItemDTO> plugins = pluginOrderDTO.getPlugins();
             if (CollectionUtils.isEmpty(plugins)){
+                continue;
+            }
+            if (pluginOrderDto.getName().equals(pluginOrderDTO.getName())){
                 continue;
             }
             if (plugins.get(0).getPort().equals(pluginOrderDto.getPort())){
@@ -604,6 +577,24 @@ public class GatewayServiceImpl implements GatewayService {
         return pluginOrderDTO;
     }
 
+    @Override
+    public void resortPluginOrder(List<String> names) {
+        //获取待更新的plugin manager
+        List<HasMetadata> hasMetadatas = names.stream().map(n -> configManager.getConfig(K8sResourceEnum.PluginManager.name(), globalConfig.getResourceNamespace(), n)).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(hasMetadatas)){
+            return;
+        }
+        for (HasMetadata hasMetadata : hasMetadatas) {
+            //数据转换
+            PluginOrderDTO trans = Trans.trans((K8sTypes.PluginManager) hasMetadata);
+            //插件排序
+            PluginMappingEnum.pluginSort(trans.getPlugins());
+            //更新配置
+            PluginOrder pluginOrder = Trans.pluginOrderDTO2PluginOrder(trans);
+            configManager.updateConfig(pluginOrder);
+        }
+    }
+
     public List<PluginOrderDTO> getPluginManagerList(String gwCluster){
         List<HasMetadata> config = configManager.getConfigListWithRev(K8sResourceEnum.PluginManager.name());
         if (CollectionUtils.isEmpty(config)){
@@ -611,47 +602,6 @@ public class GatewayServiceImpl implements GatewayService {
         }
         return config.stream().map(o -> Trans.trans((K8sTypes.PluginManager) o)).filter(o -> gwCluster.equals(o.getGwCluster())).collect(Collectors.toList());
     }
-
-
-    private void processPluginOrder(PluginOrderDTO pluginOrderDto, List<PluginOrderItemDTO> updatePluginList) {
-        if (CollectionUtils.isEmpty(updatePluginList)) {
-            return;
-        }
-        List<PluginOrderItemDTO> plugins = pluginOrderDto.getPlugins();
-        for (PluginOrderItemDTO pluginOrderItemDTO : updatePluginList) {
-            //设置默认值
-            addDefaultInfo(pluginOrderItemDTO);
-            PluginOrderItemDTO source = plugins.stream().filter(plugin -> plugin.getName().equals(pluginOrderItemDTO.getName())).findFirst().orElse(null);
-            if (source == null){
-                //不存在item，新增
-                plugins.add(pluginOrderItemDTO);
-            }else {
-                //存在item，更新
-                processorPluginItem(source, pluginOrderItemDTO);
-            }
-        }
-        pluginOrderDto.setPlugins(plugins);
-    }
-
-    private void processorPluginItem(PluginOrderItemDTO source, PluginOrderItemDTO target){
-        if (target.getEnable() != null){
-            source.setEnable(target.getEnable());
-        }
-        if (target.getRider() != null){
-            source.setRider(target.getRider());
-            source.setWasm(null);
-            source.setInline(null);
-        }else if (target.getWasm() != null){
-            source.setWasm(target.getWasm());
-            source.setRider(null);
-            source.setInline(null);
-        }else if (target.getInline() != null){
-            source.setInline(target.getInline());
-            source.setWasm(null);
-            source.setRider(null);
-        }
-    }
-
 
 
     private void createEnvoyServicePort(IstioGateway istioGateway){
@@ -788,43 +738,4 @@ public class GatewayServiceImpl implements GatewayService {
         configManager.updateConfig(configMap);
         return true;
     }
-
-    @Override
-    public boolean publishCustomPlugin(CustomPluginDTO customPluginDTO) {
-        //发布自定义代码
-        boolean result = publishCustomCode(customPluginDTO);
-        if (!result){
-            logger.error("publish custom code failed, pluginName:{}", customPluginDTO.getPluginName());
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean deleteCustomPlugin(CustomPluginDTO customPluginDTO) {
-        //删除自定义代码
-        boolean result = publishCustomCode(customPluginDTO);
-        if (!result){
-            logger.error("delete custom code failed, pluginName:{}", customPluginDTO.getPluginName());
-            return false;
-        }
-        return true;
-    }
-
-
-    /**
-     * 发布自定义代码
-     * @return 是否发布成功
-     */
-    private boolean publishCustomCode(CustomPluginDTO customPluginDTO){
-        ConfigMapDTO configMapDTO = new ConfigMapDTO();
-        Map<String, String> label = new HashMap<>();
-        label.put(Const.APP, Const.RIDER);
-        label.put(Const.GW_CLUSTER, customPluginDTO.getGwCluster());
-        configMapDTO.setContentKey(customPluginDTO.getPluginName());
-        configMapDTO.setContentValue(customPluginDTO.getPluginContent());
-        configMapDTO.setLabel(label);
-        return publishConfigMap(configMapDTO);
-    }
-
 }

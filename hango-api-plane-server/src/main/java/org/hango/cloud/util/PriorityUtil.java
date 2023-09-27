@@ -2,7 +2,7 @@ package org.hango.cloud.util;
 
 import com.google.common.collect.ImmutableMap;
 import org.hango.cloud.meta.API;
-import org.hango.cloud.meta.UriMatch;
+import org.hango.cloud.meta.enums.UriMatch;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;

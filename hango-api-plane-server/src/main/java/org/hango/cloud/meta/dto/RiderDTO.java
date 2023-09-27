@@ -1,26 +1,16 @@
 package org.hango.cloud.meta.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotNull;
-
 /**
  * @Author zhufengwei
  * @Date 2023/9/22
  */
 public class RiderDTO {
-    @JsonProperty("pluginName")
     private String pluginName;
 
-
-    @JsonProperty("imagePullSecretName")
     private String imagePullSecretName;
 
-    @JsonProperty("url")
-    @NotNull(message = "url")
     private String url;
 
-    @JsonProperty("setting")
     private Object setting;
 
     public String getPluginName() {

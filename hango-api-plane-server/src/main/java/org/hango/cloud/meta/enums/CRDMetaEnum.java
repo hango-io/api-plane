@@ -1,4 +1,4 @@
-package org.hango.cloud.meta;
+package org.hango.cloud.meta.enums;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

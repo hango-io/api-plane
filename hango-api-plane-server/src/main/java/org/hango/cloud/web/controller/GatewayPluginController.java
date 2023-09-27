@@ -5,8 +5,8 @@ import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.editor.ResourceGenerator;
 import org.hango.cloud.meta.Plugin;
 import org.hango.cloud.meta.PluginSupportDetail;
-import org.hango.cloud.meta.dto.CustomPluginDTO;
 import org.hango.cloud.meta.dto.PluginOrderDTO;
+import org.hango.cloud.meta.dto.PluginStatusDTO;
 import org.hango.cloud.service.GatewayService;
 import org.hango.cloud.service.PluginService;
 import org.hango.cloud.util.errorcode.ApiPlaneErrorCode;
@@ -16,7 +16,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -36,7 +39,6 @@ public class GatewayPluginController extends BaseController {
 
     @Autowired
     private GatewayService gatewayService;
-
 
     /**
      * 查询插件schema
@@ -76,16 +78,16 @@ public class GatewayPluginController extends BaseController {
         return apiReturn(ImmutableMap.of("Plugins", plugins));
     }
 
+
     /**
-     * 获取plm资源
+     * 更新插件状态
      */
-    @RequestMapping(params = "Action=GetPluginOrder", method = RequestMethod.GET)
-    public String getPluginOrder(@RequestParam(name = "Name") String name) {
-        Map<String, Object> result = new HashMap<>();
-        result.put(RESULT, gatewayService.getPluginManager(name));
-        ErrorCode code = ApiPlaneErrorCode.Success;
-        return apiReturn(code.getStatusCode(), code.getCode(), null, result);
+    @RequestMapping(params = "Action=UpdatePluginStatus", method = RequestMethod.POST)
+    public String updatePluginStatus(@RequestBody PluginStatusDTO pluginStatusDTO) {
+        gatewayService.updatePluginStatus(pluginStatusDTO);
+        return apiReturn(ApiPlaneErrorCode.Success);
     }
+
 
     /**
      * 发布plm
@@ -100,54 +102,32 @@ public class GatewayPluginController extends BaseController {
         return apiReturn(ApiPlaneErrorCode.Success);
     }
 
-
-    /**
-     * 更新plm item
-     */
-    @RequestMapping(params = "Action=UpdatePluginOrderItem", method = RequestMethod.POST)
-    public String updatePluginOrderItem(@RequestBody PluginOrderDTO pluginOrderDTO) {
-        gatewayService.updatePluginOrderItem(pluginOrderDTO);
-        return apiReturn(ApiPlaneErrorCode.Success);
-    }
-
-    /**
-     * 更新plm item
-     */
-    @RequestMapping(params = "Action=DeletePluginOrderItem", method = RequestMethod.POST)
-    public String deletePluginOrderItem(@RequestBody PluginOrderDTO pluginOrderDTO) {
-        gatewayService.deletePluginOrderItem(pluginOrderDTO);
-        return apiReturn(ApiPlaneErrorCode.Success);
-    }
-
-
-    /**
-     * 发布自定义插件
-     */
-    @RequestMapping(params = "Action=PublishCustomPlugin", method = RequestMethod.POST)
-    public String publishCustomPlugin(@RequestBody @Valid CustomPluginDTO customPluginDTO) {
-        Map<String, Object> result = new HashMap<>();
-        result.put(RESULT, gatewayService.publishCustomPlugin(customPluginDTO));
-        ErrorCode code = ApiPlaneErrorCode.Success;
-        return apiReturn(code.getStatusCode(), code.getCode(), null, result);
-    }
-
-    /**
-     * 删除自定义插件
-     */
-    @RequestMapping(params = "Action=DeleteCustomPlugin",method = RequestMethod.POST)
-    public String deleteCustomPlugin(@RequestBody CustomPluginDTO customPluginDTO) {
-        Map<String, Object> result = new HashMap<>();
-        result.put(RESULT, gatewayService.deleteCustomPlugin(customPluginDTO));
-        ErrorCode code = ApiPlaneErrorCode.Success;
-        return apiReturn(code.getStatusCode(), code.getCode(), null, result);
-    }
-
     /**
      * 删除plm
      */
     @RequestMapping(params = "Action=DeletePluginOrder", method = RequestMethod.POST)
     public String deletePluginOrder(@RequestBody PluginOrderDTO pluginOrderDTO) {
         gatewayService.deletePluginOrder(pluginOrderDTO);
+        return apiReturn(ApiPlaneErrorCode.Success);
+    }
+
+    /**
+     * 获取plm资源
+     */
+    @RequestMapping(params = "Action=GetPluginOrder", method = RequestMethod.GET)
+    public String getPluginOrder(@RequestParam(name = "Name") String name) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(RESULT, gatewayService.getPluginManager(name));
+        ErrorCode code = ApiPlaneErrorCode.Success;
+        return apiReturn(code.getStatusCode(), code.getCode(), null, result);
+    }
+
+    /**
+     * 重新排序插件执行顺序
+     */
+    @RequestMapping(params = "Action=ResortPluginOrder", method = RequestMethod.GET)
+    public String resortPluginOrder(@RequestParam("Names") List<String> names) {
+        gatewayService.resortPluginOrder(names);
         return apiReturn(ApiPlaneErrorCode.Success);
     }
 }

@@ -22,9 +22,9 @@ public class IngressDTO {
     private Integer port;
 
     /**
-     * http协议端口
+     * https协议端口
      */
-    @JsonProperty("TlsPort")
+    @JsonProperty("TLSPort")
     private Integer tlsPort;
 
     /**

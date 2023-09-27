@@ -18,6 +18,7 @@ import org.hango.cloud.meta.PluginSupportConfig;
 import org.hango.cloud.meta.PluginSupportDetail;
 import org.hango.cloud.meta.dto.PluginOrderDTO;
 import org.hango.cloud.meta.dto.PluginOrderItemDTO;
+import org.hango.cloud.meta.enums.PluginMappingEnum;
 import org.hango.cloud.service.PluginService;
 import org.hango.cloud.util.exception.ApiPlaneException;
 import org.slf4j.Logger;
@@ -133,9 +134,12 @@ public class PluginServiceImpl implements PluginService {
             logger.error("parse plugin order template error, content:{}", manager, e);
             throw new ApiPlaneException("get plugin order template error");
         }
-        //过滤插件
-        List<String> supportPlugins = pluginSupportDetails.stream().map(PluginSupportDetail::getPlugin).collect(Collectors.toList());
-        List<PluginOrderItemDTO> pluginOrderItemDTOS = pluginOrderDTO.getPlugins().stream().filter(p -> supportPlugins.contains(p.getName())).collect(Collectors.toList());
+        //插件过滤
+        List<String> supportFilters = pluginSupportDetails.stream().map(PluginSupportDetail::getPlugin).collect(Collectors.toList());
+
+        List<PluginOrderItemDTO> pluginOrderItemDTOS = pluginOrderDTO.getPlugins().stream().filter(p -> supportFilters.contains(p.getName())).collect(Collectors.toList());
+        //插件排序
+        PluginMappingEnum.pluginSort(pluginOrderItemDTOS);
         pluginOrderDTO.setPlugins(pluginOrderItemDTOS);
         return pluginOrderDTO;
     }

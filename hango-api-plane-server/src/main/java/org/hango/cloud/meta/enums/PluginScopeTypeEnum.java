@@ -1,4 +1,4 @@
-package org.hango.cloud.meta;
+package org.hango.cloud.meta.enums;
 
 /**
  * @Author zhufengwei
