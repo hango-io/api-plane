@@ -38,9 +38,8 @@ public class GatewayPluginDataHandler implements DataHandler<GatewayPlugin> {
                 .put(TemplateConst.VERSION, plugin.getVersion())
                 .put(TemplateConst.GATEWAY_PLUGIN_GATEWAYS, getGatewayName(plugin))
                 .put(TemplateConst.GATEWAY_PLUGIN_NAME, HandlerUtil.getGatewayPluginName(plugin))
-                .put(TemplateConst.GATEWAY_PLUGIN_PLUGINS, gatewayPlugins);
-
-
+                .put(TemplateConst.GATEWAY_PLUGIN_PLUGINS, gatewayPlugins)
+                .put(TemplateConst.GATEWAY_PLUGIN_GW_CLUSTER, plugin.getGwCluster());
 
         // 路由和全局插件模板渲染数据区分填充
         if (PluginScopeTypeEnum.isRoutePlugin(plugin.getPluginScope())) {

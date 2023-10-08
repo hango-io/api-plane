@@ -17,6 +17,8 @@ public class GatewayPlugin {
 
     private String gateway;
 
+    private String gwCluster;
+
     private String code;
 
     private Integer port;
@@ -49,6 +51,14 @@ public class GatewayPlugin {
 
     public String getGateway() {
         return gateway;
+    }
+
+    public String getGwCluster() {
+        return gwCluster;
+    }
+
+    public void setGwCluster(String gwCluster) {
+        this.gwCluster = gwCluster;
     }
 
     public String getCode() {

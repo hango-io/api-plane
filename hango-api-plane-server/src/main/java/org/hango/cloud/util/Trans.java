@@ -377,6 +377,7 @@ public class Trans {
         gatewayPlugin.setGateway(dto.getGateway());
         gatewayPlugin.setHosts(dto.getHosts());
         gatewayPlugin.setCode(dto.getCode());
+        gatewayPlugin.setGwCluster(dto.getGwCluster());
         gatewayPlugin.setPluginScope(dto.getPluginScope());
         gatewayPlugin.setPort(dto.getPort() == null ? 80 : dto.getPort());
         Long version = dto.getVersion();

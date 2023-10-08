@@ -26,6 +26,9 @@ public class GatewayPluginDTO {
     @JsonProperty(value = "Gateway")
     private String gateway;
 
+    @JsonProperty(value = "GwCluster")
+    private String gwCluster;
+
     @JsonProperty(value = "Code")
     private String code;
 
@@ -60,6 +63,22 @@ public class GatewayPluginDTO {
 
     public void setGateway(String gateway) {
         this.gateway = gateway;
+    }
+
+    public String getPluginType() {
+        return pluginType;
+    }
+
+    public void setPluginType(String pluginType) {
+        this.pluginType = pluginType;
+    }
+
+    public String getGwCluster() {
+        return gwCluster;
+    }
+
+    public void setGwCluster(String gwCluster) {
+        this.gwCluster = gwCluster;
     }
 
     public String getCode() {

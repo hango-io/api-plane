@@ -16,6 +16,11 @@ spec:
   - ${g}
   </#list>
 </#if>
+<#if t_gw_cluster?has_content>
+  workloadSelector:
+    labels:
+      gw_cluster: ${t_gw_cluster}
+</#if>
 <#if t_gateway_plugin_hosts?has_content>
   host:
 <#list t_gateway_plugin_hosts as h>
