@@ -166,7 +166,7 @@
               "key": "value",
               "placeholder": "请输入",
               "type": "input",
-              "ruleNames": ["MaxLength(200)","Required"]
+              "ruleNames": ["MaxLength(200)","Required","^[ -~]+$"]
             }
           ]
         },
@@ -175,7 +175,7 @@
           "type": "input",
           "alias": "响应体",
           "help": "若不填写，则默认返回：circuit breaker filter abort",
-          "rules": ["MaxLength(200)"]
+          "rules": ["MaxLength(1000)","^[ -~\\u4e00-\\u9fa5]+$"]
         }
       ]
     }

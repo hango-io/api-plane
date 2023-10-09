@@ -76,7 +76,7 @@
               "invisible": {
                 "this.match_type": "present"
               },
-              "rules": ["MaxLength(200)","Required"]
+              "rules": ["MaxLength(200)","Required","^[ -~]+$"]
             }
           ]
         },

@@ -106,7 +106,7 @@
         {
           "type": "input",
           "key": "value",
-          "rules": ["MaxLength(200)"]
+          "rules": ["MaxLength(200)","^[ -~]+$"]
         }
       ]
     },
@@ -143,7 +143,7 @@
         {
           "type": "input",
           "key": "value",
-          "rules": ["MaxLength(200)"]
+          "rules": ["MaxLength(200)","^[ -~]+$"]
         }
       ]
     },
@@ -203,7 +203,7 @@
           "type": "input",
           "placeholder": "请输入",
           "key": "requestHeaderValue",
-          "ruleNames": ["MaxLength(200)","Required"]
+          "ruleNames": ["MaxLength(200)","Required","^[ -~]+$"]
         }
       ]
     },
@@ -247,16 +247,16 @@
         {
           "type": "input",
           "key": "value",
-          "rules": [
-            "Required",
-            "Number",
-            "MinNumber(200)",
-            "MaxNumber(599)"
-          ],
           "customRules": {
             "keys": [
               "this",
               "match_type"
+            ],
+            "exact_match": [
+              "Required",
+              "Number",
+              "MinNumber(200)",
+              "MaxNumber(599)"
             ],
             "safe_regex_match": [
               "Required",
@@ -317,7 +317,7 @@
           "type": "input",
           "placeholder": "请输入",
           "key": "responseHeaderValue",
-          "ruleNames": ["MaxLength(200)","Required"]
+          "ruleNames": ["MaxLength(200)","Required","^[ -~]+$"]
         }
       ]
     },
@@ -375,7 +375,7 @@
           "key": "downgradeResponseHeaderValue",
           "placeholder": "请输入",
           "type": "input",
-          "ruleNames": ["MaxLength(200)","Required"]
+          "ruleNames": ["MaxLength(200)","Required","^[ -~]+$"]
         }
       ]
     },
@@ -386,7 +386,7 @@
       "key": "downgradeResponseBody",
       "type": "input",
       "alias": "响应体",
-      "rules": ["MaxLength(200)","Required"]
+      "rules": ["MaxLength(1000)","Required","^[ -~\\u4e00-\\u9fa5]+$"]
     }
   ]
 }

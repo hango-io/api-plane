@@ -73,7 +73,7 @@
                   "key": "value",
                   "type": "input",
                   "alias": "取值",
-                  "rules": ["MaxLength(200)"]
+                  "rules": ["MaxLength(200)","^[ -~]+$"]
                 }
               ]
             },
@@ -105,7 +105,7 @@
                   "key": "value",
                   "type": "input",
                   "alias": "取值",
-                  "rules": ["MaxLength(200)"]
+                  "rules": ["MaxLength(200)","^[ -~]+$"]
                 }
               ]
             },
@@ -157,7 +157,7 @@
                   "key": "value",
                   "type": "input",
                   "alias": "取值",
-                  "rules": ["MaxLength(200)","Required"],
+                  "rules": ["MaxLength(200)","Required","^[ -~]+$"],
                   "invisible": {
                     "present_match": ["this", "match_type"],
                     "present_match_invert": ["this", "match_type"]
@@ -207,7 +207,7 @@
                   "alias": "取值",
                   "type": "input",
                   "rules": [
-                    "Required"
+                    "Required","^[ -~]+$","MaxLength(200)"
                   ]
                 }
               ]
@@ -260,7 +260,7 @@
                   "key": "value",
                   "type": "input",
                   "alias": "取值",
-                  "rules": ["MaxLength(200)","Required"],
+                  "rules": ["MaxLength(200)","Required","^[ -~]+$"],
                   "invisible": {
                     "present_match": ["this", "match_type"],
                     "present_match_invert": ["this", "match_type"]
