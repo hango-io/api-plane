@@ -201,6 +201,7 @@
                   "key": "value",
                   "alias": "取值",
                   "type": "input",
+                  "rules": ["Required"],
                   "customRules": {
                     "keys": [
                       "this",
@@ -343,7 +344,23 @@
                       "key": "value",
                       "alias": "取值",
                       "type": "input",
-                      "rules": ["MaxLength(200)","Required","^[ -~]+$"]
+                      "rules": ["Required"],
+                      "customRules": {
+                        "keys": [
+                          "this",
+                          "match_type"
+                        ],
+                        "exact_match": [
+                          "Required",
+                          "Number",
+                          "MinNumber(200)",
+                          "MaxNumber(599)"
+                        ],
+                        "safe_regex_match": [
+                          "Required",
+                          "RegExp"
+                        ]
+                      }
                     }
                   ]
                 },
