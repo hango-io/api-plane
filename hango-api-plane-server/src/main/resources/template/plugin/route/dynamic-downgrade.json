@@ -482,7 +482,7 @@
           "key": "uri",
           "alias": "接口降级URI",
           "type": "input",
-          "help": "接口降级URI的提示：符合URI规范，以http://开头，例如http://test.cn/service/downgrade，如果降级服务直接接入当前网关，域名可以是任意合法的域名值，否则域名要求是降级服务对外暴露的域名值。",
+          "help": "符合URI规范，以http://开头，例如http://test.cn/service/downgrade，如果降级服务未使用到域名，域名可以是任意合法值",
           "rules": [
             "^http://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$"
           ]

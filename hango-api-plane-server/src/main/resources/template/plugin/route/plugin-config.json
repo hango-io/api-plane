@@ -220,7 +220,7 @@
       "instructionForUse": "跨域访问JSONP",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": ""
+      "pluginGuidance": "JSONP全称json with padding，是一种利用script标签跨域传输数据的技术。路由配置了JSONP插件，并设置callback为test，当客户端发起 http://example.com/data?test=myCallback 跨域请求，且后端服务响应body内容为{data: 'hello world'}时，那么网关将响应body修改为myCallback({data: 'hello world'})给客户端。"
     },
     {
       "name": "waf",
@@ -231,7 +231,7 @@
       "instructionForUse": "提供应用级安全防护",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": ""
+      "pluginGuidance": "WAF全称web application firewall，提供web应用安全防护功能。当请求被检测出存在攻击行为时，该请求会被拦截，网关返回 403 Forbidden。"
     },
     {
       "name": "parameters-validate",
