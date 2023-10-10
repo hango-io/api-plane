@@ -580,7 +580,10 @@ public class GatewayServiceImpl implements GatewayService {
     @Override
     public void resortPluginOrder(List<String> names) {
         //获取待更新的plugin manager
-        List<HasMetadata> hasMetadatas = names.stream().map(n -> configManager.getConfig(K8sResourceEnum.PluginManager.name(), globalConfig.getResourceNamespace(), n)).collect(Collectors.toList());
+        List<HasMetadata> hasMetadatas = names.stream()
+                .map(n -> configManager.getConfig(K8sResourceEnum.PluginManager.name(), globalConfig.getResourceNamespace(), n))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(hasMetadatas)){
             return;
         }

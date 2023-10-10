@@ -29,7 +29,7 @@ public enum PluginMappingEnum {
 
     //认证类插件
     SUPER_AUTHZ("proxy.filters.http.super_authz", "", Arrays.asList("super-authz","oauth2-auth", "simple-auth"), PluginCategoryEnum.AUTH, 1),
-    JWT_AUTH("envoy.filters.http.jwt_authn", "", Collections.singletonList("jwt_auth"), PluginCategoryEnum.AUTH, 2),
+    JWT_AUTH("envoy.filters.http.jwt_authn", "", Collections.singletonList("jwt-auth"), PluginCategoryEnum.AUTH, 2),
     BASIC_RBAC("envoy.filters.http.rbac", "", Collections.singletonList("basic-rbac"), PluginCategoryEnum.AUTH, 3),
 
     //流量管理类插件
@@ -54,7 +54,7 @@ public enum PluginMappingEnum {
     TRAFFIC_MARK("proxy.filters.http.traffic_mark", "", Collections.EMPTY_LIST, POST_BUILTIN, 1),
     DETAILED_STATS("proxy.filters.http.detailed_stats", "", Collections.EMPTY_LIST, POST_BUILTIN, 2),
     STATEFUL_SESSION("envoy.filters.http.stateful_session", "type.googleapis.com/envoy.extensions.filters.http.stateful_session.v3.StatefulSessionPerRoute", Collections.EMPTY_LIST, POST_BUILTIN, 3),
-    SOAPJSONTRANSCODER("proxy.filters.http.soapjsontranscoder", "", Collections.EMPTY_LIST, POST_BUILTIN, 4),
+    SOAPJSONTRANSCODER("proxy.filters.http.soapjsontranscoder", "", Collections.singletonList("soap-json-transcoder"), POST_BUILTIN, 4),
 
     //自定义插件
     RIDER("rider", "type.googleapis.com/proxy.filters.http.rider.v3alpha1.RouteFilterConfig", Collections.singletonList("rider"), null, -1 ),
