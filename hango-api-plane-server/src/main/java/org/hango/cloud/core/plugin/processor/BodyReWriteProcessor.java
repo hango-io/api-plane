@@ -1,5 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
+import io.micrometer.core.instrument.util.StringEscapeUtils;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
 import org.hango.cloud.core.plugin.FragmentWrapper;
@@ -73,9 +74,9 @@ public abstract class BodyReWriteProcessor extends AbstractSchemaProcessor {
             String path = source.getValue("$.request.path.value", String.class);
             if (nonNull(matchType, path)) {
                 if ("safe_regex_match".equals(matchType)) {
-                    matcher.addJsonElement("$.decoder_matcher.headers", String.format(safe_regex_string_match, ":path", path));
+                    matcher.addJsonElement("$.decoder_matcher.headers", String.format(safe_regex_string_match, ":path", StringEscapeUtils.escapeJson(path)));
                 } else {
-                    matcher.addJsonElement("$.decoder_matcher.headers", String.format(exact_string_match, ":path", path));
+                    matcher.addJsonElement("$.decoder_matcher.headers", String.format(exact_string_match, ":path", StringEscapeUtils.escapeJson(path)));
                 }
             }
         }
@@ -86,9 +87,9 @@ public abstract class BodyReWriteProcessor extends AbstractSchemaProcessor {
         String host = source.getValue("$.request.host.value", String.class);
         if (nonNull(matchType, host)) {
             if ("safe_regex_match".equals(matchType)) {
-                matcher.addJsonElement("$.decoder_matcher.headers", String.format(safe_regex_string_match, ":authority", host));
+                matcher.addJsonElement("$.decoder_matcher.headers", String.format(safe_regex_string_match, ":authority", StringEscapeUtils.escapeJson(host)));
             } else {
-                matcher.addJsonElement("$.decoder_matcher.headers", String.format(exact_string_match, ":authority", host));
+                matcher.addJsonElement("$.decoder_matcher.headers", String.format(exact_string_match, ":authority", StringEscapeUtils.escapeJson(host)));
             }
         }
     }
@@ -120,16 +121,16 @@ public abstract class BodyReWriteProcessor extends AbstractSchemaProcessor {
                 }
                 switch (matchType) {
                     case "safe_regex_match":
-                        matcher.addJsonElement("$.decoder_matcher.headers", String.format(safe_regex_string_match, headerKey, headerValue));
+                        matcher.addJsonElement("$.decoder_matcher.headers", String.format(safe_regex_string_match, StringEscapeUtils.escapeJson(headerKey), StringEscapeUtils.escapeJson(headerValue)));
                         break;
                     case "present_match":
-                        matcher.addJsonElement("$.decoder_matcher.headers", String.format(present_match, headerKey));
+                        matcher.addJsonElement("$.decoder_matcher.headers", String.format(present_match, StringEscapeUtils.escapeJson(headerKey)));
                         break;
                     case "present_match_invert":
-                        matcher.addJsonElement("$.decoder_matcher.headers", String.format(present_invert_match, headerKey));
+                        matcher.addJsonElement("$.decoder_matcher.headers", String.format(present_invert_match, StringEscapeUtils.escapeJson(headerKey)));
                         break;
                     default:
-                        matcher.addJsonElement("$.decoder_matcher.headers", String.format(exact_string_match, headerKey, headerValue));
+                        matcher.addJsonElement("$.decoder_matcher.headers", String.format(exact_string_match, StringEscapeUtils.escapeJson(headerKey), StringEscapeUtils.escapeJson(headerValue)));
                         break;
                 }
             });
@@ -148,13 +149,13 @@ public abstract class BodyReWriteProcessor extends AbstractSchemaProcessor {
                     return;
                 }
                 if ("safe_regex_match".equals(matchType)) {
-                    matcher.addJsonElement("$.encoder_matcher.headers", String.format(safe_regex_string_match, headerKey, headerValue));
+                    matcher.addJsonElement("$.encoder_matcher.headers", String.format(safe_regex_string_match, StringEscapeUtils.escapeJson(headerKey), StringEscapeUtils.escapeJson(headerValue)));
                 } else if ("present_match".equals(matchType)) {
-                    matcher.addJsonElement("$.encoder_matcher.headers", String.format(present_match, headerKey));
+                    matcher.addJsonElement("$.encoder_matcher.headers", String.format(present_match, StringEscapeUtils.escapeJson(headerKey)));
                 } else if ("present_match_invert".equals(matchType)) {
-                    matcher.addJsonElement("$.encoder_matcher.headers", String.format(present_invert_match, headerKey));
+                    matcher.addJsonElement("$.encoder_matcher.headers", String.format(present_invert_match, StringEscapeUtils.escapeJson(headerKey)));
                 } else {
-                    matcher.addJsonElement("$.encoder_matcher.headers", String.format(exact_string_match, headerKey, headerValue));
+                    matcher.addJsonElement("$.encoder_matcher.headers", String.format(exact_string_match, StringEscapeUtils.escapeJson(headerKey), StringEscapeUtils.escapeJson(headerValue)));
                 }
             });
         }
@@ -177,7 +178,7 @@ public abstract class BodyReWriteProcessor extends AbstractSchemaProcessor {
             String jsonPointer = item.get("key");
             String jsonValue = item.get("value");
             //value均为字符类型不写json，使用字符串拼接处理转义问题
-            String transformationElement = "{\"json_pointer\":\"" + jsonPointer + "\",\"json_value\":\"" + jsonValue + "\"}";
+            String transformationElement = "{\"json_pointer\":\"" + StringEscapeUtils.escapeJson(jsonPointer) + "\",\"json_value\":\"" + StringEscapeUtils.escapeJson(jsonValue) + "\"}";
             transformation.addJsonElement("$.json_transformations", transformationElement);
         });
     }

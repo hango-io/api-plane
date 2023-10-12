@@ -198,7 +198,7 @@
             {
               "key": "value",
               "alias": "取值",
-              "type": "input",
+              "type": "number",
               "rules": [
                 "Required"
               ]
