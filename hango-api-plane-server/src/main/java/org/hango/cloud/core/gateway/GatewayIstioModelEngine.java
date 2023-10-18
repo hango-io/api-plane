@@ -2,15 +2,14 @@ package org.hango.cloud.core.gateway;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import istio.networking.v1alpha3.VirtualServiceOuterClass;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.IstioModelEngine;
-import org.hango.cloud.core.editor.EditorContext;
 import org.hango.cloud.core.gateway.handler.*;
 import org.hango.cloud.core.gateway.processor.DefaultModelProcessor;
-import org.hango.cloud.core.gateway.processor.NeverReturnNullModelProcessor;
 import org.hango.cloud.core.gateway.processor.RenderTwiceModelProcessor;
-import org.hango.cloud.core.gateway.service.ResourceManager;
 import org.hango.cloud.core.k8s.K8sResourcePack;
 import org.hango.cloud.core.k8s.empty.DynamicGatewayPluginSupplier;
 import org.hango.cloud.core.k8s.operator.IntegratedResourceOperator;
@@ -23,6 +22,7 @@ import org.hango.cloud.k8s.K8sTypes.VirtualService;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
 import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
+import org.hango.cloud.meta.enums.PluginScopeTypeEnum;
 import org.hango.cloud.service.PluginService;
 import org.hango.cloud.util.Const;
 import org.hango.cloud.util.HandlerUtil;
@@ -31,10 +31,7 @@ import org.hango.cloud.util.function.Subtracter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,41 +42,22 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
 
     private static final Logger logger = LoggerFactory.getLogger(IstioModelEngine.class);
 
-    private IntegratedResourceOperator operator;
-    private TemplateTranslator templateTranslator;
-    private EditorContext editorContext;
-    private ResourceManager resourceManager;
     private PluginService pluginService;
     private GlobalConfig globalConfig;
 
     @Autowired
-    public GatewayIstioModelEngine(IntegratedResourceOperator operator, TemplateTranslator templateTranslator, EditorContext editorContext,
-                                   ResourceManager resourceManager, PluginService pluginService, GlobalConfig globalConfig) {
+    public GatewayIstioModelEngine(IntegratedResourceOperator operator, TemplateTranslator templateTranslator,
+                                   PluginService pluginService, GlobalConfig globalConfig) {
         super(operator);
-        this.operator = operator;
-        this.templateTranslator = templateTranslator;
-        this.editorContext = editorContext;
-        this.resourceManager = resourceManager;
         this.pluginService = pluginService;
         this.globalConfig = globalConfig;
 
         this.defaultModelProcessor = new DefaultModelProcessor(templateTranslator);
         this.renderTwiceModelProcessor = new RenderTwiceModelProcessor(templateTranslator);
-        this.neverNullRenderTwiceProcessor = new NeverReturnNullModelProcessor(this.renderTwiceModelProcessor, NEVER_NULL);
     }
 
     private DefaultModelProcessor defaultModelProcessor;
     private RenderTwiceModelProcessor renderTwiceModelProcessor;
-    private NeverReturnNullModelProcessor neverNullRenderTwiceProcessor;
-
-    @Value(value = "${http10:#{null}}")
-    Boolean enableHttp10;
-
-    @Value(value = "${rateLimitConfigMapName:rate-limit-config}")
-    String rateLimitConfigMapName;
-
-    @Value(value = "${rateLimitNameSpace:gateway-system}")
-    String rateLimitNamespace;
 
 
     private static final String API_GATEWAY = "gateway/api/gateway";
@@ -137,15 +115,28 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
     public List<K8sResourcePack> translate(GatewayPlugin plugin) {
         logger.info("{}{} start translate k8s resource", LogConstant.TRANSLATE_LOG_NOTE, LogConstant.PLUGIN_LOG_NOTE);
 
-        // 打印插件配置信息
-        plugin.showPluginConfigsInLog(logger);
-
         RawResourceContainer rawResourceContainer = new RawResourceContainer();
-        rawResourceContainer.add(renderPlugins(plugin.getPlugins()));
+        rawResourceContainer.add(pluginService.processPlugin(plugin.getPlugins(), plugin.getPluginScope()));
 
         logger.info("{}{} render plugins ok, start to generate and add k8s resource",
                 LogConstant.TRANSLATE_LOG_NOTE, LogConstant.PLUGIN_LOG_NOTE);
         return generateAndAddK8sResource(rawResourceContainer, plugin);
+    }
+
+    /**
+     * 转换GatewayPlugin数据为CRD资源
+     *
+     * @param plugin 网关插件实例（内含插件配置）
+     * @return k8s资源集合
+     */
+    public List<K8sResourcePack> translate(BasePlugin plugin) {
+        List<FragmentHolder> holders = pluginService.processPlugin(Collections.singletonList(plugin.getPluginConfig()), PluginScopeTypeEnum.GATEWAY.getValue());
+
+        String pluginConfig = CollectionUtils.isEmpty(holders) ? StringUtils.EMPTY : holders.get(0).getGatewayPluginsFragment().getContent();
+        // 将插件配置转换为pluginManager setting
+        List<String> pluginManagers = defaultModelProcessor.process(PLUGIN_MANAGER, PluginOrder.of(plugin.getName(), pluginConfig), new PluginOrderDataHandler());
+
+        return generateK8sPack(pluginManagers);
     }
 
     /**
@@ -191,7 +182,6 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
 
         return resourcePacks;
     }
-
     /**
      * 插件转换为GatewayPlugin CRD资源
      *
@@ -209,7 +199,7 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
 
         // 当插件传入为空时，生成空的GatewayPlugin，删除时使用
         DynamicGatewayPluginSupplier dynamicGatewayPluginSupplier =
-                new DynamicGatewayPluginSupplier(plugin.getGateway(), plugin.getRouteId(), "%s-%s");
+                new DynamicGatewayPluginSupplier(plugin.getGateway(), plugin.getCode(), "%s-%s");
 
         resourcePacks.addAll(generateK8sPack(rawGatewayPlugins,
                 new GatewayPluginNormalSubtracter(),
@@ -239,7 +229,7 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
      */
     public List<K8sResourcePack> translate(IstioGateway istioGateway) {
         List<K8sResourcePack> resources = new ArrayList<>();
-        List<String> rawGateways = defaultModelProcessor.process(API_GATEWAY, istioGateway, new PortalGatewayDataHandler(enableHttp10, globalConfig.getResourceNamespace()));
+        List<String> rawGateways = defaultModelProcessor.process(API_GATEWAY, istioGateway, new PortalGatewayDataHandler(globalConfig.getResourceNamespace()));
         resources.addAll(generateK8sPack(rawGateways));
         return resources;
     }
@@ -256,19 +246,6 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
         List<String> secrets = defaultModelProcessor.process(SECRET, secret, new SecretDataHandler());
         resources.addAll(generateK8sPack(secrets));
         return resources;
-    }
-
-    private List<FragmentHolder> renderPlugins(List<String> pluginList) {
-
-        if (CollectionUtils.isEmpty(pluginList)) {
-            return Collections.emptyList();
-        }
-
-        List<String> plugins = pluginList.stream()
-                .filter(StringUtils::hasText)
-                .collect(Collectors.toList());
-
-        return pluginService.processPlugin(plugins, new ServiceInfo());
     }
 
     private HasMetadata adjust(HasMetadata rawVs) {
@@ -300,6 +277,7 @@ public class GatewayIstioModelEngine extends IstioModelEngine {
                     .addAllExportTo(originalSpec.getExportToList())
                     .addAllVirtualCluster(originalSpec.getVirtualClusterList())
                     .addAllTcp(originalSpec.getTcpList())
+                    .addAllUdp(originalSpec.getUdpList())
                     .addAllThrift(originalSpec.getThriftList())
                     .addAllTls(originalSpec.getTlsList())
                     .setPriority(originalSpec.getPriority())

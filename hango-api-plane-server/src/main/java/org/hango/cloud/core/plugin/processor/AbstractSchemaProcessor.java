@@ -4,23 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.hango.cloud.core.editor.EditorContext;
 import org.hango.cloud.meta.ServiceInfo;
 import org.hango.cloud.util.exception.ApiPlaneException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 
-import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractSchemaProcessor implements SchemaProcessor<ServiceInfo> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractSchemaProcessor.class);
-
     @Autowired
     protected EditorContext editorContext;
-
-    @Autowired
-    protected List<SchemaProcessor> processorList;
 
     /**
      * https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/route/v3/route_components.proto#envoy-v3-api-field-config-route-v3-headermatcher-string-match
@@ -38,9 +29,6 @@ public abstract class AbstractSchemaProcessor implements SchemaProcessor<Service
 
     public String exact_string_match = "{\"name\":\"%s\",\"string_match\":{\"exact\": \"%s\"}}";
 
-    public String safe_regex_with_invert_string_match = "{\"name\":\"%s\",\"string_match\":{\"safe_regex_match\":{\"google_re2\":{},\"regex\":\"%s\"}},\"invert_match\": %s}";
-
-    public String exact_invert_string_match = "{\"name\":\"%s\",\"string_match\":{\"exact\": \"%s\"},\"invert_match\": %s}";
 
     public String prefix_string_match = "{\"name\":\"%s\",\"string_match\":{\"prefix\": \"%s\"}}";
 
@@ -60,41 +48,6 @@ public abstract class AbstractSchemaProcessor implements SchemaProcessor<Service
 
     public String present_match_separate = "{\"name\":\"%s\", \"present_match_separate\":true}";
 
-    public String presentMatch = "{\"name\":\"%s\", \"presentMatch\":true}";
-
-    public String presentInvertMatch = "{\"name\":\"%s\", \"presentMatch\":true, \"invertMatch\":true}";
-
-    public String exactMatch = "{\"name\":\"%s\", \"exactMatch\":\"%s\"}";
-
-    public String exactInvertMatch = "{\"name\":\"%s\", \"exactMatch\":\"%s\", \"invertMatch\":true}";
-
-    public String regexMatch = "{\"name\":\"%s\", \"regexMatch\":\"%s\"}";
-
-    public String regexInvertMatch = "{\"name\":\"%s\", \"regexMatch\":\"%s\", \"invertMatch\":true}";
-
-    public String presentMatchSeparate = "{\"name\":\"%s\", \"presentMatchSeparate\":true}";
-
-
-    protected SchemaProcessor getProcessor(String name) {
-        logger.info("Get processor {}", name);
-        if (CollectionUtils.isEmpty(processorList)) throw new ApiPlaneException("The list of processors is empty");
-        for (SchemaProcessor item : processorList) {
-            if (name.equalsIgnoreCase(item.getName())) return item;
-        }
-        throw new ApiPlaneException(String.format("Processor [%s] could not be found", name));
-    }
-
-    protected String getApiName(ServiceInfo serviceInfo) {
-        return serviceInfo.getApiName();
-    }
-
-    protected String getGateway(ServiceInfo serviceInfo) {
-        return serviceInfo.getGateway();
-    }
-
-    protected String getServiceName(ServiceInfo serviceInfo) {
-        return serviceInfo.getServiceName();
-    }
 
 
     protected String getRegexByOp(String op, String value) {

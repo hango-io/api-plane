@@ -7,10 +7,8 @@ COPY hango-api-plane-server/setenv.sh $CATALINA_HOME/bin/
 RUN rm -rf webapps/*
 COPY hango-api-plane-server/target/*.war webapps/
 RUN cd /usr/local/tomcat/webapps && \
-    mkdir ROOT && \
-    mv *.war ROOT/ROOT.war && \
-    cd ROOT && \
-    jar -xvf ROOT.war && \
-    rm -rf *.war
+    mv *.war ROOT.war && \
+    unzip ROOT.war -d ./ROOT && \
+    rm -f ROOT.war
 
 ENTRYPOINT ["catalina.sh", "run"]

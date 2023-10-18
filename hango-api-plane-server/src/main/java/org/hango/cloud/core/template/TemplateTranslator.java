@@ -20,8 +20,6 @@ public class TemplateTranslator {
 
     private Configuration configuration;
 
-    public static final String DEFAULT_TEMPLATE_SPILIT = "---";
-
     @Autowired
     public TemplateTranslator(Configuration configuration) {
         this.configuration = configuration;

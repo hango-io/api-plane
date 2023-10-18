@@ -2,16 +2,19 @@ package org.hango.cloud.meta.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+
 /**
  * @Author zhufengwei
  * @Date 2023/7/3
  */
 public class ConfigMapDTO{
+
     /**
-     * ConfigMap名称
+     * ConfigMap label
      */
-    @JsonProperty(value = "Name")
-    private String name;
+    @JsonProperty(value = "Label")
+    private Map<String, String> label;
 
 
     /**
@@ -27,12 +30,12 @@ public class ConfigMapDTO{
     private String contentValue;
 
 
-    public String getName() {
-        return name;
+    public Map<String, String> getLabel() {
+        return label;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLabel(Map<String, String> label) {
+        this.label = label;
     }
 
     public String getContentKey() {

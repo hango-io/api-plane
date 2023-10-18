@@ -14,12 +14,6 @@ public class GlobalConfig {
     @Value("${resourceNamespace:gateway-system}")
     private String resourceNamespace;
 
-    @Value("${apiPlaneType}")
-    private String apiPlaneType;
-
-    @Value("${apiPlaneVersion}")
-    private String apiPlaneVersion;
-
     @Value("${istioRev:gw-stable}")
     private String istioRev;
 
@@ -36,27 +30,17 @@ public class GlobalConfig {
     @Value("${projectCode:skiff.netease.com/project}")
     private String projectCode;
 
-    //ingress controller标识，和istio保持一致
-    @Value("${ingressClass:hango}")
-    private String ingressClass;
+    @Value("${defaultSecretName:harbor-qingzhou}")
+    private String defaultSecretName;
 
-    //自定义插件代码挂载cm 名称
-    @Value("${pluginContentConfigName:hango-rider-plugin}")
-    private String pluginContentConfigName;
-
-    //自定义插件schema挂载cm 名称
-    @Value("${pluginSchemaConfigName:hango-plugin-schema}")
-    private String pluginSchemaConfigName;
-
-
-    private final String ALL = "all";
 
     @Value("${ignorePlugins:#{null}}")
     private String ignorePlugins;
 
-    public String getIgnorePlugins() {
-        return ignorePlugins;
-    }
+    @Value("${kubernetesSvcSuffix:.svc.cluster.local}")
+    private String kubernetesSvcSuffix;
+
+    private final String ALL = "all";
 
     public Set<String> getIgnorePluginSet() {
         return StringUtils.isEmpty(ignorePlugins) ? Collections.emptySet() : new HashSet<>(Arrays.asList(ignorePlugins.split(",")));
@@ -67,17 +51,11 @@ public class GlobalConfig {
         return resourceNamespace;
     }
 
-    public String getApiPlaneType() {
-        return apiPlaneType;
-    }
 
     public String getIstioRev() {
         return istioRev;
     }
 
-    public String getApiPlaneVersion() {
-        return apiPlaneVersion;
-    }
 
     public Integer getTelnetConnectTimeout() {
         return telnetConnectTimeout;
@@ -98,16 +76,11 @@ public class GlobalConfig {
         return projectCode;
     }
 
-    public String getIngressClass() {
-        return ingressClass;
+    public String getDefaultSecretName() {
+        return defaultSecretName;
     }
 
-    public String getPluginContentConfigName() {
-        return pluginContentConfigName;
+    public String getKubernetesSvcSuffix() {
+        return kubernetesSvcSuffix;
     }
-
-    public String getPluginSchemaConfigName() {
-        return pluginSchemaConfigName;
-    }
-
 }

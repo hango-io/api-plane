@@ -1,5 +1,6 @@
 package org.hango.cloud.core.plugin.processor;
 
+import io.micrometer.core.instrument.util.StringEscapeUtils;
 import org.hango.cloud.core.editor.ResourceType;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.core.plugin.FragmentTypeEnum;
@@ -204,7 +205,7 @@ public class SmartLimiterProcessor extends AbstractSchemaProcessor implements Sc
             boolean presentInvert = Boolean.parseBoolean(headerMatchSource.getValue("invert"));
 
             String matchTypeFormatter = translateMatchType(matchType, presentInvert);
-            headerMatch.addJsonElement("$", String.format(matchTypeFormatter, headerKey, headerValue));
+            headerMatch.addJsonElement("$", String.format(matchTypeFormatter, headerKey, StringEscapeUtils.escapeJson(headerValue)));
         }
 
         if (CollectionUtils.isEmpty(headerMatchList)) {
@@ -213,7 +214,6 @@ public class SmartLimiterProcessor extends AbstractSchemaProcessor implements Sc
             return headerMatch;
         }
     }
-
     /**
      * 将插件schema中的匹配类型转换为SmartLimiter规定的类型
      *

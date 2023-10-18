@@ -2,7 +2,7 @@ package org.hango.cloud.meta.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hango.cloud.meta.CRDMetaEnum;
+import org.hango.cloud.meta.enums.CRDMetaEnum;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
@@ -45,7 +45,7 @@ public class PortalServiceDTO {
     private String gateway;
 
     @JsonProperty(value = "Protocol")
-    @Pattern(regexp = "(http|https|grpc)", message = "protocol")
+    @Pattern(regexp = "(http|https|grpc|tcp|udp)", message = "protocol")
     private String protocol = "http";
 
     @JsonProperty(value = "TrafficPolicy")

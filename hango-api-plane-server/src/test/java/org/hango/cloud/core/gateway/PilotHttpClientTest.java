@@ -1,10 +1,12 @@
 package org.hango.cloud.core.gateway;
 
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.ServicePort;
+import io.fabric8.kubernetes.api.model.ServiceSpec;
 import org.hango.cloud.core.BaseTest;
 import org.hango.cloud.core.istio.PilotHttpClient;
-import org.hango.cloud.core.k8s.KubernetesClient;
+import org.hango.cloud.core.k8s.K8sClient;
 import org.hango.cloud.meta.Endpoint;
-import io.fabric8.kubernetes.api.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -31,7 +32,7 @@ public class PilotHttpClientTest extends BaseTest {
     RestTemplate restTemplate;
 
     @MockBean
-    KubernetesClient k8sClient;
+    K8sClient k8sClient;
 
     @Test
     public void getEndpointList() {
@@ -47,7 +48,7 @@ public class PilotHttpClientTest extends BaseTest {
 
         Service service = buildService("10.10.10.18", 8080);
 
-        when(k8sClient.getObjectList(any(),any(),anyMap())).thenReturn(Arrays.asList(service));
+        when(k8sClient.getServices(any(),any())).thenReturn(Arrays.asList(service));
         when(restTemplate.getForEntity(anyString(), any())).thenReturn(entity);
 
         List<Endpoint> endpoints = istioHttpClient.getEndpointList();

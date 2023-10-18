@@ -3,6 +3,7 @@ package org.hango.cloud.core.gateway.service;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import org.hango.cloud.core.ConfigManager;
+import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
 import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
@@ -26,6 +27,13 @@ public interface GatewayConfigManager extends ConfigManager {
      * @param plugin 网关插件对象
      */
     void updateConfig(GatewayPlugin plugin);
+
+    /**
+     * 更新网关插件配置，修改pluginmanager资源
+     * @param plugin 网关插件对象
+     */
+    void updateConfig(BasePlugin plugin);
+
 
     /**
      * 更新服务
@@ -122,4 +130,10 @@ public interface GatewayConfigManager extends ConfigManager {
      * 更新Configmap资源
      */
     void updateConfig(ConfigMap configMap);
+
+
+    /**
+     * 获取pluginManager资源
+     */
+    K8sTypes.PluginManager getPluginManager(String name);
 }

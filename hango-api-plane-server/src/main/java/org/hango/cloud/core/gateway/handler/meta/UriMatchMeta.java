@@ -1,6 +1,6 @@
 package org.hango.cloud.core.gateway.handler.meta;
 
-import org.hango.cloud.meta.UriMatch;
+import org.hango.cloud.meta.enums.UriMatch;
 
 public class UriMatchMeta {
     /**

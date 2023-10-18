@@ -1,14 +1,17 @@
 package org.hango.cloud.util;
 
 import com.google.common.collect.ImmutableList;
-import com.google.protobuf.Value;
+import io.fabric8.kubernetes.api.model.HasMetadata;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ServicePort;
-import org.apache.logging.log4j.util.Strings;
-import org.hango.cloud.core.editor.ResourceGenerator;
+import io.fabric8.kubernetes.api.model.ServiceSpec;
 import org.hango.cloud.core.editor.ResourceType;
+import org.hango.cloud.core.plugin.PluginGenerator;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.*;
+import org.hango.cloud.meta.enums.CRDMetaEnum;
+import org.hango.cloud.meta.enums.UriMatch;
 import org.hango.cloud.util.exception.ApiPlaneException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
@@ -19,7 +22,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hango.cloud.service.impl.GatewayServiceImpl.GW_CLUSTER;
-import static org.hango.cloud.util.Const.RIDER_PLUGIN;
 
 
 public class Trans {
@@ -62,6 +64,7 @@ public class Trans {
             api.setMirrorTraffic(mirrorTraffic);
         }
         api.setMetaMap(portalAPI.getMetaMap());
+        api.setProtocol(portalAPI.getProtocol());
         return api;
     }
 
@@ -255,7 +258,9 @@ public class Trans {
     }
 
     public static PluginOrder pluginOrderDTO2PluginOrder(PluginOrderDTO pluginOrderDTO) {
-
+        if (pluginOrderDTO == null) {
+            return null;
+        }
         PluginOrder po = new PluginOrder();
         Map<String, String> gatewayLabels = new HashMap<>();
         gatewayLabels.put(GW_CLUSTER, pluginOrderDTO.getGwCluster());
@@ -268,36 +273,11 @@ public class Trans {
         }
         for (PluginOrderItemDTO dto : plugins) {
             if (Objects.nonNull(dto)) {
-                if (dto.getPort() == null){
-                    dto.setPort(80);
-                }
-                orderItems.add(ResourceGenerator.newInstance(dto, ResourceType.OBJECT).yamlString());
+                orderItems.add(PluginGenerator.newInstance(dto, ResourceType.OBJECT).yamlString());
             }
         }
         po.setPlugins(orderItems);
         return po;
-    }
-
-    public static String getPluginName(PluginOrderItemDTO itemDTO){
-        if (itemDTO == null){
-            return Strings.EMPTY;
-        }
-        String name = itemDTO.getName();
-        if (!RIDER_PLUGIN.equals(name)){
-            return name;
-        }
-        Object inlineObj = itemDTO.getInline();
-        if (!(inlineObj instanceof PluginManagerOuterClass.Inline)){
-            return Strings.EMPTY;
-        }
-        PluginManagerOuterClass.Inline inline = (PluginManagerOuterClass.Inline) inlineObj;
-        Map<String, Value> fieldsMap = inline.getSettings().getFieldsMap();
-        Value plugin = fieldsMap.get("plugin");
-        if (plugin == null){
-            return Strings.EMPTY;
-        }
-        Value pluginName = plugin.getStructValue().getFieldsMap().get("name");
-        return pluginName == null ? Strings.EMPTY : pluginName.getStringValue();
     }
 
     public static PluginOrderDTO trans(K8sTypes.PluginManager pluginManager){
@@ -305,6 +285,7 @@ public class Trans {
         Map<String, String> workloadLabels = pluginManager.getSpec().getWorkloadLabels();
         dto.setGwCluster(workloadLabels.get(GW_CLUSTER));
         dto.setPlugins(new ArrayList<>());
+        dto.setName(pluginManager.getMetadata().getName());
         List<PluginManagerOuterClass.Plugin> plugins = pluginManager.getSpec().getPluginList();
         if (CollectionUtils.isEmpty(plugins)) {
             return dto;
@@ -313,10 +294,39 @@ public class Trans {
             PluginOrderItemDTO itemDTO = new PluginOrderItemDTO();
             itemDTO.setEnable(p.getEnable());
             itemDTO.setName(p.getName());
-            itemDTO.setInline(p.getInline());
+            buildPluginSetting(itemDTO, p);
             itemDTO.setPort(p.getPort());
             dto.getPlugins().add(itemDTO);
         });
+        return dto;
+    }
+
+    public static void buildPluginSetting(PluginOrderItemDTO itemDTO, PluginManagerOuterClass.Plugin plugin){
+        if (StringUtils.hasText(plugin.getRider().getPluginName())){
+            itemDTO.setRider(trans(plugin.getRider()));
+        }else if (StringUtils.hasText(plugin.getWasm().getPluginName())){
+            itemDTO.setWasm(trans(plugin.getWasm()));
+        }else {
+            itemDTO.setInline(plugin.getInline());
+        }
+
+    }
+
+    private static RiderDTO trans(slime.microservice.plugin.v1alpha1.PluginManagerOuterClass.Rider rider){
+        RiderDTO dto = new RiderDTO();
+        dto.setPluginName(rider.getPluginName());
+        dto.setUrl(rider.getUrl());
+        dto.setImagePullSecretName(rider.getImagePullSecretName());
+        dto.setSettings(rider.getSettings());
+        return dto;
+    }
+
+    private static RiderDTO trans(PluginManagerOuterClass.Wasm wasm){
+        RiderDTO dto = new RiderDTO();
+        dto.setPluginName(wasm.getPluginName());
+        dto.setUrl(wasm.getUrl());
+        dto.setImagePullSecretName(wasm.getImagePullSecretName());
+        dto.setSettings(wasm.getSettings());
         return dto;
     }
 
@@ -378,24 +388,69 @@ public class Trans {
     public static GatewayPlugin pluginDTOToPlugin(GatewayPluginDTO dto) {
         GatewayPlugin gatewayPlugin = new GatewayPlugin();
         gatewayPlugin.setPlugins(dto.getPlugins());
-        gatewayPlugin.setRouteId(dto.getRouteId());
         gatewayPlugin.setGateway(dto.getGateway());
         gatewayPlugin.setHosts(dto.getHosts());
         gatewayPlugin.setCode(dto.getCode());
-        gatewayPlugin.setPluginType(dto.getPluginType());
+        gatewayPlugin.setGwCluster(dto.getGwCluster());
+        gatewayPlugin.setPluginScope(dto.getPluginScope());
         gatewayPlugin.setPort(dto.getPort() == null ? 80 : dto.getPort());
         Long version = dto.getVersion();
         gatewayPlugin.setVersion(version == null ? 0 : version);
         return gatewayPlugin;
     }
 
-
-    public static String getSchemaPath(String pluginName){
-        return pluginName + ".json";
+    public static BasePlugin trans(BasePluginDTO dto) {
+        BasePlugin basePlugin = new BasePlugin();
+        basePlugin.setPluginType(dto.getPluginType());
+        basePlugin.setLanguage(dto.getLanguage());
+        basePlugin.setName(dto.getName());
+        basePlugin.setPluginConfig(dto.getPluginConfig());
+        return basePlugin;
     }
 
-    public static String getCustomCodePath(String pluginName, String language){
-        return pluginName + "." + language;
+    public static KubernetesServiceDTO transService(HasMetadata data) {
+        if (data == null) {
+            return null;
+        }
+        io.fabric8.kubernetes.api.model.Service service = (io.fabric8.kubernetes.api.model.Service) data;
+        KubernetesServiceDTO kubernetesServiceDTO = new KubernetesServiceDTO();
+        ObjectMeta metadata = service.getMetadata();
+        if (Objects.isNull(metadata)){
+            return null;
+        }
+        kubernetesServiceDTO.setNamespace(metadata.getNamespace());
+        kubernetesServiceDTO.setName(metadata.getName());
+        ServiceSpec spec = service.getSpec();
+        if (Objects.isNull(spec)){
+            return null;
+        }
+        kubernetesServiceDTO.setType(spec.getType());
+        kubernetesServiceDTO.setClusterIP(spec.getClusterIP());
+        kubernetesServiceDTO.setPorts(spec.getPorts().stream().map(Trans::transPort).collect(Collectors.toList()));
+        return kubernetesServiceDTO;
+    }
+
+    public static KubernetesServiceDTO.ServicePort transPort(ServicePort servicePort) {
+        if (servicePort == null) {
+            return null;
+        }
+        KubernetesServiceDTO.ServicePort port = new KubernetesServiceDTO.ServicePort();
+        port.setName(servicePort.getName());
+        port.setPort(servicePort.getPort());
+        port.setProtocol(servicePort.getProtocol());
+        port.setTargetPort(servicePort.getTargetPort().getIntVal());
+        port.setNodePort(servicePort.getNodePort());
+        return port;
+    }
+
+    public static PluginOrderItemDTO trans(CustomPluginPublishDTO customPluginPublishDTO){
+        PluginOrderItemDTO pluginOrderItemDTO = new PluginOrderItemDTO();
+        pluginOrderItemDTO.setEnable(false);
+        pluginOrderItemDTO.setName(customPluginPublishDTO.getPluginName());
+        pluginOrderItemDTO.setWasm(customPluginPublishDTO.getWasm());
+        pluginOrderItemDTO.setRider(customPluginPublishDTO.getLua());
+        pluginOrderItemDTO.setPort(customPluginPublishDTO.getPort());
+        return pluginOrderItemDTO;
     }
 
 }

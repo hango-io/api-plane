@@ -94,7 +94,6 @@ public class NonK8sConfiguration {
         options.registerDescriptor(DestinationRuleOuterClass.getDescriptor().getMessageTypes());
         options.registerDescriptor(GatewayOuterClass.getDescriptor().getMessageTypes());
         options.registerDescriptor(PluginManagerOuterClass.getDescriptor().getMessageTypes());
-        options.registerDescriptor(GatewayPluginOuterClass.getDescriptor().getMessageTypes());
         options.registerDescriptor(ServiceEntryOuterClass.getDescriptor().getMessageTypes());
 
         if (!StringUtils.isEmpty(rlsAddresses)) {

@@ -1,7 +1,7 @@
 package org.hango.cloud.meta.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hango.cloud.meta.CRDMetaEnum;
+import org.hango.cloud.meta.enums.CRDMetaEnum;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
@@ -54,11 +54,6 @@ public class PortalAPIDTO {
     @NotNull(message = "proxyServices")
     private List<PortalRouteServiceDTO> proxyServices;
 
-    /**
-     * 插件
-     */
-    @JsonProperty(value = "Plugins")
-    private List<String> plugins;
 
     /**
      * 请求头
@@ -177,6 +172,13 @@ public class PortalAPIDTO {
     @JsonProperty(value = "Version")
     private Long version;
 
+    /**
+     * 协议，默认HTTP
+     */
+    @JsonProperty(value = "Protocol")
+    private String protocol = "HTTP";
+
+
     public PortalMirrorTrafficDto getMirrorTrafficDto() {
         return mirrorTrafficDto;
     }
@@ -239,14 +241,6 @@ public class PortalAPIDTO {
 
     public void setProxyServices(List<PortalRouteServiceDTO> proxyServices) {
         this.proxyServices = proxyServices;
-    }
-
-    public List<String> getPlugins() {
-        return plugins;
-    }
-
-    public void setPlugins(List<String> plugins) {
-        this.plugins = plugins;
     }
 
     public List<PairMatchDTO> getHeaders() {
@@ -336,5 +330,13 @@ public class PortalAPIDTO {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 }

@@ -8,6 +8,7 @@ import org.hango.cloud.util.errorcode.ErrorCode;
 import org.hango.cloud.util.errorcode.ErrorCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 
-
+@Validated
 @RestController
 @RequestMapping(value = "/api", params = "Version=2019-07-25")
 public class PortalGatewayController extends BaseController {
@@ -50,16 +51,27 @@ public class PortalGatewayController extends BaseController {
     }
 
     /**
-     * 删除路由插件CRD配置
+     * 批量新增或更新插件CRD配置
      *
-     * @param plugin 本次需要保留的插件对象（CRD渲染需要的必要信息 + 插件配置集合）
+     * @param plugins 本次最新的插件对象（CRD渲染需要的必要信息 + 插件配置集合）
      * @return 接口执行结果信息
      */
-    @RequestMapping(value = "/portal", params = "Action=DeletePlugin", method = RequestMethod.POST)
-    public String deleteGatewayPlugin(@RequestBody @Valid GatewayPluginDTO plugin) {
-        gatewayService.deleteGatewayPlugin(plugin);
+    @RequestMapping(value = "/portal", params = "Action=BatchPublishPlugin", method = RequestMethod.POST)
+    public String batchPublishGatewayPlugin(@RequestBody @Valid List<GatewayPluginDTO> plugins) {
+        plugins.forEach(plugin -> gatewayService.updateGatewayPlugin(plugin));
         return apiReturn(ApiPlaneErrorCode.Success);
     }
+
+    /**
+     * 更新全局插件配置，下发pluginmanager资源
+     */
+    @RequestMapping(value = "/portal", params = "Action=PublishBasePlugin", method = RequestMethod.POST)
+    public String publishBasePlugin(@RequestBody @Valid BasePluginDTO plugin) {
+
+        gatewayService.updateBasePlugin(plugin);
+        return apiReturn(ApiPlaneErrorCode.Success);
+    }
+
 
     @RequestMapping(value = "/portal", params = "Action=PublishService", method = RequestMethod.POST)
     public String publishPortalService(@RequestBody @Valid PortalServiceDTO service) {

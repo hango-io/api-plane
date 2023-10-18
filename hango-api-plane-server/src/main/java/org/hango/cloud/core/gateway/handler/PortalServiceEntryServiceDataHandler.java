@@ -41,8 +41,7 @@ public class PortalServiceEntryServiceDataHandler extends ServiceDataHandler {
                 addrs.add(backendService);
             }
             List<ServiceSubset> subsets = CollectionUtils.isEmpty(service.getSubsets()) ? Collections.EMPTY_LIST : service.getSubsets();
-            addrs.stream()
-                    .forEach(addr -> {
+            addrs.forEach(addr -> {
                         Endpoint e = new Endpoint();
                         if (CommonUtil.isValidIPPortAddr(addr) || addr.contains(":")) {
                             String[] ipPort = addr.split(":");
@@ -86,6 +85,10 @@ public class PortalServiceEntryServiceDataHandler extends ServiceDataHandler {
                 return "TLS";
             case "grpc":
                 return "GRPC";
+            case "tcp":
+                return "TCP";
+            case "udp":
+                return "UDP";
             default:
                 return "HTTP";
         }

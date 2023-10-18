@@ -26,15 +26,9 @@ public class PluginSupportConfig {
         return gatewayKind;
     }
 
-    public void setGatewayKind(String gatewayKind) {
-        this.gatewayKind = gatewayKind;
-    }
 
     public List<PluginSupportDetail> getPlugins() {
         return plugins;
     }
 
-    public void setPlugins(List<PluginSupportDetail> plugins) {
-        this.plugins = plugins;
-    }
 }

@@ -16,7 +16,7 @@ public interface GatewayService {
 
     void updateGatewayPlugin(GatewayPluginDTO plugin);
 
-    void deleteGatewayPlugin(GatewayPluginDTO plugin);
+    void updateBasePlugin(BasePluginDTO plugin);
 
     void updateService(PortalServiceDTO service);
 
@@ -58,9 +58,15 @@ public interface GatewayService {
 
     void deleteSecret(PortalSecretDTO portalSecretDTO);
 
-    PluginOrderDTO getPluginOrder(PluginOrderDTO pluginOrderDto);
+    void resortPluginOrder(List<String> name);
 
-    void updatePluginOrder(PluginOrderDTO pluginOrderDto);
+    PluginOrderDTO getPluginManager(String name);
+
+    void updatePluginStatus(PluginStatusDTO pluginStatusDTO);
+
+
+
+    void reloadPluginOrder(PluginOrderDTO pluginOrderDto);
 
     void publishPluginOrder(PluginOrderDTO pluginOrderDto);
 
@@ -86,7 +92,6 @@ public interface GatewayService {
      */
     boolean pluginOrderPortCheck(PluginOrderDTO pluginOrderDto);
 
-
     /**
      * 发布configmap资源
      * @return
@@ -94,16 +99,13 @@ public interface GatewayService {
     boolean publishConfigMap(ConfigMapDTO configMapDTO);
 
 
-
     /**
-     * 发布自定义插件
+     * 获取Kubernetes Service信息
+     *
+     * @param namespace
+     * @param filters
+     * @param domain
+     * @return
      */
-    boolean publishCustomPlugin(CustomPluginDTO customPluginDTO);
-
-    /**
-     * 删除自定义插件
-     */
-    boolean deleteCustomPlugin(String pluginName, String language);
-
-
+    List<KubernetesServiceDTO> getKubernetesService(String namespace, Map<String, String> filters, String domain);
 }

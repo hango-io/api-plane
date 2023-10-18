@@ -2,13 +2,10 @@ package org.hango.cloud.core.k8s.operator;
 
 import org.hango.cloud.core.k8s.K8sResourceEnum;
 import org.hango.cloud.k8s.K8sTypes;
-import org.hango.cloud.util.function.Equals;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import slime.microservice.plugin.v1alpha1.PluginManagerOuterClass;
-
-import java.util.Objects;
 
 @Component
 public class PluginManagerOperator implements k8sResourceOperator<K8sTypes.PluginManager> {
@@ -34,13 +31,6 @@ public class PluginManagerOperator implements k8sResourceOperator<K8sTypes.Plugi
         }
         latest.setSpec(builder.build());
         return latest;
-    }
-
-    private class PluginEquals implements Equals<PluginManagerOuterClass.Plugin> {
-        @Override
-        public boolean apply(PluginManagerOuterClass.Plugin op, PluginManagerOuterClass.Plugin np) {
-            return Objects.equals(op.getName(), np.getName());
-        }
     }
 
     @Override

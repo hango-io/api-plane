@@ -2,7 +2,7 @@ package org.hango.cloud.core.gateway.handler;
 
 import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.k8s.K8sTypes;
-import org.hango.cloud.meta.CRDMetaEnum;
+import org.hango.cloud.meta.enums.CRDMetaEnum;
 import org.hango.cloud.meta.Service;
 import org.hango.cloud.meta.dto.LocalitySettingDTO;
 import org.hango.cloud.meta.dto.PortalServiceConnectionPoolDTO;

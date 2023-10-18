@@ -1,0 +1,118 @@
+{
+  "formatter":{
+    "kind": "request-rewrite",
+    "headers": "&headers",
+    "querystrings": "&querystrings",
+    "urlPath": "&urlPath"
+  },
+  "layouts":[
+    {
+      "key": "headers",
+      "alias": "请求头",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "key",
+          "alias": "请求头名称",
+          "type": "input",
+          "rules": [
+            "Required",
+            "MaxLength(200)"
+          ]
+        },
+        {
+          "key": "action",
+          "alias": "修改类型",
+          "type": "select",
+          "default": "update",
+          "help":"更新:若不存在则创建,存在则更新;  追加:若不存在则创建,存在则追加,多个值之间使用 ',' 分隔",
+          "options": [
+            {
+              "text": "更新",
+              "value": "update"
+            },
+            {
+              "text": "追加",
+              "value": "append"
+            },
+            {
+              "text": "删除",
+              "value": "remove"
+            }
+          ],
+          "rules": [
+            "Required",
+            "MaxNumber(3)",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "text",
+          "alias": "取值",
+          "type": "input",
+          "invisible": {
+            "this.action": "remove"
+          },
+          "rules": [
+            "Required",
+            "MaxLength(200)"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "querystrings",
+      "alias": "请求参数",
+      "type": "array",
+      "layouts": [
+        {
+          "key": "key",
+          "alias": "参数名称",
+          "type": "input",
+          "rules": [
+            "Required",
+            "MaxLength(200)"
+          ]
+        },
+        {
+          "key": "action",
+          "alias": "修改类型",
+          "type": "select",
+          "default": "update",
+          "help":"更新:若不存在则创建,存在则更新;  追加:若不存在则创建,存在则追加,多个值之间使用 ';' 分隔",
+          "options": [
+            {
+              "text": "更新",
+              "value": "update"
+            },
+            {
+              "text": "追加",
+              "value": "append"
+            },
+            {
+              "text": "删除",
+              "value": "remove"
+            }
+          ],
+          "rules": [
+            "Required",
+            "MaxNumber(3)",
+            "MinNumber(0)"
+          ]
+        },
+        {
+          "key": "text",
+          "alias": "取值",
+          "type": "input",
+          "invisible": {
+            "this.action": "remove"
+          },
+          "rules": [
+            "Required",
+            "MaxLength(200)"
+          ]
+        }
+      ]
+    }
+  ]
+}

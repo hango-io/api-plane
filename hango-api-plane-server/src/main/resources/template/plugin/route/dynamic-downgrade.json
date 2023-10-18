@@ -75,7 +75,8 @@
                 {
                   "key": "value",
                   "type": "input",
-                  "alias": "取值"
+                  "alias": "取值",
+                  "rules": ["MaxLength(200)","^[ -~]+$"]
                 }
               ]
             },
@@ -106,7 +107,8 @@
                 {
                   "key": "value",
                   "type": "input",
-                  "alias": "取值"
+                  "alias": "取值",
+                  "rules": ["MaxLength(200)","^[ -~]+$"]
                 }
               ]
             },
@@ -122,9 +124,7 @@
                   "key": "headerKey",
                   "alias": "请求头名称",
                   "type": "input",
-                  "rules": [
-                    "MaxLength(200)"
-                  ]
+                  "rules": ["Required","^[a-zA-Z0-9-]{1,64}$"]
                 },
                 {
                   "key": "match_type",
@@ -146,6 +146,7 @@
                   "key": "value",
                   "type": "input",
                   "alias": "取值",
+                  "rules": ["MaxLength(200)","Required","^[ -~]+$"],
                   "invisible": {
                     "present_match": [
                       "this",
@@ -200,16 +201,17 @@
                   "key": "value",
                   "alias": "取值",
                   "type": "input",
-                  "rules": [
-                    "Required",
-                    "Number",
-                    "MinNumber(200)",
-                    "MaxNumber(599)"
-                  ],
+                  "rules": ["Required"],
                   "customRules": {
                     "keys": [
                       "this",
                       "match_type"
+                    ],
+                    "exact_match": [
+                      "Required",
+                      "Number",
+                      "MinNumber(200)",
+                      "MaxNumber(599)"
                     ],
                     "safe_regex_match": [
                       "Required",
@@ -232,7 +234,7 @@
                   "alias": "响应头名称",
                   "type": "input",
                   "rules": [
-                    "MaxLength(200)"
+                    "Required","^[a-zA-Z0-9-]{1,64}$"
                   ]
                 },
                 {
@@ -255,6 +257,7 @@
                   "key": "value",
                   "type": "input",
                   "alias": "取值",
+                  "rules": ["MaxLength(200)","Required","^[ -~]+$"],
                   "invisible": {
                     "present_match": [
                       "this",
@@ -340,7 +343,24 @@
                     {
                       "key": "value",
                       "alias": "取值",
-                      "type": "input"
+                      "type": "input",
+                      "rules": ["Required"],
+                      "customRules": {
+                        "keys": [
+                          "this",
+                          "match_type"
+                        ],
+                        "exact_match": [
+                          "Required",
+                          "Number",
+                          "MinNumber(200)",
+                          "MaxNumber(599)"
+                        ],
+                        "safe_regex_match": [
+                          "Required",
+                          "RegExp"
+                        ]
+                      }
                     }
                   ]
                 },
@@ -357,7 +377,7 @@
                       "alias": "响应头名称",
                       "type": "input",
                       "rules": [
-                        "MaxLength(200)"
+                        "Required","^[a-zA-Z0-9-]{1,64}$"
                       ]
                     },
                     {
@@ -380,6 +400,7 @@
                       "key": "value",
                       "type": "input",
                       "alias": "取值",
+                      "rules": ["MaxLength(200)","Required","^[ -~]+$"],
                       "invisible": {
                         "present_match": [
                           "this",
@@ -433,19 +454,17 @@
               "key": "query_params",
               "alias": "查询参数名称",
               "help": "自定义查询参数参与key计算",
+              "placeholder": "支持英文字母、数字、中划线,长度小于64",
               "type": "multi_input",
-              "rules": [
-                "MaxLength(200)"
-              ]
+              "rules": ["^[a-zA-Z0-9-]{1,64}$"]
             },
             {
               "key": "headers",
               "alias": "请求头名称",
               "type": "multi_input",
               "help": "自定义请求头参与key计算",
-              "rules": [
-                "MaxLength(200)"
-              ]
+              "placeholder": "支持英文字母、数字、中划线,长度小于64",
+              "rules": ["^[a-zA-Z0-9-]{1,64}$"]
             }
           ]
         }
@@ -463,7 +482,7 @@
           "key": "uri",
           "alias": "接口降级URI",
           "type": "input",
-          "help": "URI为空，默认采用原接口",
+          "help": "符合URI规范，以http://开头，例如http://test.cn/service/downgrade，如果降级服务未使用到域名，域名可以是任意合法值",
           "rules": [
             "^http://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$"
           ]

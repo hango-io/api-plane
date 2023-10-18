@@ -41,7 +41,6 @@ public class TransTest {
         Assert.assertEquals(api.getHosts(), dto.getHosts());
         Assert.assertEquals(api.getMethods(), dto.getMethods());
         Assert.assertEquals(api.getName(), dto.getCode());
-        Assert.assertEquals(api.getPlugins(), dto.getPlugins());
         Assert.assertTrue(equalService(api.getProxyServices(), dto.getProxyServices()));
         Assert.assertEquals(api.getUriMatch().name().toLowerCase(), dto.getUriMatch());
         Assert.assertTrue(equalsPairMatch(api.getHeaders(), dto.getHeaders()));
@@ -112,7 +111,6 @@ public class TransTest {
         dto.setHosts(hosts);
         dto.setMethods(methods);
         dto.setCode(code);
-        dto.setPlugins(plugins);
         dto.setProxyServices(services);
         dto.setRequestUris(requestUris);
         dto.setUriMatch(uriMatch);

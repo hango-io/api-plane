@@ -4,6 +4,7 @@ import org.hango.cloud.core.plugin.FragmentWrapper;
 import org.hango.cloud.core.template.TemplateConst;
 import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.meta.GatewayPlugin;
+import org.hango.cloud.meta.enums.PluginScopeTypeEnum;
 import org.hango.cloud.util.HandlerUtil;
 
 import java.util.ArrayList;
@@ -41,10 +42,10 @@ public class SmartLimiterDataHandler implements DataHandler<GatewayPlugin> {
                 .put(TemplateConst.GATEWAY_PLUGIN_NAMESPACE, gatewayNamespace);
 
         // 路由和全局插件模板渲染数据区分填充
-        if (plugin.isRoutePlugin()) {
+        if (PluginScopeTypeEnum.isRoutePlugin(plugin.getPluginScope())) {
             gatewayPluginParams
                     .put(TemplateConst.GATEWAY_PLUGIN_ROUTE, HandlerUtil.getRoute(plugin));
-        } else if (plugin.isGlobalPlugin()) {
+        } else if (PluginScopeTypeEnum.isHostPlugin(plugin.getPluginScope())) {
             gatewayPluginParams.put(TemplateConst.GATEWAY_PLUGIN_HOSTS, HandlerUtil.completeHosts(plugin));
         }
 

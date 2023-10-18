@@ -12,12 +12,10 @@ import java.util.List;
 
 public class PortalGatewayDataHandler extends GatewayDataHandler {
 
-    private Boolean enableHttp10;
     private String gatewayNamespace;
     public static final String CREDENTIAL_NAME_PREFIX = "kubernetes-gateway://";
 
-    public PortalGatewayDataHandler(Boolean enableHttp10, String gatewayNamespace) {
-        this.enableHttp10 = enableHttp10;
+    public PortalGatewayDataHandler(String gatewayNamespace) {
         this.gatewayNamespace = gatewayNamespace;
     }
     @Override
@@ -34,7 +32,6 @@ public class PortalGatewayDataHandler extends GatewayDataHandler {
         }
         TemplateParams params = TemplateParams.instance()
                 .put(TemplateConst.GATEWAY_NAME, istioGateway.getName())
-                .put(TemplateConst.GATEWAY_HTTP_10, enableHttp10)
                 .put(TemplateConst.GATEWAY_GW_CLUSTER, istioGateway.getGwCluster())
                 .put(TemplateConst.GATEWAY_SERVERS, istioGateway.getServers());
         return Arrays.asList(params);

@@ -3,7 +3,6 @@ package org.hango.cloud.service;
 import org.hango.cloud.core.plugin.FragmentHolder;
 import org.hango.cloud.meta.Plugin;
 import org.hango.cloud.meta.PluginSupportDetail;
-import org.hango.cloud.meta.ServiceInfo;
 import org.hango.cloud.meta.dto.PluginOrderDTO;
 
 import java.util.List;
@@ -30,7 +29,8 @@ public interface PluginService {
      */
     String getSchema(String path);
 
-    List<FragmentHolder> processPlugin(List<String> plugins, ServiceInfo serviceInfo);
+    List<FragmentHolder> processPlugin(List<String> plugins, String pluginScope);
+
 
     /**
      * 根据网关类型获取该类型所支持的插件列表

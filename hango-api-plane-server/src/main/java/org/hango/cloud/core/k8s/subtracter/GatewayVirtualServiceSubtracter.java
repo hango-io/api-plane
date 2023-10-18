@@ -21,7 +21,12 @@ public class GatewayVirtualServiceSubtracter implements Subtracter<K8sTypes.Virt
                 .filter(h -> !h.getName().equals(key))
                 .collect(Collectors.toList());
 
-        VirtualServiceOuterClass.VirtualService build = old.getSpec().toBuilder().clearHttp().build();
+        VirtualServiceOuterClass.VirtualService build = old.getSpec().toBuilder()
+                .clearHttp()
+                .clearTcp()
+                .clearUdp()
+                .build();
+        //TCP/UDP 默认路由不存在更新场景
         old.setSpec(build.toBuilder().addAllHttp(latestHttp).build());
         return old;
     }

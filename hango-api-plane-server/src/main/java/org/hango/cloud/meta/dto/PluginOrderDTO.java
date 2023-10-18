@@ -17,7 +17,7 @@ public class PluginOrderDTO {
     private String gwCluster;
 
     /**
-     * plugin manager 名称
+     * 产品类型 apiGateway/ingressGateway
      */
     @JsonProperty(value = "GatewayKind")
     private String gatewayKind;

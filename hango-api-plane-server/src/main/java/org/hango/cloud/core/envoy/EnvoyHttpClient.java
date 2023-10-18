@@ -69,8 +69,11 @@ public class EnvoyHttpClient {
      * @return ip:19000
      */
     private String getEnvoyUrl(String gateway) {
-        Pod envoyPod = getEnvoyPod(gateway);
-        return String.format("http://%s:19000", envoyPod.getStatus().getPodIP());
+        List<Service> envoyServiceList = getEnvoyServiceList(gateway);
+        if (CollectionUtils.isEmpty(envoyServiceList)) {
+            throw new ApiPlaneException(ExceptionConst.ENVOY_SERVICE_NON_EXIST);
+        }
+        return String.format("http://%s:19000", envoyServiceList.get(0).getSpec().getClusterIP());
     }
 
     /**

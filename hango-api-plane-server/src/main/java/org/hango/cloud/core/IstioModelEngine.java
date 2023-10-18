@@ -103,20 +103,6 @@ public abstract class IstioModelEngine {
         return operator;
     }
 
-    protected class EmptyResourceGenerator implements Function<String, HasMetadata> {
-
-        private HasMetadata hmd;
-
-        public EmptyResourceGenerator(HasMetadata hmd) {
-            this.hmd = hmd;
-        }
-
-        @Override
-        public HasMetadata apply(String s) {
-            if (NEVER_NULL.equals(s)) return hmd;
-            return str2HasMetadata(s);
-        }
-    }
 
     protected class DynamicResourceGenerator implements Function<String, HasMetadata> {
 

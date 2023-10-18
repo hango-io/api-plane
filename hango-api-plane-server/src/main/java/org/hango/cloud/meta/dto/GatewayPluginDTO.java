@@ -16,9 +16,6 @@ public class GatewayPluginDTO {
     @JsonProperty(value = "Plugins")
     private List<String> plugins;
 
-    @JsonProperty(value = "RouteId")
-    private String routeId;
-
     @JsonProperty(value = "PluginType")
     private String pluginType;
 
@@ -29,6 +26,9 @@ public class GatewayPluginDTO {
     @JsonProperty(value = "Gateway")
     private String gateway;
 
+    @JsonProperty(value = "GwCluster")
+    private String gwCluster;
+
     @JsonProperty(value = "Code")
     private String code;
 
@@ -37,6 +37,9 @@ public class GatewayPluginDTO {
 
     @JsonProperty(value = "Version")
     private Long version;
+
+    @JsonProperty(value = "PluginScope")
+    private String pluginScope;
 
     public List<String> getPlugins() {
         return plugins;
@@ -54,20 +57,28 @@ public class GatewayPluginDTO {
         this.hosts = hosts;
     }
 
-    public String getRouteId() {
-        return routeId;
-    }
-
-    public void setRouteId(String routeId) {
-        this.routeId = routeId;
-    }
-
     public String getGateway() {
         return gateway;
     }
 
     public void setGateway(String gateway) {
         this.gateway = gateway;
+    }
+
+    public String getPluginType() {
+        return pluginType;
+    }
+
+    public void setPluginType(String pluginType) {
+        this.pluginType = pluginType;
+    }
+
+    public String getGwCluster() {
+        return gwCluster;
+    }
+
+    public void setGwCluster(String gwCluster) {
+        this.gwCluster = gwCluster;
     }
 
     public String getCode() {
@@ -78,13 +89,6 @@ public class GatewayPluginDTO {
         this.code = code;
     }
 
-    public String getPluginType() {
-        return pluginType;
-    }
-
-    public void setPluginType(String pluginType) {
-        this.pluginType = pluginType;
-    }
 
     public Integer getPort() {
         return port;
@@ -101,4 +105,13 @@ public class GatewayPluginDTO {
     public void setVersion(Long version) {
         this.version = version;
     }
+
+    public String getPluginScope() {
+        return pluginScope;
+    }
+
+    public void setPluginScope(String pluginScope) {
+        this.pluginScope = pluginScope;
+    }
+
 }

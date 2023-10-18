@@ -20,15 +20,21 @@ import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.*;
 import org.hango.cloud.meta.dto.GrpcEnvoyFilterDTO;
 import org.hango.cloud.meta.dto.IpSourceEnvoyFilterDTO;
+import org.hango.cloud.meta.enums.PluginMappingEnum;
+import org.hango.cloud.util.exception.ApiPlaneException;
 import org.hango.cloud.util.function.Subtracter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import slime.microservice.plugin.v1alpha1.PluginManagerOuterClass;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.hango.cloud.util.Const.LUA;
+import static org.hango.cloud.util.Const.WASM;
 
 public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport implements
     GatewayConfigManager {
@@ -60,9 +66,78 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
     }
 
     @Override
+    public void updateConfig(BasePlugin plugin) {
+        List<K8sResourcePack> resources = modelEngine.translate(plugin);
+        if (CollectionUtils.isEmpty(resources)){
+            return;
+        }
+        resources.forEach(o -> updatePluginSetting(o, plugin));
+        update(resources);
+    }
+
+
+    @Override
     public void updateConfig(Service service) {
         List<K8sResourcePack> resources = modelEngine.translate(service);
         update(resources);
+    }
+
+    /**
+     * 替换plm配置
+     */
+    private void updatePluginSetting(K8sResourcePack k8sResourcePack, BasePlugin plugin){
+        //待更新的插件配置
+        K8sTypes.PluginManager target = (K8sTypes.PluginManager) k8sResourcePack.getResource();
+
+        PluginManagerOuterClass.Plugin targetPlugin = target.getSpec().getPluginCount()> 0 ? target.getSpec().getPlugin(0) : null;
+        //获取当前插件配置
+        K8sTypes.PluginManager source = getPluginManager(plugin.getName());
+        //替换插件配置
+        List<PluginManagerOuterClass.Plugin> targetPluginList = source.getSpec().getPluginList().stream().map(sourcePlugin -> {
+            if (sourcePlugin.getName().equals(PluginMappingEnum.getFilterName(plugin.getPluginType()))){
+                return mergeSetting(sourcePlugin, targetPlugin, plugin.getLanguage());
+            }
+            return sourcePlugin;
+
+        }).collect(Collectors.toList());
+
+        source.setSpec(source.getSpec().toBuilder().clearPlugin().addAllPlugin(targetPluginList).build());
+        k8sResourcePack.setResource(source);
+    }
+
+
+    private PluginManagerOuterClass.Plugin mergeSetting(PluginManagerOuterClass.Plugin source, PluginManagerOuterClass.Plugin target, String lanugaue){
+        PluginManagerOuterClass.Plugin.Builder builder = source.toBuilder();
+        switch (lanugaue){
+            case LUA:
+                PluginManagerOuterClass.Rider.Builder riderBuilder = source.getRider().toBuilder();
+                if (target == null){
+                    riderBuilder.clearSettings();
+                }else {
+                    riderBuilder.setSettings(target.getRider().getSettings());
+                }
+                builder.setRider(riderBuilder.build());
+                break;
+            case WASM:
+                PluginManagerOuterClass.Wasm.Builder wasmBuilder = source.getWasm().toBuilder();
+                if (target == null){
+                    wasmBuilder.clearSettings();
+                }else {
+                    wasmBuilder.setSettings(target.getWasm().getSettings());
+                }
+                builder.setWasm(wasmBuilder.build());
+                break;
+            default:
+                PluginManagerOuterClass.Inline.Builder inlineBuilder = source.getInline().toBuilder();
+                if (target == null){
+                    inlineBuilder.clearSettings();
+                }else {
+                    inlineBuilder.setSettings(target.getInline().getSettings());
+                }
+                builder.setInline(inlineBuilder.build());
+                break;
+        }
+        return builder.build();
     }
 
     private void update(List<K8sResourcePack> resources) {
@@ -137,6 +212,15 @@ public class GatewayConfigManagerImpl extends AbstractConfigManagerSupport imple
     @Override
     public HasMetadata getConfig(String kind, String namespace, String name) {
         return configStore.get(kind, namespace, name);
+    }
+
+    @Override
+    public K8sTypes.PluginManager getPluginManager(String name) {
+        HasMetadata config = getConfig(K8sResourceEnum.PluginManager.name(), name);
+        if (Objects.isNull(config)) {
+            throw new ApiPlaneException("plugin manager config can not found.");
+        }
+        return (K8sTypes.PluginManager) config;
     }
 
     @Override

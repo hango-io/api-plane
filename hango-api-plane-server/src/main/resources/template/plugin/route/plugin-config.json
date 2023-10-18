@@ -9,7 +9,7 @@
       "instructionForUse": "按百分比限流，例如允许50%流量通过",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关实例按照百分比限制请求流量，通过网关实例到达后端服务的流量为（1-限制值/100）*实际流量。 当触发限流时，网关返回 429 Too Many Requests。"
     },
     {
       "name": "local-limiting",
@@ -20,7 +20,7 @@
       "instructionForUse": "请求频率限流，限制网关实例节点的服务请求流量",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": ""
+      "pluginGuidance": "限制符合匹配条件的请求QPS值，支持配置多组限流规则。每一组限流规则，支持配置请求头匹配条件，当请求流量满足该匹配条件（如果未配置匹配条件，路由下任意请求均满足），即根据QPS值对此类请求进行流量控制。每一个网关实例有独立的计数器，其实际QPS值，为限流规则QPS值除以网关实例数。 当触发限流时，网关返回 429 Too Many Requests。"
     },
     {
       "name": "rate-limiting",
@@ -31,7 +31,7 @@
       "instructionForUse": "基于分布式限流组件对服务请求流量进行限制",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": ""
+      "pluginGuidance": "限制符合匹配条件的请求QPS值，支持配置多组限流规则。每一组限流规则，支持配置请求头匹配条件，当请求流量满足该匹配条件（如果未配置匹配条件，路由下任意请求均满足），即根据QPS值对此类请求进行流量控制。多个网关实例共享计数器，限制实际到达服务的总QPS。 当触发限流时，网关返回 429 Too Many Requests。"
     },
     {
       "name": "cluster-group-limiting",
@@ -42,7 +42,7 @@
       "instructionForUse": "基于分布式限流组件对服务请求流量进行分组限制",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": ""
+      "pluginGuidance": "限制符合匹配条件的请求QPS值，支持配置多组限流规则。每一组限流规则，支持指定请求头名称，相同请求头和值的请求为一个组，对同一组内的请求进行总QPS限制。 当触发限流时，网关返回 429 Too Many Requests。"
     },
     {
       "name": "circuit-breaker",
@@ -53,7 +53,7 @@
       "instructionForUse": "当后端服务错误率和时延超过阈值时，拦截客户端请求，保护后端服务",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": "当错误率或连续慢响应次数超多阈值时触发熔断，在熔断状态下，网关将直接返回指定响应给客户端，等经过惩罚时间后，网关会尝试将请求转发到后端服务，如果响应无异常则恢复为正常状态否则继续处于熔断状态。"
+      "pluginGuidance": "当错误率或慢响应连续产生次数超过阈值时触发熔断，路由即进入熔断状态，此时对任意请求网关均将自定义响应返回给客户端，熔断时间结束后服务状态变为正常，将正常响应客户端请求。"
     },
     {
       "name": "static-downgrade",
@@ -64,7 +64,7 @@
       "instructionForUse": "当后端响应异常时，返回固定响应给客户端",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": "当请求和响应匹配降级条件时，网关返回自定义的响应返回给客户端"
+      "pluginGuidance": "当请求和响应匹配降级条件时，网关返回自定义的响应返回给客户端。"
     },
     {
       "name": "dynamic-downgrade",
@@ -75,7 +75,7 @@
       "instructionForUse": "当后端响应异常时，返回缓存响应给客户端，或者转发请求给降级接口处理",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": "当请求和响应匹配降级条件时，网关返回之前请求的响应缓存，或者转发请求到降级服务的接口进行处理，并返回降级处理响应结果"
+      "pluginGuidance": "当请求和响应匹配降级条件时，网关返回之前请求的响应缓存，或者转发请求到降级服务进行处理，并返回降级处理响应结果给客户端。"
     },
     {
       "name": "local-cache",
@@ -87,7 +87,7 @@
       "instructionForUse": "本地缓存后端应答，以缓存响应请求",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": "根据请求和响应匹配信息确定待缓存的请求响应结果，当后续请求符合请求匹配信息时，网关将已缓存的响应返回给客户端。设置自定义缓存Key计算，可以根据请求参数提供多个缓存值。"
+      "pluginGuidance": "根据请求和响应匹配条件将请求的响应结果缓存到本地内存，当后续请求满足请求匹配条件时，网关将已缓存的响应返回给客户端。设置自定义缓存Key计算，可以根据请求参数提供多个缓存值。"
     },
     {
       "name": "redis-cache",
@@ -98,7 +98,7 @@
       "instructionForUse": "redis缓存后端应答，以缓存响应请求",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": "根据请求和响应匹配信息确定待缓存的请求响应结果，当后续请求符合请求匹配信息时，网关将已缓存的响应返回给客户端。设置自定义缓存Key计算，可以根据请求参数提供多个缓存值。"
+      "pluginGuidance": "根据请求和响应匹配条件将请求的响应结果缓存到Redis，当后续请求满足请求匹配条件时，网关将已缓存的响应返回给客户端。设置自定义缓存Key计算，可以根据请求参数提供多个缓存值。"
     },
     {
       "name": "ianus-router",
@@ -109,7 +109,7 @@
       "instructionForUse": "请求中断返回，支持定义响应码和响应Body",
       "categoryKey": "trafficPolicy",
       "categoryName": "流量管理",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关拦截当前路由下的所有请求，并返回用户指定的响应码和响应Body。"
     },
     {
       "name": "jwt-auth",
@@ -120,7 +120,7 @@
       "instructionForUse": "提供JWT认证",
       "categoryKey": "auth",
       "categoryName": "认证鉴权",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关提供JWT认证，对请求中的JWT token进行合法性校验，网关将会拦截token非法的请求。如果需要对请求的消费者进行身份权限验证，可以使用基础鉴权等鉴权插件。 当请求token非法时，网关返回 401 Unauthorized。"
     },
     {
       "name": "oauth2-auth",
@@ -132,7 +132,7 @@
       "instructionForUse": "提供OAuth2认证",
       "categoryKey": "auth",
       "categoryName": "认证鉴权",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关提供OAuth2认证，对请求中的Authorization头进行合法性校验，网关将会拦截Authorization头非法的请求。如果需要对请求的客户端进行身份权限验证，可以使用基础鉴权等鉴权插件。 当请求Authorization头非法时，网关返回 401 Unauthorized。"
     },
     {
       "name": "simple-auth",
@@ -143,7 +143,7 @@
       "instructionForUse": "提供简单认证",
       "categoryKey": "auth",
       "categoryName": "认证鉴权",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关提供简单认证，对请求header中的用户信息进行合法性校验，网关将会拦截请求中用户非法的请求。 当请求的用户信息非法时，网关返回 401 Unauthorized。"
     },
     {
       "name": "basic-rbac",
@@ -154,7 +154,7 @@
       "instructionForUse": "提供基于外部认证鉴权",
       "categoryKey": "auth",
       "categoryName": "认证鉴权",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关根据请求对应的外部认证进行访问权限校验，如果请求的外部认证不在配置列表内，网关将会拦截该请求。 当请求客户端无访问权限时，网关返回 403 Forbidden。"
     },
     {
       "name": "ip-restriction",
@@ -165,7 +165,7 @@
       "instructionForUse": "根据IP过滤请求",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关根据请求来源IP限制请求。黑名单类型，网关会限制在黑名单内的IP请求，其他IP请求放行；白名单类型，网关仅放行白名单的IP请求，其他IP请求拦截。 当请求被拦截时，网关返回 403 Forbidden。"
     },
     {
       "name": "ua-restriction",
@@ -176,7 +176,7 @@
       "instructionForUse": "根据user-agent过滤请求",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关根据请求客户端类型限制请求。黑名单类型，网关会限制匹配黑名单客户端请求，其他客户端类型请求放行；白名单类型，网关会放行匹配白名单客户端的请求，拦截其他客户端请求。 当请求被拦截时，网关返回 403 Forbidden。"
     },
     {
       "name": "referer-restriction",
@@ -187,7 +187,7 @@
       "instructionForUse": "根据referer过滤请求",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关根据请求referer源限制请求。黑名单类型，网关会限制匹配黑名单内referer源请求，其他referer源请求放行；白名单类型，网关会放行匹配白名单referer源的请求，拦截其他referer源请求。 当请求被拦截时，网关返回 403 Forbidden。"
     },
     {
       "name": "header-restriction",
@@ -198,7 +198,7 @@
       "instructionForUse": "根据header过滤请求",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关根据请求header参数限制请求。黑名单类型，网关会限制匹配黑名单header的请求，其他header请求放行；白名单类型，网关会放行匹配白名单header的请求，拦截其他header请求。 当请求被拦截时，网关返回 403 Forbidden。"
     },
     {
       "name": "cors",
@@ -209,7 +209,7 @@
       "instructionForUse": "跨域访问CORS",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关提供跨域访问，支持简单请求和预检请求处理。 预检请求的响应头中会携带插件配置的各项参数，来表明是否允许跨域访问以及允许哪些源访问。"
     },
     {
       "name": "jsonp",
@@ -220,18 +220,18 @@
       "instructionForUse": "跨域访问JSONP",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": ""
+      "pluginGuidance": "JSONP全称json with padding，是一种利用script标签跨域传输数据的技术。路由配置了JSONP插件，并设置callback为test，当客户端发起 http://example.com/data?test=myCallback 跨域请求，且后端服务响应body内容为{data: 'hello world'}时，那么网关将响应body修改为myCallback({data: 'hello world'})给客户端。"
     },
     {
       "name": "waf",
       "displayName": "WAF",
       "schema": "plugin/route/waf.json",
       "description": "",
-      "pluginScope": "routeRule,global",
+      "pluginScope": "routeRule,global,gateway",
       "instructionForUse": "提供应用级安全防护",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": ""
+      "pluginGuidance": "WAF全称web application firewall，提供web应用安全防护功能。当请求被检测出存在攻击行为时，该请求会被拦截，网关返回 403 Forbidden。"
     },
     {
       "name": "parameters-validate",
@@ -242,7 +242,7 @@
       "instructionForUse": "检查请求的header和query参数值",
       "categoryKey": "security",
       "categoryName": "安全",
-      "pluginGuidance": "校验请求的请求头和查询参数值，包括数值类型、大小、长度和枚举值。网关会拦截不符合参数校验规则的请求。"
+      "pluginGuidance": "校验请求的请求头和查询参数值，包括数值类型、大小、长度和枚举值。网关会拦截不符合参数校验规则的请求。 参数校验不通过时，网关返回 400 Bad Request。"
     },
     {
       "name": "rewrite",
@@ -253,18 +253,29 @@
       "instructionForUse": "修改请求Path前缀",
       "categoryKey": "dataFormat",
       "categoryName": "数据转换",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关转发请求前，替换请求path的前缀，然后转发更新后的请求到后端。"
     },
     {
       "name": "transformer",
-      "displayName": "请求重写",
+      "displayName": "请求重写(即将下架)",
       "schema": "plugin/route/request-transformer-new.json",
       "description": "",
       "pluginScope": "routeRule",
       "instructionForUse": "修改请求Header、Query String以及Path",
       "categoryKey": "dataFormat",
       "categoryName": "数据转换",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关转发请求前，修改请求header、query string和path，然后转发更新后的请求到后端。"
+    },
+    {
+      "name": "request-rewrite",
+      "displayName": "请求重写",
+      "schema": "plugin/route/request-rewrite.json",
+      "description": "",
+      "pluginScope": "routeRule",
+      "instructionForUse": "修改请求Header、Query String",
+      "categoryKey": "dataFormat",
+      "categoryName": "数据转换",
+      "pluginGuidance": "网关转发请求前，修改请求header、query string和path，然后转发更新后的请求到后端。"
     },
     {
       "name": "response-header-rewrite",
@@ -275,7 +286,7 @@
       "instructionForUse": "修改请求的响应头信息",
       "categoryKey": "dataFormat",
       "categoryName": "数据转换",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关转发响应前，修改响应header，然后转发更新后的响应到客户端。"
     },
     {
       "name": "traffic-mark",
@@ -297,7 +308,7 @@
       "instructionForUse": "修改json格式的请求body内容",
       "categoryKey": "dataFormat",
       "categoryName": "数据转换",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关转发请求前，修改请求body内容，然后转发更新后的请求到后端。"
     },
     {
       "name": "response-body-rewrite",
@@ -308,7 +319,7 @@
       "instructionForUse": "修改json格式的响应body内容",
       "categoryKey": "dataFormat",
       "categoryName": "数据转换",
-      "pluginGuidance": ""
+      "pluginGuidance": "网关转发响应前，修改响应body内容，然后转发更新后的响应到客户端。"
     },
     {
       "name": "soap-json-transcoder",

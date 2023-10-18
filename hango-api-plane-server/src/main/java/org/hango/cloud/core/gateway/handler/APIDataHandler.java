@@ -7,8 +7,8 @@ import org.hango.cloud.core.gateway.handler.meta.UriMatchMeta;
 import org.hango.cloud.core.template.TemplateParams;
 import org.hango.cloud.k8s.K8sTypes;
 import org.hango.cloud.meta.API;
-import org.hango.cloud.meta.CRDMetaEnum;
-import org.hango.cloud.meta.UriMatch;
+import org.hango.cloud.meta.enums.CRDMetaEnum;
+import org.hango.cloud.meta.enums.UriMatch;
 import org.hango.cloud.meta.dto.DubboInfoDto;
 import org.hango.cloud.util.CommonUtil;
 import org.hango.cloud.util.HandlerUtil;
@@ -84,6 +84,7 @@ public abstract class APIDataHandler implements DataHandler<API> {
                 .put(SERVICE_INFO_VIRTUAL_SERVICE_HOST_HEADERS, getOrDefault(hostHeaders, ".*"))
                 .put(VIRTUAL_SERVICE_REQUEST_HEADERS, api.getRequestOperation())
                 .put(VIRTUAL_SERVICE_RESP_EXCEPTION_CODE, api.getCustomDefaultRespCode())
+                .put(VIRTUAL_SERVICE_PROTOCOL, api.getProtocol().toLowerCase())
                 ;
 
         return handleApiMetaMap(api,tp);

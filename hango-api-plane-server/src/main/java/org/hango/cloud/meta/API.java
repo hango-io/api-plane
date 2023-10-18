@@ -1,6 +1,9 @@
 package org.hango.cloud.meta;
 
 
+import org.hango.cloud.meta.enums.CRDMetaEnum;
+import org.hango.cloud.meta.enums.UriMatch;
+
 import java.util.List;
 import java.util.Map;
 

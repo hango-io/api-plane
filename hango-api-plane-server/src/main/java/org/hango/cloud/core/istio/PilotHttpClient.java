@@ -8,12 +8,13 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServicePort;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hango.cloud.core.k8s.K8sResourceEnum;
-import org.hango.cloud.core.k8s.KubernetesClient;
+import org.hango.cloud.core.GlobalConfig;
+import org.hango.cloud.core.k8s.K8sClient;
 import org.hango.cloud.meta.Endpoint;
 import org.hango.cloud.util.Const;
 import org.hango.cloud.util.exception.ApiPlaneException;
@@ -46,9 +47,6 @@ public class PilotHttpClient {
     @Value(value = "${istioNamespace:gateway-system}")
     private String NAMESPACE;
 
-    @Value("#{ '${istioNamespaces:istio-system}'.split(',') }")
-    private List<String> pilotNamespaces;
-
     @Value(value = "${istioName:istiod}")
     private String ISTIO_NAME;
 
@@ -73,23 +71,23 @@ public class PilotHttpClient {
     RestTemplate shortTimeoutRestTemplate;
 
     @Autowired
-    private KubernetesClient client;
+    private K8sClient k8sClient;
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    GlobalConfig globalConfig;
 
 
     @Value(value = "${endpointExpired:10}")
     private Long endpointCacheExpired;
 
     LoadingCache<String, Object> endpointsCache;
-    LoadingCache<String, Map<String, Map<String, String>>> statusCache;
-    public static final String PILOT_GLOBAL_KEY = "global";
-
-    public static final Integer ERROR_PORT = -1;
 
     private static final String ISTIOD_DEBUG_PORT_NAME = "http-legacy-discovery";
     private static final String MESH_REGISTRY_DEBUG_PORT_NAME = "aux-port";
+    private static final String DEFAULT_ISTIO_CONFIG_MAP_NAME = "istio";
 
     @PostConstruct
     void cacheInit() {
@@ -114,6 +112,24 @@ public class PilotHttpClient {
     private String getMeshRegistryUrl() {
         if (!StringUtils.isEmpty(meshRegistryHttpUrl)) return meshRegistryHttpUrl;
         return getSvcUrl(MESH_REGISTRY_NAME, MESH_REGISTRY_DEBUG_PORT_NAME);
+    }
+
+
+
+    public Map<String, String> getIstioConfigData(){
+        ConfigMap configMap = k8sClient.getConfigMap(NAMESPACE, getIstioConfigMapName());
+        if (configMap == null){
+            return new HashMap<>();
+        }
+        return configMap.getData();
+    }
+
+    private String getIstioConfigMapName(){
+        String istioRev = globalConfig.getIstioRev();
+        if (StringUtils.isBlank(istioRev) || "default".equals(istioRev)){
+            return DEFAULT_ISTIO_CONFIG_MAP_NAME;
+        }
+        return DEFAULT_ISTIO_CONFIG_MAP_NAME + "-" + istioRev;
     }
 
     public List<Endpoint> getDubboEndpoints(String igv){
@@ -271,7 +287,7 @@ public class PilotHttpClient {
     }
 
     public String getSvcUrl(String svcName, String portName) {
-        List<Service> pilotServices = client.getObjectList(K8sResourceEnum.Service.name(), NAMESPACE, ImmutableMap.of("app", svcName));
+        List<Service> pilotServices = k8sClient.getServices(NAMESPACE, ImmutableMap.of("app", svcName));
         if (CollectionUtils.isEmpty(pilotServices)) throw new ApiPlaneException(ExceptionConst.PILOT_SERVICE_NON_EXIST);
         Service service = pilotServices.get(0);
         String ip = service.getSpec().getClusterIP();

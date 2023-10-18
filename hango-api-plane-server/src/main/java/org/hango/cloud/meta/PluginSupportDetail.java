@@ -24,34 +24,15 @@ public class PluginSupportDetail {
      */
     private String plugin;
 
-    /**
-     * 是否对外显示
-     * 1. 如果对外显示，则该插件配置的开关由外部控制
-     * 2. 如果不对外显示，该插件开关由 template/plugin/manager/plugin-manager-template.json 决定
-     */
-    private boolean display;
 
     public String getSchema() {
         return schema;
     }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
 
     public String getPlugin() {
         return plugin;
     }
 
-    public void setPlugin(String plugin) {
-        this.plugin = plugin;
-    }
 
-    public boolean getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(boolean display) {
-        this.display = display;
-    }
 }

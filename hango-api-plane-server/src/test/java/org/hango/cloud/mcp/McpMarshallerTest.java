@@ -21,7 +21,6 @@ public class McpMarshallerTest {
         options.registerDescriptor(DestinationRuleOuterClass.getDescriptor().getMessageTypes());
         options.registerDescriptor(GatewayOuterClass.getDescriptor().getMessageTypes());
         options.registerDescriptor(PluginManagerOuterClass.getDescriptor().getMessageTypes());
-        options.registerDescriptor(GatewayPluginOuterClass.getDescriptor().getMessageTypes());
         options.registerDescriptor(ServiceEntryOuterClass.getDescriptor().getMessageTypes());
 
         McpMarshaller marshaller = new McpMarshaller(options);

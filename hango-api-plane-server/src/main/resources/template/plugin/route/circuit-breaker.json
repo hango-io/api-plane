@@ -155,7 +155,10 @@
               "type": "input",
               "ruleNames": [
                 "Required",
-                "MaxLength(200)"
+                {
+                  "pattern": "^[a-zA-Z0-9-]{1,64}$",
+                  "message": "支持英文字母、数字、中划线,长度小于64"
+                }
               ]
             },
             {
@@ -163,10 +166,7 @@
               "key": "value",
               "placeholder": "请输入",
               "type": "input",
-              "ruleNames": [
-                "Required",
-                "MaxLength(200)"
-              ]
+              "ruleNames": ["MaxLength(200)","Required","^[ -~]+$"]
             }
           ]
         },
@@ -174,7 +174,8 @@
           "key": "body",
           "type": "input",
           "alias": "响应体",
-          "help": "若不填写，则默认返回：circuit breaker filter abort"
+          "help": "若不填写，则默认返回：circuit breaker filter abort",
+          "rules": ["MaxLength(1000)","^[ -~\\u4e00-\\u9fa5]+$"]
         }
       ]
     }

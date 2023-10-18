@@ -1,5 +1,6 @@
 package org.hango.cloud.core.gateway.service.impl;
 
+import org.hango.cloud.core.GlobalConfig;
 import org.hango.cloud.core.envoy.EnvoyHttpClient;
 import org.hango.cloud.core.gateway.service.ResourceManager;
 import org.hango.cloud.core.istio.PilotHttpClient;
@@ -33,6 +34,10 @@ public class DefaultResourceManager implements ResourceManager {
 
     @Autowired
     private EnvoyHttpClient envoyHttpClient;
+
+    @Autowired
+    private GlobalConfig globalConfig;
+
 
     @Value("${service.namespace.exclude:gateway-system,kube-system,istio-system,gateway-v112}")
     private String excludeNamespace;
@@ -200,6 +205,11 @@ public class DefaultResourceManager implements ResourceManager {
             String hostRegex = "^.+\\.nsf\\." + labelFilters.get(PROJECT_CODE) + "\\.(eureka|nacos)$";
             return hostname.matches(hostRegex);
         }
+        if (hostname.endsWith(globalConfig.getKubernetesSvcSuffix())) {
+           //k8s服务校验是否匹配projectCode
+            return labelFilters.get(PROJECT_CODE).equals(endpoint.getLabel(PROJECT_CODE));
+        }
+
         return true;
     }
 

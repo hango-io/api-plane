@@ -77,6 +77,8 @@ public interface TemplateConst {
 
     String DESTINATION_RULE_METADATA_HUB = "t_destination_rule_metadata_hub";
 
+    String VIRTUAL_SERVICE_PROTOCOL = "t_virtual_service_protocol";
+
 
 
     /**
@@ -169,7 +171,6 @@ public interface TemplateConst {
      */
     String DESTINATION_RULE_EXTRA_SUBSETS = "t_destination_rule_extra_subsets";
 
-    String API_GATEWAYS = "t_api_gateways";
 
 
 
@@ -188,22 +189,8 @@ public interface TemplateConst {
     String GATEWAY_NAME = "t_gateway_name";
     String GATEWAY_NS = "t_gateway_ns";
     String GATEWAY_HOSTS = "t_gateway_hosts";
-    String GATEWAY_HTTP_10 = "t_gateway_http_10";
     String GATEWAY_GW_CLUSTER = "t_api_gateway";
-    String GATEWAY_CUSTOM_IP_HEADER = "t_custom_ip_header";
-    String GATEWAY_XFF_NUM_TRUSTED_HOPS = "t_xff_num_trusted_hops";
-    String GATEWAY_USE_REMOTE_ADDRESS = "t_use_remote_address";
     String GATEWAY_SERVERS = "t_gateway_servers";
-
-
-
-    /**
-     * SharedConfig
-     **/
-    String SHARED_CONFIG_DESCRIPTOR = "t_shared_config_descriptor";
-
-    String SHARED_CONFIG_NAME = "t_shared_config_name";
-    String SHARED_CONFIG_NAMESPACE = "t_shared_config_namespace";
 
     /**
      * PluginManager
@@ -237,15 +224,9 @@ public interface TemplateConst {
     String GATEWAY_PLUGIN_GATEWAYS = "t_gateway_plugin_gateways";
     String GATEWAY_PLUGIN_HOSTS = "t_gateway_plugin_hosts";
     String GATEWAY_PLUGIN_PLUGINS = "t_gateway_plugin_plugins";
+    String GATEWAY_PLUGIN_GW_CLUSTER = "t_gw_cluster";
     String GATEWAY_PLUGIN_ROUTE = "t_gateway_plugin_route";
 
-
-    /**
-     * SmartLimiter
-     */
-
-    String SMART_LIMITER_NAME = "t_smart_limiter_name";
-    String SMART_LIMITER_CONFIG = "t_smart_limiter_config";
 
     /**
      * Gateway
@@ -254,27 +235,6 @@ public interface TemplateConst {
     String SECRET_TLS_CRT = "t_secret_tls_crt";
     String SECRET_TLS_KEY = "t_secret_tls_key";
     String SECRET_CA_CRT = "t_secret_ca_crt";
-
-
-    /**
-     * Sidecar
-     */
-    String SIDECAR_SOURCE_APP = "t_sidecar_source_app";
-    String SIDECAR_EGRESS_HOSTS = "t_sidecar_egress_hosts";
-
-    /**
-     * rls = rate limit server
-     * rls configmap
-     */
-    String RLS_CONFIG_MAP_NAME = "t_rls_cm_name";
-    String RLS_CONFIG_MAP_DESCRIPTOR = "t_rls_cm_descriptor";
-
-
-    /** ---------- 模板占位符名 end ---------- **/
-
-    /**
-     *
-     */
 
     /**
      * Dubbo Meta 相关信息

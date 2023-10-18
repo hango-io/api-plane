@@ -59,7 +59,9 @@ public class VirtualServiceOperator implements k8sResourceOperator<K8sTypes.Virt
         return virtualService == null ||
                 StringUtils.isEmpty(virtualService.getApiVersion()) ||
                 virtualService.getSpec() == null ||
-                CollectionUtils.isEmpty(virtualService.getSpec().getHttpList());
+                (CollectionUtils.isEmpty(virtualService.getSpec().getHttpList())
+                && CollectionUtils.isEmpty(virtualService.getSpec().getTcpList())
+                && CollectionUtils.isEmpty(virtualService.getSpec().getUdpList()));
     }
 
     @Override
