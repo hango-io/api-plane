@@ -53,7 +53,7 @@ public enum PluginMappingEnum {
     //系统后置插件
     TRAFFIC_MARK("proxy.filters.http.traffic_mark", "", Collections.EMPTY_LIST, POST_BUILTIN, 1),
     DETAILED_STATS("proxy.filters.http.detailed_stats", "", Collections.EMPTY_LIST, POST_BUILTIN, 2),
-    STATEFUL_SESSION("envoy.filters.http.stateful_session", "type.googleapis.com/envoy.extensions.filters.http.stateful_session.v3.StatefulSessionPerRoute", Collections.EMPTY_LIST, POST_BUILTIN, 3),
+    STATEFUL_SESSION("envoy.filters.http.stateful_session", "type.googleapis.com/envoy.extensions.filters.http.stateful_session.v3.StatefulSessionPerRoute", Collections.singletonList("session-state"), POST_BUILTIN, 3),
     SOAPJSONTRANSCODER("proxy.filters.http.soapjsontranscoder", "", Collections.singletonList("soap-json-transcoder"), POST_BUILTIN, 4),
 
     //自定义插件
